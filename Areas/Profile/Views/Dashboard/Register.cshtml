@@ -1,0 +1,115 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="border">
+    <div class="container mt-5">
+        <div class="row g-3 align-items-center">
+            <!-- Left Column: Image -->
+            <div class="col-12 col-md-6 d-flex justify-content-center">
+                <div class="text-center mb-4">
+                    <img id="slideshow" class="RegSlide" src="/uploads/Register/RegPic1.jpg"  alt="pic" />
+                </div>
+            </div>
+
+            <!-- Right Column: Form -->
+            <div class="col-12 col-md-6">
+                <form asp-action="GetRegister" method="post" id="registerForm">
+                    <div>
+                        <h2 class="mb-4">ثبت نام</h2>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="UserName" class="form-label" ></label>
+                        <input asp-for="UserName" class="form-control" name="UserName" placeholder="User Name" required/>
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" type="email" name="Email" class="form-control" placeholder="Email" required/>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" type="password" name="Password" class="form-control" placeholder="Password" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label"></label>
+                        <input asp-for="ConfirmPassword" type="password" name="ConfirmPassword" class="form-control" placeholder="Confirm password" required />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary">ثبت نام</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+ 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const images = [
+                "/uploads/Register/RegPic1.jpg",
+                "/uploads/Register/RegPic2.jpg",
+                "/uploads/Register/RegPic3.jpg"
+            ];
+
+            let currentIndex = 0;
+            const imgElement = document.getElementById("slideshow");
+
+            if (imgElement) {
+                setInterval(() => {
+                    imgElement.classList.add("fade-out");
+
+                    setTimeout(() => {
+                        currentIndex = (currentIndex + 1) % images.length;
+                        imgElement.src = images[currentIndex];
+                        imgElement.classList.remove("fade-out");
+                    }, 800);
+                }, 4000);
+            }
+        });
+
+
+        document.getElementById("registerForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const data = {
+                Username: form.UserName.value,   // 👈 match backend property
+                Email: form.Email.value,
+                Password: form.Password.value
+            };
+
+
+            try {
+                const res = await fetch("/Profile/Register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) throw new Error("Failed to register");
+
+                const result = await res.json();
+                if (result.success) {
+                    window.location.href = result.redirectUrl; // 👈 go to profile
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Registration failed");
+            }
+        });
+
+    </script>
+
+}

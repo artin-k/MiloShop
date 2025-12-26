@@ -1,0 +1,258 @@
+﻿/* Force hero text to be white (Bootstrap overrides otherwise) */
+.hero,
+.hero .heroContent,
+.hero .heroPanel,
+.hero .heroTitle,
+.hero .heroSub,
+.hero .heroBadge {
+    color: #fff !important;
+}
+
+    /* Keep CTA button text readable if button bg is white */
+    .hero .heroBtn {
+        color: #111 !important;
+    }
+
+
+.hero {
+    position: relative;
+    margin: 22px auto 32px;
+    max-width: 1280px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #0b1220;
+}
+
+.heroSlide {
+    position: relative;
+    min-height: 520px;
+    background-size: cover;
+    background-position: center;
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    /* dims entire image + slight gradient for readability */
+    background: linear-gradient(270deg, rgba(0,0,0,.55), rgba(0,0,0,.10));
+}
+
+
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    padding: 70px 24px;
+    display: flex;
+    direction: rtl; /* ✅ keep RTL */
+    justify-content: flex-start; /* ✅ in RTL, start = RIGHT */
+}
+
+
+.heroPanel {
+    background: transparent;
+    border: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+    border-radius: 0;
+    width: min(720px, 96%);
+    min-height: auto;
+}
+
+
+.heroPanel {
+    width: min(720px, 96%);
+    min-height: 240px; /* ✅ keeps same size */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    gap: 10px;
+}
+
+/* keep title/sub consistent lines */
+.heroTitle {
+    display: -webkit-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    -webkit-box-orient: vertical;
+}
+
+.heroSub {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* max 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.heroTitle, .heroSub {
+    text-shadow: 0 10px 28px rgba(0,0,0,.35);
+}
+
+
+.heroBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #fff;
+    color: #111;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform .15s ease, opacity .15s ease;
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+    .heroBtn:hover {
+        transform: translateY(-1px);
+        opacity: .95;
+    }
+
+/* Modern arrows */
+.hero .swiper-button-next,
+.hero .swiper-button-prev {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.35);
+    border: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+}
+
+    .hero .swiper-button-next:after,
+    .hero .swiper-button-prev:after {
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+/* Hide nav until hover (clean) */
+.heroNav {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+}
+
+.hero:hover .heroNav {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Thumbs */
+.heroThumbs {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 320px;
+    z-index: 3;
+}
+
+.heroThumbCard {
+    position: relative;
+    height: 64px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.20);
+}
+
+.heroThumbOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,.70), rgba(0,0,0,.25));
+}
+
+.heroThumbMeta {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px 10px;
+    color: #fff;
+    text-align: right;
+    gap: 4px;
+}
+
+.heroThumbBadge {
+    
+    align-self: flex-start;
+    font-size: 9px;
+    padding: 2px 8px;
+    align-content: center;
+    font-weight: 600;
+}
+
+.heroThumbTitle {
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+    opacity: .95;
+}
+
+.heroThumbs .swiper-slide-thumb-active .heroThumbCard {
+    border-color: rgba(34,197,94,.9);
+    box-shadow: 0 0 0 2px rgba(34,197,94,.25);
+}
+
+@media (max-width: 768px) {
+    .heroSlide {
+        min-height: 420px;
+    }
+
+    .heroThumbs {
+        width: 220px;
+    }
+}
+
+/* default: hidden */
+.hero .swiper-button-next,
+.hero .swiper-button-prev {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity .25s ease, transform .25s ease;
+    transform: translateY(2px);
+}
+
+/* show on hover */
+.hero:hover .swiper-button-next,
+.hero:hover .swiper-button-prev {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0);
+}
+
+
+/* start visible */
+.hero .heroNav {
+    opacity: 1;
+    transition: opacity .25s ease;
+}
+
+/* after timeout, we add .nav-hidden to .hero */
+.hero.nav-hidden .heroNav {
+    opacity: 0;
+    pointer-events: none; /* avoid invisible buttons blocking clicks */
+}
+
+/* show when user hovers hero */
+.hero:hover .heroNav {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* also show if user hovers the buttons themselves */
+.hero .swiper-button-next,
+.hero .swiper-button-prev {
+    opacity: 1;
+    transition: opacity .25s ease;
+}

@@ -1,0 +1,63 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5" style="max-width: 400px;">
+    <h2 class="mb-4">Login</h2>
+
+        <form method="post" id="LoginForm">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" name="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Password</label>
+            <input asp-for="Password" type="password" name="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+@*         <a href=>forget password?</a> *@
+        <a href="~/Profile/Register">sign up</a>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+</div>
+
+
+<script>
+    document.getElementById("LoginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const data = {
+            Email: form.querySelector("[name=Email]").value,
+            Password: form.querySelector("[name=Password]").value
+        };
+
+        try {
+            const res = await fetch("/Profile/Login", {   // 👈 adjust to match controller route
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (!res.ok || !result.success) {
+                alert(result.message || "Invalid login attempt");
+                return;
+            }
+
+            // ✅ redirect on success
+            window.location.href = result.redirectUrl;
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong, please try again.");
+        }
+    });
+</script>
