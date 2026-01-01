@@ -1,10 +1,11 @@
 ﻿using avatCo.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace avatCo.Data
 {
-    public class MiloDbContext : DbContext
+    public class MiloDbContext : IdentityDbContext<ApplicationUser>
     {
         public MiloDbContext(DbContextOptions<MiloDbContext> options)
         : base(options) { }

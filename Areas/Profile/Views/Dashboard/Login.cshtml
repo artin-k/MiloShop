@@ -1,4 +1,4 @@
-﻿@model LoginViewModel
+﻿@model avatCo.Areas.Profile.ViewModels.LoginVM;
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -53,7 +53,7 @@
                 return;
             }
 
-            // ✅ redirect on success
+            //redirect on success
             window.location.href = result.redirectUrl;
         } catch (err) {
             console.error(err);
