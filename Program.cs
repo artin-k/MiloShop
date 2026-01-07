@@ -29,15 +29,19 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<MiloDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Profile/Login";    // redirect if not logged in
-        options.LogoutPath = "/Profile/Logout";  // logout endpoint
-        options.AccessDeniedPath = "/Profile/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        options.SlidingExpiration = true;
-    });
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.LoginPath = "/Profile/Login";
+    opt.LogoutPath = "/Profile/Logout";
+    opt.AccessDeniedPath = "/Profile/Login";
+
+    opt.Cookie.HttpOnly = true;
+    opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    opt.Cookie.SameSite = SameSiteMode.Lax; // Strict can break external login flows
+
+    opt.SlidingExpiration = true;
+    opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+});
 
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
 
@@ -46,6 +50,8 @@ builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+app.UseHsts();
 
 if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();

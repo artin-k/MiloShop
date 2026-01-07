@@ -37,8 +37,6 @@
     background: linear-gradient(270deg, rgba(0,0,0,.55), rgba(0,0,0,.10));
 }
 
-
-
 .heroContent {
     position: relative;
     z-index: 2;
@@ -145,12 +143,16 @@
 
 /* Thumbs */
 .heroThumbs {
-    position: absolute;
-    bottom: 16px;
-    right: 16px;
+    position: absolute !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
     width: 320px;
     z-index: 3;
 }
+
 
 .heroThumbCard {
     position: relative;
@@ -176,7 +178,7 @@
     justify-content: center;
     padding: 8px 10px;
     color: #fff;
-    text-align: right;
+    text-align: center;
     gap: 4px;
 }
 
@@ -197,6 +199,9 @@
     text-overflow: ellipsis;
     max-width: 280px;
     opacity: .95;
+    align-items:center;
+    text-align:center;
+    justify-content:center;
 }
 
 .heroThumbs .swiper-slide-thumb-active .heroThumbCard {

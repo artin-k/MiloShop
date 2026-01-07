@@ -1,4 +1,5 @@
-﻿namespace avatCo.Models.ViewModel
+﻿
+namespace avatCo.Areas.Profile.ViewModels
 {
     public class EditProfileViewModel
     {
@@ -8,7 +9,7 @@
         public string Address { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string ProfileImageUrl { get; set; } = string.Empty;
-        public string Gender {  get; set; } = string.Empty;
-        public string DateOfBirth { get; set; } = string.Empty;
+        public string Gender { get; set; } = string.Empty;
+        public DateTime DateOfBirth { get; set; } 
     }
 }

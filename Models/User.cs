@@ -13,7 +13,7 @@ namespace avatCo.Models
         public string PhoneNumber { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
-        public string DateOfBirth { get; set; } = string.Empty;
+        public DateTime DateOfBirth { get; set; } 
         public DateTime RegisteredAt { get; set; } = DateTime.Now;
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();

@@ -1,5 +1,4 @@
 ﻿using avatCo.Models;
-using avatCo.Models.ViewModel;
 using avatCo.Areas.Profile.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Scripting;
@@ -12,6 +11,8 @@ using System.Security.Claims;
 using avatCo.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace avatCo.Areas.Profile.Controllers
@@ -20,6 +21,7 @@ namespace avatCo.Areas.Profile.Controllers
     [Route("Profile")]
     public class DashboardController : Controller
     {
+        private readonly IWebHostEnvironment _env;
         private readonly MiloDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -27,11 +29,13 @@ namespace avatCo.Areas.Profile.Controllers
 
         public DashboardController(MiloDbContext context,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
+            _env = env;
         }
 
         [HttpGet("")]
@@ -85,38 +89,63 @@ namespace avatCo.Areas.Profile.Controllers
         }
 
         [HttpPost("UpdateProfile")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile([FromForm] EditProfileViewModel model, IFormFile? ProfileImageFile)
         {
-            Console.WriteLine("Edit profile hit");
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, message = "Invalid data" });
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-            var user = await _context.Users.FindAsync(int.Parse(userId));
-            if (user == null) return NotFound();
+            await using var tx = await _context.Database.BeginTransactionAsync();
 
-            user.UserName = model.UserName;
-            user.FullName = model.FullName;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Address = model.Address;
-            user.Gender = model.Gender;
-            user.DateOfBirth = model.DateOfBirth;
-
-            if (ProfileImageFile != null && ProfileImageFile.Length > 0)
+            try
             {
-                var filePath = Path.Combine("wwwroot/uploads/Profiles", ProfileImageFile.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                user.FullName = model.FullName;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Address = model.Address;
+                user.Gender = model.Gender;
+                user.DateOfBirth = model.DateOfBirth;
+
+                if (ProfileImageFile is { Length: > 0 })
                 {
-                    await ProfileImageFile.CopyToAsync(stream);
+                    const long maxBytes = 2 * 1024 * 1024; // 2MB
+                    if (ProfileImageFile.Length > maxBytes)
+                        return BadRequest(new { success = false, message = "File too large" });
+
+                    var ext = Path.GetExtension(ProfileImageFile.FileName).ToLowerInvariant();
+                    var allowed = new HashSet<string> { ".jpg", ".jpeg", ".png", ".webp" };
+                    if (!allowed.Contains(ext))
+                        return BadRequest(new { success = false, message = "Invalid file type" });
+
+                    var uploadsRoot = Path.Combine(_env.WebRootPath, "uploads", "Profiles");
+                    Directory.CreateDirectory(uploadsRoot);
+
+                    var safeName = $"{Guid.NewGuid():N}{ext}";
+                    var fullPath = Path.Combine(uploadsRoot, safeName);
+
+                    await using var fs = new FileStream(fullPath, FileMode.CreateNew);
+                    await ProfileImageFile.CopyToAsync(fs);
+
+                    user.ProfileImageUrl = $"/uploads/Profiles/{safeName}";
                 }
-                user.ProfileImageUrl = "/uploads/Profiles/" + ProfileImageFile.FileName;
+
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                    return BadRequest(new { success = false, message = "Update failed" });
+
+                await tx.CommitAsync();
+                return Ok(new { success = true });
             }
-
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { success = true });
+            catch
+            {
+                await tx.RollbackAsync();
+                return StatusCode(500, new { success = false, message = "Server error" });
+            }
         }
+
 
 
         [HttpGet("Register")]
@@ -125,150 +154,94 @@ namespace avatCo.Areas.Profile.Controllers
             return View();
         }
 
-        /*        [HttpPost("Register")]
-                public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
-                {
-                    if (string.IsNullOrWhiteSpace(model.Password))
-                        return BadRequest(new { success = false, message = "Password required" });
-
-                    // Hash before saving
-                    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password.Trim());
-
-                    var user = new User
-                    {
-                        UserName = model.Username,   // 👈 fixed naming
-                        Email = model.Email,
-                        PasswordHash = hashedPassword
-                    };
-
-                    _context.Users.Add(user);
-                    await _context.SaveChangesAsync();
-
-                    return Ok(new { success = true, redirectUrl = "/Profile" });
-                }*/
-
         [HttpPost("Register")]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterVM vm)
         {
-            if (!ModelState.IsValid)
-                return View(vm);
+            if (!ModelState.IsValid) return View(vm);
 
-            var identityUser = new ApplicationUser
-            {
-                UserName = vm.Email,
-                Email = vm.Email
-            };
-
-            var result = await _userManager.CreateAsync(identityUser, vm.Password);
-
-            if (!result.Succeeded)
-            {
-                // generic message to avoid enumeration
-                ModelState.AddModelError("", "ثبت نام ناموفق بود.");
-                return View(vm);
-            }
+            await using var tx = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // OPTIONAL: if you want to create extra rows in your own tables,
-                // do it here (Profile table etc.)
+                var user = new ApplicationUser
+                {
+                    UserName = vm.Email.Trim(),
+                    Email = vm.Email.Trim()
+                };
 
-                // If you want max security: DON'T auto sign-in until email confirmed.
-                await _signInManager.SignInAsync(identityUser, isPersistent: true);
+                var result = await _userManager.CreateAsync(user, vm.Password);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "ثبت نام ناموفق بود.");
+                    return View(vm);
+                }
 
+                // Example: your own extra tables (optional)
+                // _context.UserProfiles.Add(new UserProfile { UserId = user.Id, ... });
+                // await _context.SaveChangesAsync();
+
+                await tx.CommitAsync();
+
+                // Safer mode: require email confirm, don't sign in here
+                await _signInManager.SignInAsync(user, isPersistent: true);
                 return Redirect("/");
             }
             catch
             {
-                await _userManager.DeleteAsync(identityUser);
+                await tx.RollbackAsync();
                 ModelState.AddModelError("", "ثبت نام ناموفق بود.");
                 return View(vm);
             }
         }
 
 
-
-
         [HttpGet("Login")]
-        public IActionResult Login()
+        [AllowAnonymous]
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
-        /*        [HttpPost("Login")]
-                public async Task<IActionResult> Login([FromBody] LoginViewModel model)
-                {
-                    if (!ModelState.IsValid)
-                    {
-                        Console.WriteLine("not valid");
-                        //return BadRequest(new { success = false, message = "Invalid model state" });
-                    }
-
-                    string hash = "$2a$11$EXU1DdhCIHVWWUKQpG18KeIhtfCzeiPKRbC2xepkSgo/VyXi2Y.AO";
-                    bool ok = BCrypt.Net.BCrypt.Verify("1", hash);
-                    Console.WriteLine($"Manual verify: {ok}");
-
-
-                    if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
-                        return BadRequest(new { success = false, message = "Email and Password are required." });
-
-                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-                    if (user == null)
-                        return Unauthorized(new { success = false, message = "Invalid Email." });
-
-                    Console.WriteLine($"[DEBUG] Password: {model.Password}, Hash: {user.PasswordHash}");
-
-                    if (!BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
-                        return Unauthorized(new { success = false, message = "Invalid Password." });
-
-
-                    // 🔹 Create claims
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.UserName ?? user.Email),
-                        new Claim(ClaimTypes.Email, user.Email)
-                    };
-
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var principal = new ClaimsPrincipal(identity);
-
-                    // 🔹 Sign in user with cookie
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        principal,
-                        new AuthenticationProperties { IsPersistent = true });
-
-                    // 🔹 Return JSON response for your JS fetch
-                    return Ok(new { success = true, redirectUrl = "/Profile" });
-                }*/
-
         [HttpPost("Login")]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginVM vm, string? returnUrl = null)
         {
             if (!ModelState.IsValid) return View(vm);
 
+            returnUrl ??= "/";
+
+            // IMPORTANT: only allow local redirects (prevents open redirect attacks)
+            if (!Url.IsLocalUrl(returnUrl)) returnUrl = "/";
+
             var result = await _signInManager.PasswordSignInAsync(
-                vm.Email, vm.Password, vm.RememberMe, lockoutOnFailure: true);
+                vm.Email.Trim(),
+                vm.Password,
+                vm.RememberMe,
+                lockoutOnFailure: true);
 
             if (result.Succeeded)
-                return LocalRedirect(returnUrl ?? "/");
+                return LocalRedirect(returnUrl);
 
-            // Generic message (don’t reveal locked out / user exists / etc.)
+            // Keep message generic
             ModelState.AddModelError("", "ورود ناموفق بود.");
             return View(vm);
         }
 
 
+
         [HttpPost("Logout")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
- //           await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Profile", new { area = "UserProfile" });
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
         }
+
 
 
     }

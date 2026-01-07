@@ -4,6 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link rel="stylesheet" href="~/css/animate.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/flexboxgrid.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/home-hero.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/promos.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
     <!--hero section-->
     <section class="hero" dir="rtl">
         <div class="swiper heroSwiper">
@@ -430,50 +437,13 @@
 </main>
 
 @section Scripts {
-    <script src="./js/main.js"></script>
+    <script src="~/js/home.js" asp-append-version="true"></script>
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous">
     </script>
-    <script src="./js/jquery.js"></script>
-    <script src="./js/owl.carousel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-        const thumbs = new Swiper(".heroThumbs", {
-            slidesPerView: 3,
-            spaceBetween: 10,
-            watchSlidesProgress: true,
-        });
-
-        const hero = new Swiper(".heroSwiper", {
-            loop: true,
-            effect: "fade",
-            autoplay: { delay: 4500, disableOnInteraction: false },
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev"
-            },
-            thumbs: { swiper: thumbs }
-        });
-    </script>
-
-    <script>
-        const heroEl = document.querySelector(".hero");
-        let t;
-
-        function showNavTemporarily() {
-            clearTimeout(t);
-            heroEl.classList.add("nav-show");
-            t = setTimeout(() => heroEl.classList.remove("nav-show"), 1800);
-        }
-
-        heroEl.addEventListener("mousemove", showNavTemporarily);
-        heroEl.addEventListener("touchstart", showNavTemporarily, { passive: true });
-        hero.on("slideChange", showNavTemporarily);
-        showNavTemporarily();
-
-    </script>
-
 }
 
 
