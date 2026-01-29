@@ -1,263 +1,252 @@
-﻿/* Force hero text to be white (Bootstrap overrides otherwise) */
-.hero,
-.hero .heroContent,
-.hero .heroPanel,
-.hero .heroTitle,
-.hero .heroSub,
-.hero .heroBadge {
-    color: #fff !important;
+﻿/* --- General Setup --- */
+.aparat-hero {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+    margin-bottom: 20px;
 }
 
-    /* Keep CTA button text readable if button bg is white */
-    .hero .heroBtn {
-        color: #111 !important;
+.aparat-slider {
+    position: relative;
+    width: 100%;
+    height: 550px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* --- Slides --- */
+.slide-item {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1;
+    overflow: hidden;
+    /* Important: Transition display property requires specific handling, 
+       but we will handle display via JS or !important in active class */
+    transition: opacity 0.8s ease-in-out, visibility 0.8s;
+}
+
+    /* Active State - Force display block to override inline style */
+    .slide-item.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 2;
+        display: block !important; /* This overrides the HTML inline style="display:none" */
     }
 
-
-.hero {
-    position: relative;
-    margin: 22px auto 32px;
-    max-width: 1280px;
-    border-radius: 18px;
-    overflow: hidden;
-    background: #0b1220;
-}
-
-.heroSlide {
-    position: relative;
-    min-height: 520px;
+/* --- Background with Zoom Effect --- */
+.slide-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1.1); /* Start Zoomed In */
+    transition: transform 6s ease-out; /* Slow zoom out effect */
 }
 
-.heroOverlay {
+/* When active, zoom out to normal */
+.slide-item.active .slide-bg {
+    transform: scale(1);
+}
+
+/* --- Overlay --- */
+.slide-overlay {
     position: absolute;
-    inset: 0;
-    /* dims entire image + slight gradient for readability */
-    background: linear-gradient(270deg, rgba(0,0,0,.55), rgba(0,0,0,.10));
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%);
+    z-index: 1;
 }
 
-.heroContent {
-    position: relative;
+/* --- Content Box (Merged the duplicate .slide-content) --- */
+.slide-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center; /* Vertically center */
+    padding-right: 100px; /* Right padding */
     z-index: 2;
-    padding: 70px 24px;
+}
+
+.content-box {
+    max-width: 600px;
+    text-align: right;
+}
+
+.action-btn {
+    /* Modern Gradient (Orange to Red) */
+    background: linear-gradient(45deg, #ff8c00 0%, #ff4500 100%);
+    /* Fix Padding: Vertical 12px, Horizontal 30px for a clickable shape */
+    padding: 12px 30px;
+    /* Typography */
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none; /* Removes underline if it's a link */
+    border: none;
+    border-radius: 50px; /* Fully rounded corners (Pill shape) */
+    cursor: pointer;
+    /* Shadow for depth */
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+    /* Smooth Transition */
+    transition: all 0.3s ease;
+    /* Reset margins if needed, or keep your margin: 2px */
+    margin: 2px;
+    display: inline-block; /* Ensures padding works correctly */
+}
+
+    /* Hover Effect */
+    .action-btn:hover {
+        /* Slightly lighter gradient on hover */
+        background: linear-gradient(45deg, #ffa500 0%, #ff6347 100%);
+        /* Lifts the button up slightly */
+        transform: translateY(-3px);
+        /* Increases shadow */
+        box-shadow: 0 8px 20px rgba(255, 69, 0, 0.6);
+    }
+
+    /* Active Effect (When clicked) */
+    .action-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 10px rgba(255, 69, 0, 0.3);
+    }
+
+/* --- Text Animations --- */
+/* Targeting the actual classes used in your HTML */
+.slide-title, .desc-text, .badge-tag, .action-btn {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+/* Staggered Delays */
+.slide-item.active .slide-title {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.4s;
+}
+
+.slide-item.active .desc-text {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.6s;
+}
+
+.slide-item.active .badge-tag {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.2s;
+}
+
+.slide-item.active .action-btn {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.8s;
+}
+
+/* --- Navigation & Thumbnails (Kept your styles) --- */
+.slider-nav {
+    position: absolute; /* Changed to absolute so it stays inside slider */
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
     display: flex;
-    direction: rtl; /* ✅ keep RTL */
-    justify-content: flex-start; /* ✅ in RTL, start = RIGHT */
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
 
+    .slider-nav.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
 
-.heroPanel {
-    background: transparent;
-    border: 0;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    padding: 0;
-    border-radius: 0;
-    width: min(720px, 96%);
-    min-height: auto;
-}
-
-
-.heroPanel {
-    width: min(720px, 96%);
-    min-height: 240px; /* ✅ keeps same size */
+.nav-arrow {
+    pointer-events: auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between; 
-    gap: 10px;
-}
-
-/* keep title/sub consistent lines */
-.heroTitle {
-    display: -webkit-box;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    -webkit-box-orient: vertical;
-}
-
-.heroSub {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* max 2 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.heroTitle, .heroSub {
-    text-shadow: 0 10px 28px rgba(0,0,0,.35);
-}
-
-
-.heroBtn {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 16px;
-    border-radius: 12px;
-    background: #fff;
-    color: #111;
-    font-weight: 800;
-    text-decoration: none;
-    transition: transform .15s ease, opacity .15s ease;
-    margin-top: 10px;
-    align-self: flex-start;
+    transition: 0.3s;
 }
 
-    .heroBtn:hover {
-        transform: translateY(-1px);
-        opacity: .95;
+    .nav-arrow:hover {
+        background: #ff5a00;
+        border-color: #ff5a00;
     }
 
-/* Modern arrows */
-.hero .swiper-button-next,
-.hero .swiper-button-prev {
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
-    background: rgba(0,0,0,.35);
-    border: 1px solid rgba(255,255,255,.18);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #fff;
+.prev-arrow {
+    margin-right: 25px;
 }
 
-    .hero .swiper-button-next:after,
-    .hero .swiper-button-prev:after {
-        font-size: 18px;
-        font-weight: 800;
-    }
-
-/* Hide nav until hover (clean) */
-.heroNav {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
+.next-arrow {
+    margin-left: 25px;
 }
 
-.hero:hover .heroNav {
-    opacity: 1;
-    pointer-events: auto;
+.thumbs-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    z-index: 10;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
 }
 
-/* Thumbs */
-.heroThumbs {
-    position: absolute !important;
-    right: 16px !important;
-    bottom: 16px !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    width: 320px;
-    z-index: 3;
-}
-
-
-.heroThumbCard {
+.thumb-card {
+    width: 80px;
+    height: 40px;
     position: relative;
-    height: 64px;
-    border-radius: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.thumb-img {
+    width: 100%;
+    height: 100%;
     background-size: cover;
     background-position: center;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,.20);
 }
 
-.heroThumbOverlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(0,0,0,.70), rgba(0,0,0,.25));
-}
-
-.heroThumbMeta {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8px 10px;
-    color: #fff;
-    text-align: center;
-    gap: 4px;
-}
-
-.heroThumbBadge {
-    
-    align-self: flex-start;
-    font-size: 9px;
-    padding: 2px 8px;
-    align-content: center;
-    font-weight: 600;
-}
-
-.heroThumbTitle {
-    font-size: 12px;
-    font-weight: 750;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 280px;
-    opacity: .95;
-    align-items:center;
-    text-align:center;
-    justify-content:center;
-}
-
-.heroThumbs .swiper-slide-thumb-active .heroThumbCard {
-    border-color: rgba(34,197,94,.9);
-    box-shadow: 0 0 0 2px rgba(34,197,94,.25);
-}
-
-@media (max-width: 768px) {
-    .heroSlide {
-        min-height: 420px;
-    }
-
-    .heroThumbs {
-        width: 220px;
-    }
-}
-
-/* default: hidden */
-.hero .swiper-button-next,
-.hero .swiper-button-prev {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transition: opacity .25s ease, transform .25s ease;
-    transform: translateY(2px);
-}
-
-/* show on hover */
-.hero:hover .swiper-button-next,
-.hero:hover .swiper-button-prev {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: translateY(0);
-}
-
-
-/* start visible */
-.hero .heroNav {
+.thumb-card.active {
     opacity: 1;
-    transition: opacity .25s ease;
-}
-
-/* after timeout, we add .nav-hidden to .hero */
-.hero.nav-hidden .heroNav {
-    opacity: 0;
-    pointer-events: none; /* avoid invisible buttons blocking clicks */
-}
-
-/* show when user hovers hero */
-.hero:hover .heroNav {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* also show if user hovers the buttons themselves */
-.hero .swiper-button-next,
-.hero .swiper-button-prev {
-    opacity: 1;
-    transition: opacity .25s ease;
+    border-color: #ff5a00;
+    transform: scale(1.1);
 }

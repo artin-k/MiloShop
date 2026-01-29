@@ -1,24 +1,43 @@
-﻿/* enforce full-page flex layout */
+﻿/* --- 1. Global Layout (Keep this as is) --- */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    
 }
 
-/* page container: header -> content -> footer */
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    overflow-x: hidden; /* Prevents horizontal scroll */
+    width: 100vw; /* Ensures body doesn't exceed viewport */
 }
 
-/* main content wrapper must grow */
 .content-wrapper {
+    /* Layout Properties (Don't lose these!) */
     flex: 1 1 auto;
     padding-bottom: 120px;
+    /* Slider Fixes */
+    width: 100%;
+    margin: 0;
+    padding: 0px;
+    background-color: #ffffff;
 }
 
-    /* ensure main has space inside wrapper */
+    /* Ensure main has space inside wrapper */
     .content-wrapper main[role="main"] {
         min-height: 20px;
     }
+
+/* --- 3. Container Fixes --- */
+/* Standard Container (for the rest of your page) */
+.container {
+    width: 100%;
+    max-width: 100%; /* Normal width for text content */
+    margin-right: auto;
+    margin-left: auto;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+

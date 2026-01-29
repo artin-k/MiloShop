@@ -1,88 +1,68 @@
-﻿
-/* footer appearance */
+﻿/* --- FOOTER STYLES (PURE CSS, NO BOOTSTRAP) --- */
 .site-footer {
-    background-color: #1F2937; /* dark background */
-    direction: rtl;
-    text-align: right;
-    padding-top: 15px;
-    padding-bottom: 180px;
+    background-color: #333;
     color: #fff;
+    padding: 40px 20px;
+    width: 100%;
+    text-align: center;
 }
 
-    /* footer links */
-    .site-footer .footer-link {
-        color: #d1d5db;
-        text-decoration: none;
-    }
-
-        .site-footer .footer-link:hover {
-            color: #f87171;
-        }
-
-/* small screens spacing */
-@media (max-width: 767.98px) {
-    .site-footer .col-12 {
-        text-align: center;
-    }
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
 }
-    .footer ul {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-    }
 
-    .footer li {
-        margin-bottom: 6px;
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-column {
+    text-align: center;
+}
+
+.footer-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.footer-text {
+    color: #aaa;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .footer-list li {
+        margin-bottom: 8px;
     }
 
 .footer-link {
-    color: #d1d5db;
+    color: #ccc;
     text-decoration: none;
-    transition: color 0.3s ease;
+    display: inline-block;
 }
 
     .footer-link:hover {
-        color: #f87171;
+        color: #fff;
+        text-decoration: underline;
     }
 
-.footer h5, .footer h6 {
-    color: #fff;
+.footer-divider {
+    border-color: #555;
+    margin: 20px 0;
 }
 
-
-.footer {
-    position: fixed;
-    background-color: #1F2937; /* same dark blue as header */
-    direction: rtl;
-    text-align: right;
-    z-index: 999;
+.footer-copyright {
+    color: #aaa;
+    font-size: 0.9rem;
 }
-
-    .footer ul {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-    }
-
-    .footer li {
-        margin-bottom: 6px;
-    }
-
-.footer-link {
-    color: #d1d5db;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-    .footer-link:hover {
-        color: #f87171;
-    }
-
-.footer h5, .footer h6 {
-    color: #fff;
-}
-
-.footer p {
-    color: #d1d5db;
-}
-

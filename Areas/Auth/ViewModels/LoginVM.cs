@@ -1,4 +1,4 @@
-﻿namespace avatCo.Areas.Profile.ViewModels
+﻿namespace avatCo.Areas.Auth.ViewModels
 {
     public class LoginVM
     {

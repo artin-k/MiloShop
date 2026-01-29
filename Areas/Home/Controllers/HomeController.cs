@@ -33,7 +33,7 @@ namespace avatCo.Areas.Home.Controllers
                         Subtitle = "جدیدترین محصولات با تخفیف محدود",
                         Badge = "ویژه",
                         BackgroundImageUrl = "/images/hero/hero1.jpg",
-                        ThumbImageUrl = "/images/hero/thumb1.jpg",
+                        ThumbImageUrl = "/images/1.webp",
                         CtaText = "مشاهده محصولات",
                         CtaUrl = "/Home/Home/Index" // change later
                     },
@@ -42,16 +42,16 @@ namespace avatCo.Areas.Home.Controllers
                         Subtitle = "همین امروز خرید کن",
                         Badge = "٪۶۰ تخفیف",
                         BackgroundImageUrl = "/images/hero/hero2.jpg",
-                        ThumbImageUrl = "/images/hero/thumb2.jpg",
+                        ThumbImageUrl = "/images/2.jpg",
                         CtaText = "رفتن به فروشگاه",
                         CtaUrl = "/Home/Home/Index"
                     },
-                        new HeroSlideVm {
+                    new HeroSlideVm {
                         Title = "بهترین کیفیت در غرب کشور",
                         Subtitle = "بهترین برند ها",
                         Badge = "با پرداخت امن",
                         BackgroundImageUrl = "/images/hero/hero3.jpg",
-                        ThumbImageUrl = "/images/hero/thumb3.jpg",
+                        ThumbImageUrl = "/images/3.jpg",
                         CtaText = "دیدن محصولات",
                         CtaUrl = "/Home/Home/Index"
                     }

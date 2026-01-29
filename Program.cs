@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using avatCo.Data;
@@ -16,11 +16,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.User.RequireUniqueEmail = true;
 
     // password policy
-    options.Password.RequiredLength = 8;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 1;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredUniqueChars = 0;
 
     // brute force protection
     options.Lockout.MaxFailedAccessAttempts = 5;
@@ -31,20 +32,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.ConfigureApplicationCookie(opt =>
 {
-    opt.LoginPath = "/Profile/Login";
-    opt.LogoutPath = "/Profile/Logout";
-    opt.AccessDeniedPath = "/Profile/Login";
+    opt.LoginPath = "/Auth/Login";
+    opt.LogoutPath = "/Auth/Logout";        // if you have it
+    opt.AccessDeniedPath = "/Auth/Login";   // or "/Auth/AccessDenied" if you make one
 
     opt.Cookie.HttpOnly = true;
-    opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    opt.Cookie.SameSite = SameSiteMode.Lax; // Strict can break external login flows
+    opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // dev
+    opt.Cookie.SameSite = SameSiteMode.Lax;
 
     opt.SlidingExpiration = true;
     opt.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
 
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
-
+builder.Services.AddScoped<AuthService>();
 
 // Add MVC (controllers + views)
 builder.Services.AddControllersWithViews();
@@ -62,20 +63,29 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Enable attribute-based routing
-app.MapControllers();
+app.MapAreaControllerRoute(
+    name: "AuthArea",
+    areaName: "Auth",
+    pattern: "Auth/{action=Login}/{id?}" // ✅ THIS IS THE FIX
+);
 
-// Conventional area route (fallback for controller/action/id patterns)
+//  THEN REGISTER REGULAR ROUTES
+app.MapControllers();
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+);
+
+app.MapControllerRoute(
+    name: "Profile",
+    pattern: "{area:exists}/{controller=Profile}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 app.Run();

@@ -9,56 +9,52 @@
 <link rel="stylesheet" href="~/css/flexboxgrid.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/home-hero.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/promos.css" asp-append-version="true" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    <!--hero section-->
-    <section class="hero" dir="rtl">
-        <div class="swiper heroSwiper">
-            <div class="swiper-wrapper">
-                @foreach (var s in Model.HeroSlides)
-                {
-                    <div class="swiper-slide">
-                        <div class="heroSlide" style="background-image:url('@Url.Content("~" + s.BackgroundImageUrl)')">
-                            <div class="heroOverlay"></div>
-                            <div class="heroContent container">
-                                <div class="heroPanel">
-                                    <div class="heroBadge">@s.Badge</div>
-                                    <h1 class="heroTitle">@s.Title</h1>
-                                    <p class="heroSub">@s.Subtitle</p>
-                                    <a class="heroBtn" href="@s.CtaUrl">@s.CtaText</a>
-                                </div>
-                            </div>
+<!--hero section-->
+<section class="aparat-hero" dir="rtl">
 
-                        </div>
+    <div class="aparat-slider">
+        @foreach (var s in Model.HeroSlides)
+        {
+            <div class="slide-item" style="display: none;">
+                <div class="slide-bg" style="background-image: url('@Url.Content("~" + s.BackgroundImageUrl)'); background-color: #333;"></div>
+                <div class="slide-overlay"></div>
+
+                <div class="slide-content container">
+                    <div class="content-box"><a href="c:\users\artin\source\repos\miloshop\areas\home\views\home\index.cshtml">c:\users\artin\source\repos\miloshop\areas\home\views\home\index.cshtml</a>
+                        <span class="badge-tag">@s.Badge</span>
+                        <h1 class="slide-title">@s.Title</h1>
+                        <p class="desc-text">@s.Subtitle</p>
+
+                        <button href="@s.CtaUrl" class="action-btn">@s.CtaText</button>
                     </div>
-                }
+                </div>
             </div>
+        }
 
-            <div class="heroNav">
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
+        <!-- Navigation Arrows -->
+        <div class="slider-nav">
+            <button class="nav-arrow prev-arrow"><</button>
+            <button class="nav-arrow next-arrow">></button>
         </div>
 
-        <div class="swiper heroThumbs">
-            <div class="swiper-wrapper">
-                @foreach (var s in Model.HeroSlides)
-                {
-                    var thumb = string.IsNullOrWhiteSpace(s.ThumbImageUrl) ? s.BackgroundImageUrl : s.ThumbImageUrl;
+        <!-- THUMBNAILS MOVED HERE (Inside Slider) -->
+        <div class="thumbs-container">
+            @foreach (var s in Model.HeroSlides)
+            {
+                var thumbUrl = string.IsNullOrWhiteSpace(s.ThumbImageUrl) ? s.BackgroundImageUrl : s.ThumbImageUrl;
 
-                    <div class="swiper-slide">
-                        <div class="heroThumbCard" style="background-image:url('@Url.Content("~" + thumb)')">
-                            <div class="heroThumbOverlay"></div>
-                            <div class="heroThumbMeta">
-                                <div class="heroThumbBadge">@s.Badge</div>
-                                @* <div class="heroThumbTitle">@s.Title</div> *@
-                            </div>
-                        </div>
+                <div class="thumb-card">
+                    <div class="thumb-img" style="background-image: url('@Url.Content("~" + thumbUrl)'); background-color: #444;"></div>
+                    <div class="thumb-info">
+                        <span class="thumb-badge">@s.Badge</span>
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
-    </section>
+    </div>
+
+</section>
 <main>
 
     <!--products / categories-->
@@ -239,211 +235,125 @@
     </section>
 
 
-
-    <!--products-->
-    <section class="dragble-list">
+@*     <section class="dragble-list" dir="rtl">
         <div class="title">
             <span>هندزفری ها</span>
         </div>
-        <div id="owl-product" class="owl-carousel owl-theme">
-            <div class="item">
-                <div class="shoping-card">
-                    <div class="img-sec">
-                        <img src="./images/5.webp" alt="">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+
+        <div class="custom-slider-wrapper">
+            <div class="custom-slider-track" id="productTrack">
+
+                <!-- Item 1 -->
+                <div class="slide-item">
+                    <div class="shoping-card">
+                        <div class="img-sec">
+                            <img src="./images/5.webp" alt="Product">
+                            <div class="stars">⭐⭐⭐⭐</div>
                         </div>
-                    </div>
-                    <div class="title">
-                        ایرپاد از اون خوبا
-                    </div>
-                    <div class="buttons">
-                        <div class="right">
-                            <span class="price">700 هزار تومان</span>
-                        </div>
-                        <div class="left">
-                            <div class="extend-btn">
-                                <a class="b-text" href="">علاقه</a>
-                                <a class="b-icon" href=""><i class="fas fa-heart"></i></a>
-                            </div>
-                            <div class="extend-btn">
-                                <a class="b-text" href="">خرید</a>
-                                <a class="b-icon" href=""><i class="fas fa-shopping-cart"></i></a>
+                        <div class="title">ایرپاد مدل اول</div>
+                        <div class="buttons">
+                            <div class="right"><span class="price">700,000 تومان</span></div>
+                            <div class="left">
+                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
+                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="item">
-                <div class="shoping-card">
-                    <div class="img-sec">
-                        <img src="./images/12.jpg" alt="">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+
+                <!-- Item 2 -->
+                <div class="slide-item">
+                    <div class="shoping-card">
+                        <div class="img-sec">
+                            <img src="./images/12.jpg" alt="Product">
+                            <div class="stars">⭐⭐⭐⭐</div>
                         </div>
-                    </div>
-                    <div class="title">
-                        ایرپاد از اون خوبا
-                    </div>
-                    <div class="buttons">
-                        <div class="right">
-                            <span class="price">700 هزار تومان</span>
-                        </div>
-                        <div class="left">
-                            <div class="extend-btn">
-                                <a class="b-text" href="">علاقه</a>
-                                <a class="b-icon" href=""><i class="fas fa-heart"></i></a>
-                            </div>
-                            <div class="extend-btn">
-                                <a class="b-text" href="">خرید</a>
-                                <a class="b-icon" href=""><i class="fas fa-shopping-cart"></i></a>
+                        <div class="title">ایرپاد مدل دوم</div>
+                        <div class="buttons">
+                            <div class="right"><span class="price">850,000 تومان</span></div>
+                            <div class="left">
+                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
+                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="item">
-                <div class="shoping-card">
-                    <div class="img-sec">
-                        <img src="./images/12.jpg" alt="">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+
+                <!-- Item 3 -->
+                <div class="slide-item">
+                    <div class="shoping-card">
+                        <div class="img-sec">
+                            <div class="stars">⭐⭐⭐⭐</div>
                         </div>
-                    </div>
-                    <div class="title">
-                        ایرپاد از اون خوبا
-                    </div>
-                    <div class="buttons">
-                        <div class="right">
-                            <span class="price">700 هزار تومان</span>
-                        </div>
-                        <div class="left">
-                            <div class="extend-btn">
-                                <a class="b-text" href="">علاقه</a>
-                                <a class="b-icon" href=""><i class="fas fa-heart"></i></a>
-                            </div>
-                            <div class="extend-btn">
-                                <a class="b-text" href="">خرید</a>
-                                <a class="b-icon" href=""><i class="fas fa-shopping-cart"></i></a>
+                        <div class="title">ایرپاد مدل سوم</div>
+                        <div class="buttons">
+                            <div class="right"><span class="price">900,000 تومان</span></div>
+                            <div class="left">
+                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
+                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="item">
-                <div class="shoping-card">
-                    <div class="img-sec">
-                        <img src="./images/12.jpg" alt="">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+
+                <!-- Item 4 -->
+                <div class="slide-item">
+                    <div class="shoping-card">
+                        <div class="img-sec">
+                            <div class="stars">⭐⭐⭐⭐</div>
                         </div>
-                    </div>
-                    <div class="title">
-                        ایرپاد از اون خوبا
-                    </div>
-                    <div class="buttons">
-                        <div class="right">
-                            <span class="price">700 هزار تومان</span>
-                        </div>
-                        <div class="left">
-                            <div class="extend-btn">
-                                <a class="b-text" href="">علاقه</a>
-                                <a class="b-icon" href=""><i class="fas fa-heart"></i></a>
-                            </div>
-                            <div class="extend-btn">
-                                <a class="b-text" href="">خرید</a>
-                                <a class="b-icon" href=""><i class="fas fa-shopping-cart"></i></a>
+                        <div class="title">محصول چهارم</div>
+                        <div class="buttons">
+                            <div class="right"><span class="price">500,000 تومان</span></div>
+                            <div class="left">
+                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
+                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="item">
-                <div class="shoping-card">
-                    <div class="img-sec">
-                        <img src="./images/5.webp" alt="">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+
+                <!-- Item 5 -->
+                <div class="slide-item">
+                    <div class="shoping-card">
+                        <div class="img-sec">
+                            <div class="stars">⭐⭐⭐⭐</div>
                         </div>
-                    </div>
-                    <div class="title">
-                        ایرپاد از اون خوبا
-                    </div>
-                    <div class="buttons">
-                        <div class="right">
-                            <span class="price">700 هزار تومان</span>
-                        </div>
-                        <div class="left">
-                            <div class="extend-btn">
-                                <a class="b-text" href="">علاقه</a>
-                                <a class="b-icon" href=""><i class="fas fa-heart"></i></a>
-                            </div>
-                            <div class="extend-btn">
-                                <a class="b-text" href="">خرید</a>
-                                <a class="b-icon" href=""><i class="fas fa-shopping-cart"></i></a>
+                        <div class="title">محصول پنجم</div>
+                        <div class="buttons">
+                            <div class="right"><span class="price">1,200,000 تومان</span></div>
+                            <div class="left">
+                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
+                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="item">
-                <div class="shoping-card">
-                    <div class="img-sec">
-                        <img src="./images/5.webp" alt="">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+
+                <!-- Item 6 -->
+                <div class="slide-item">
+                    <div class="shoping-card">
+                        <div class="img-sec">
+                            <div class="stars">⭐⭐⭐⭐</div>
                         </div>
-                    </div>
-                    <div class="title">
-                        ایرپاد از اون خوبا
-                    </div>
-                    <div class="buttons">
-                        <div class="right">
-                            <span class="price">700 هزار تومان</span>
-                        </div>
-                        <div class="left">
-                            <div class="extend-btn">
-                                <a class="b-text" href="">علاقه</a>
-                                <a class="b-icon" href=""><i class="fas fa-heart"></i></a>
-                            </div>
-                            <div class="extend-btn">
-                                <a class="b-text" href="">خرید</a>
-                                <a class="b-icon" href=""><i class="fas fa-shopping-cart"></i></a>
+                        <div class="title">محصول ششم</div>
+                        <div class="buttons">
+                            <div class="right"><span class="price">600,000 تومان</span></div>
+                            <div class="left">
+                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
+                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </section>
+    </section> *@
 </main>
 
 @section Scripts {
     <script src="~/js/home.js" asp-append-version="true"></script>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 }
 
 

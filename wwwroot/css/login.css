@@ -1,90 +1,109 @@
-.login-container{
-    background-color: rgb(105, 105, 105);
-    height: 100vh;
-    padding: 30px;
-}
 
-.login-box{
-    font-size: .8em;
-    box-shadow: rgba(255, 255, 255, .2);
-    border-radius: 15px;
-    background-color: rgba(255, 255, 255, .1);
-    padding: 25px 35px;
-    color: white;
-    margin: 20px 30px;
-}
-
-.login-box form{
-}
-
-.login-box form .input-group{
-     margin: 30px 0px;
-
-}
-
-.login-box form .input-group label{
- display: block;
- color: black;
-}
-
-.login-box form .input-group input{
- border: none;
- border-radius: 20px;
- background:none;
- border: 2px solid white;
- margin-top: 20px;
- padding: 10px;
- color: white;
- width: 100%;
-outline: none;
-}
-
-.login-box form .do-you-have{
- 
-}
-
-.login-box form .do-you-have a{
-    color:#eb4d4b ;
-}
-
-.login-box form .submit-btn-container{
- text-align: center;
-}
-
-.login-box form .submit-btn-container input{
- border: none;
- border-radius: 35px;
- background-color: #eb4d4b;
- color: white;
- padding: 10px 40px;
- font-size: 1.4em;
- letter-spacing: 2px;
-cursor: pointer;
-}
-
-.login-box .social-auth{
-display: flex;
-justify-content: space-around;
-border-top: 1px solid rgba(255, 255, 255, .8);
-margin-top: 30px;
-padding-top: 20px;
-}
-
-.login-box .social-auth a{
-color: white;
-font-size: 1.9em;
-}
-
-.login-box .social-auth a i{
-
-}
-
-
-.login-img-container{
+.content-wrapper {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
     display: flex;
-    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.login-img-container img{
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 200px;
+    padding-top:150px;
 }
+
+.login-card {
+    background-color: #ffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+    /* ALL FORM STYLES ARE NOW SCOPE TO .login-card */
+    .login-card h2 {
+        text-align: center;
+        color: #333;
+        margin: 0 0 30px 0;
+        font-size: 1.8rem;
+    }
+
+    .login-card .form-group {
+        margin-bottom: 20px;
+    }
+
+    .login-card .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .login-card .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e1e1e1;
+        border-radius: 8px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        outline: none;
+    }
+
+        .login-card .form-control:focus {
+            border-color: #764ba2;
+        }
+
+    .login-card .text-danger {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .login-card .auth-links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        font-size: 0.9rem;
+    }
+
+        .login-card .auth-links a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .login-card .auth-links a:hover {
+                text-decoration: underline;
+            }
+
+    .login-card .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(to right, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .login-card .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }

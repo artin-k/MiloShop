@@ -1,0 +1,97 @@
+﻿.content-wrapper {
+    background-image: url("/images/reb-background.png");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    /* Optional: Add overlay for better text readability */
+    background-blend-mode: overlay;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+/* --- CENTERED REGISTRATION CARD --- */
+.register-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.register-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 45px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    width: 100%;
+}
+
+/* --- FORM STYLING (MATCHES LOGIN PAGE) --- */
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 35px;
+    font-size: 1.9rem;
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #444;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+    .form-control:focus {
+        border-color: #764ba2;
+        box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.2);
+    }
+
+.text-danger {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+}
+
+/* --- SUBMIT BUTTON (MATCHES LOGIN) --- */
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(118, 75, 162, 0.4);
+        background: linear-gradient(to right, #764ba2, #667eea);
+    }
+
+    .btn-submit:active {
+        transform: translateY(0);
+        box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3);
+    }

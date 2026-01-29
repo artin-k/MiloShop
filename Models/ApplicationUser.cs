@@ -9,5 +9,8 @@ namespace avatCo.Models
         public string? Gender { get; set; } 
         public DateTime? DateOfBirth { get; set; }
         public string? ProfileImageUrl { get; set; }
+        public DateTime? TermsAcceptedAt { get; set; }
+        public string? TermsVersion { get; set; }
+
     }
 }

@@ -1,0 +1,62 @@
+﻿@model avatCo.Areas.Auth.ViewModels.LoginVM;
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.BodyClass = "login-page";
+}
+<link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+
+<div class="login-container">
+    <div class="login-card">
+        <h2>ورود</h2>
+
+        <form method="post" id="LoginForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">ایمیل</label>
+                <input asp-for="Email" name="Email" class="form-control" placeholder="ایمیل خود را وارد کنید" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password" class="form-label">رمز</label>
+                <input asp-for="Password" type="password" name="Password" class="form-control" placeholder="رمز خود را وارد کنید" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="auth-links">
+                <a href="~/Auth/SignUp">ثبت نام</a>
+            </div>
+
+            <button type="submit" class="btn-submit">ورود</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("LoginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = {
+            Email: form.querySelector("[name=Email]").value,
+            Password: form.querySelector("[name=Password]").value
+        };
+        try {
+            const res = await fetch("/Profile/Login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (!res.ok || !result.success) {
+                alert(result.message || "Invalid login attempt");
+                return;
+            }
+            window.location.href = result.redirectUrl;
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong, please try again.");
+        }
+    });
+</script>

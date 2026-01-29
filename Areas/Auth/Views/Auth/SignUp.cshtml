@@ -1,0 +1,48 @@
+﻿@model avatCo.Areas.Auth.ViewModels.SignUpVM
+@{
+    ViewData["Title"] = "ثبت نام";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
+<div class="register-container">
+    <div class="register-card">
+        <h2 class="form-title">ثبت نام</h2>
+        <form asp-area="Auth" asp-controller="Auth" asp-action="SignUp" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label asp-for="UserName" class="form-label">نام کاربری</label>
+                <input name="UserName" asp-for="UserName" class="form-control" placeholder="نام کاربری" required />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">ایمیل</label>
+                <input name="Email" asp-for="Email" type="email" class="form-control" placeholder="ایمیل" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="form-label">رمز عبور</label>
+                <input name="Password" asp-for="Password" type="password" class="form-control" placeholder="رمز عبور" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="form-label">تکرار رمز عبور</label>
+                <input name="ConfirmPassword" asp-for="ConfirmPassword" type="password" class="form-control" placeholder="تکرار رمز عبور" required />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <p class="terms-text">
+                با ثبت نام یا ورود، شما
+                <a href="/Profile/Terms" target="_blank">قوانین و مقررات</a>
+                را می‌پذیرید
+            </p>
+
+
+            <button type="submit" class="btn-submit">ثبت نام</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

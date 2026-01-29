@@ -11,10 +11,13 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\home.js" />
+    <Content Remove="wwwroot\js\SignUp.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\css\promos.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\register.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\SignUp.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,9 +49,22 @@
 
   <ItemGroup>
     <None Include="wwwroot\js\home.js" />
+    <None Include="wwwroot\js\SignUp.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="wwwroot\icons\header\cart.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\icons\home.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\icons\search.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\icons\user.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\images\hero\hero1.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
