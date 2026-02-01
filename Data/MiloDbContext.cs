@@ -13,7 +13,6 @@ namespace avatCo.Data
         public DbSet<TestEntity> TestEntities { get; set; }
         public DbSet<Product> Products { get; set; }
         // User & order flow
-        public DbSet<User> Users { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
@@ -24,14 +23,40 @@ namespace avatCo.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Optional: Configure relationships explicitly
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict); // or Cascade if you prefer
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // ✅ Order -> ApplicationUser
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ✅ CartItem -> ApplicationUser
+            modelBuilder.Entity<CartItem>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.CartItems)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ✅ CartItem -> Product
+            modelBuilder.Entity<CartItem>()
+                .HasOne(c => c.Product)
+                .WithMany() // or Product.CartItems if you add that navigation
+                .HasForeignKey(c => c.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ⭐ Optional but strongly recommended:
+            // one cart row per (UserId, ProductId)
+            modelBuilder.Entity<CartItem>()
+                .HasIndex(c => new { c.UserId, c.ProductId })
+                .IsUnique();
         }
+
 
     }
 }

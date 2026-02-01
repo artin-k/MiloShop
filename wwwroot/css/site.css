@@ -1,28 +1,51 @@
-﻿/* --- 1. Global Layout (Keep this as is) --- */
+﻿:root {
+    /* surfaces */
+    --bg: #f7f4ef; /* paper */
+    --surface: #ffffff; /* card */
+    --surface-2: #fbfaf8; /* subtle sections */
+    /* text */
+    --text: #111827; /* ink */
+    --muted: #64748b; /* secondary text */
+    /* borders & shadow */
+    --border: #e6e2da;
+    --shadow: 0 12px 30px rgba(17,24,39,.08);
+    /* brand accent (pick one) */
+    --accent: #2563eb; /* calm blue */
+    /* --accent: #0f766e; */ /* teal alternative */
+    /* --accent: #166534; */ /* forest alternative */
+
+    --radius: 14px;
+}
+
+/* ✅ Global layout that DOES scroll */
 html, body {
-    height: 100%;
+    height: auto; /* important */
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    
 }
 
 body {
     display: flex;
     flex-direction: column;
-    overflow-x: hidden; /* Prevents horizontal scroll */
-    width: 100vw; /* Ensures body doesn't exceed viewport */
+    overflow-x: hidden;
+    overflow-y: auto; /* allow scroll */
+    width: 100%;
 }
 
+/* ✅ Let the middle section grow and push footer down */
 .content-wrapper {
-    /* Layout Properties (Don't lose these!) */
-    flex: 1 1 auto;
-    padding-bottom: 120px;
-    /* Slider Fixes */
-    width: 100%;
-    margin: 0;
-    padding: 0px;
-    background-color: #ffffff;
+    flex: 1 0 auto; /* key for flex layouts */
+    display: block;
+    overflow: visible; /* IMPORTANT: don't hide scroll */
+    background: #f6f7fb; /* or your theme background */
 }
+
+/* footer should not shrink */
+.site-footer {
+    flex-shrink: 0;
+}
+
 
     /* Ensure main has space inside wrapper */
     .content-wrapper main[role="main"] {

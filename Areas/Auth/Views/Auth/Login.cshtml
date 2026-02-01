@@ -1,62 +1,57 @@
-﻿@model avatCo.Areas.Auth.ViewModels.LoginVM;
+﻿@model avatCo.Areas.Auth.ViewModels.LoginVM
 @{
     ViewData["Title"] = "Login";
-    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.BodyClass = "login-page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
 
-<div class="login-container">
-    <div class="login-card">
-        <h2>ورود</h2>
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+}
 
-        <form method="post" id="LoginForm">
-            @Html.AntiForgeryToken()
+<div class="auth-stage" dir="rtl">
 
-            <div class="form-group">
-                <label asp-for="Email" class="form-label">ایمیل</label>
-                <input asp-for="Email" name="Email" class="form-control" placeholder="ایمیل خود را وارد کنید" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+        <!-- Main content area -->
+        <div class="auth-body">
+            <div class="auth-art" aria-hidden="true">
+                <div class="blob">
+                    <img src="~/images/auth/login-illustration.png" alt="" />
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Password" class="form-label">رمز</label>
-                <input asp-for="Password" type="password" name="Password" class="form-control" placeholder="رمز خود را وارد کنید" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+            <div class="auth-panel">
+                <h1 class="title">ورود</h1>
 
-            <div class="auth-links">
-                <a href="~/Auth/SignUp">ثبت نام</a>
-            </div>
+                <form method="post" asp-area="Auth" asp-controller="Auth" asp-action="Login">
+                    @Html.AntiForgeryToken()
 
-            <button type="submit" class="btn-submit">ورود</button>
-        </form>
-    </div>
+                    <div class="field">
+                        <input asp-for="Identifier" class="control"
+                               placeholder="ایمیل یا نام کاربری"
+                               autocomplete="username"
+                               name="Identifier" />
+                        <span asp-validation-for="Identifier" class="error"></span>
+                    </div>
+
+                    <div class="field">
+                        <input asp-for="Password" type="password" class="control"
+                               placeholder="رمز"
+                               autocomplete="current-password"
+                               name="Password" />
+                        <span asp-validation-for="Password" class="error"></span>
+                    </div>
+
+                    <div class="links">
+                        <a href="/Auth/ForgotPassword">فراموشی رمز؟</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary">ورود</button>
+
+                    <div class="hint">
+                        حساب ندارید؟
+                        <a href="/Auth/SignUp">ثبت نام</a>
+                    </div>
+                </form>
+            </div>
+        </div>
 </div>
-
-<script>
-    document.getElementById("LoginForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const form = e.target;
-        const data = {
-            Email: form.querySelector("[name=Email]").value,
-            Password: form.querySelector("[name=Password]").value
-        };
-        try {
-            const res = await fetch("/Profile/Login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-            const result = await res.json();
-            if (!res.ok || !result.success) {
-                alert(result.message || "Invalid login attempt");
-                return;
-            }
-            window.location.href = result.redirectUrl;
-        } catch (err) {
-            console.error(err);
-            alert("Something went wrong, please try again.");
-        }
-    });
-</script>

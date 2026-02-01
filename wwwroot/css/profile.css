@@ -1,4 +1,81 @@
-﻿/* Buttons */
+﻿.profile-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-title h2 {
+    margin: 0;
+}
+
+.muted {
+    color: #667085;
+    font-size: 13px;
+}
+
+.profile-body {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    align-items: flex-start;
+}
+
+.profile-avatar {
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+.profile-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.section-title {
+    margin-top: 22px;
+}
+
+.cart-product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-thumb {
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.btn-danger {
+    background: #d92d20;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.alert.success {
+    background: #ecfdf3;
+    border: 1px solid #abefc6;
+    color: #027a48;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+
+/* Buttons */
 .btn-primary, .btn-secondary, .btn-success {
     border: 0;
     border-radius: 10px;

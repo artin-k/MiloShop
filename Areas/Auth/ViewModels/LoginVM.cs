@@ -2,9 +2,9 @@
 {
     public class LoginVM
     {
-        public string Email { get; set; } = string.Empty;
-
-        public string Password { get; set; } = string.Empty;
-        public bool RememberMe { get; set; }
+        public string Identifier { get; set; } = ""; // email یا username
+        public string Password { get; set; } = "";
+        public bool RememberMe { get; set; }  // اگر نیاز داری
     }
+
 }

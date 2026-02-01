@@ -1,27 +1,25 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using avatCo.Data;
 using avatCo.Models;
 using avatCo.Areas.Auth.ViewModels;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace avatCo.Services
 {
     public class AuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly MiloDbContext _context;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             MiloDbContext context)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _roleManager = roleManager;
             _context = context;
         }
@@ -35,9 +33,10 @@ namespace avatCo.Services
                 {
                     Success = false,
                     Message = "ایمیل قبلاً ثبت شده است",
-                    Errors = new Dictionary<string, string[]> {
-                { "Email", new[] { "ایمیل قبلاً ثبت شده است" } }
-            }
+                    Errors = new Dictionary<string, string[]>
+                    {
+                        { "Email", new[] { "ایمیل قبلاً ثبت شده است" } }
+                    }
                 };
             }
 
@@ -48,42 +47,31 @@ namespace avatCo.Services
                 {
                     Success = false,
                     Message = "نام کاربری قبلاً ثبت شده است",
-                    Errors = new Dictionary<string, string[]> {
+                    Errors = new Dictionary<string, string[]>
+                    {
                         { "UserName", new[] { "نام کاربری قبلاً ثبت شده است" } }
                     }
-                        };
-                    }
+                };
+            }
 
             // 3. Create user
             var user = new ApplicationUser
             {
-                UserName = model.UserName,
-                Email = model.Email,
+                UserName = model.UserName.Trim(),
+                Email = model.Email.Trim(),
                 EmailConfirmed = false,
                 TermsAcceptedAt = DateTime.UtcNow,
                 TermsVersion = "v1.0"
             };
 
-
             var createResult = await _userManager.CreateAsync(user, model.Password);
             if (!createResult.Succeeded)
             {
-                // ✅ CORRECTLY MAP IDENTITY ERRORS TO FIELDS
-                var identityErrors = createResult.Errors
-                    .Select(e => new { Field = "Password", Message = e.Description })
-                    .ToList();
-
-                // ✅ BUILD PROPER ERROR DICTIONARY
-                var errorsDict = new Dictionary<string, string[]>();
-                foreach (var error in identityErrors)
+                // Map identity errors
+                var errorsDict = new Dictionary<string, string[]>
                 {
-                    if (!errorsDict.ContainsKey(error.Field))
-                        errorsDict[error.Field] = new string[] { };
-
-                    errorsDict[error.Field] = errorsDict[error.Field]
-                        .Concat(new[] { error.Message })
-                        .ToArray();
-                }
+                    { "Password", createResult.Errors.Select(e => e.Description).ToArray() }
+                };
 
                 return new Result
                 {
@@ -93,20 +81,88 @@ namespace avatCo.Services
                 };
             }
 
-            // ✅ FIXED LOGIC: ROLE ASSIGNMENT OUTSIDE ERROR BLOCK
+            // Role assignment
             if (!await _roleManager.RoleExistsAsync("User"))
-            {
                 await _roleManager.CreateAsync(new IdentityRole("User"));
-            }
+
             await _userManager.AddToRoleAsync(user, "User");
 
-            // 4. Success
             return new Result
             {
                 Success = true,
                 User = user
             };
+        }
 
+        //  NEW: LoginAsync using Identity + same Result type
+        public async Task<Result> LoginAsync(LoginVM model)
+        {
+            var identifier = model.Identifier?.Trim();
+            var password = model.Password;
+
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                return new Result
+                {
+                    Success = false,
+                    Errors = new Dictionary<string, string[]>
+            {
+                { "Identifier", new[] { "ایمیل یا نام کاربری الزامی است." } }
+            }
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return new Result
+                {
+                    Success = false,
+                    Errors = new Dictionary<string, string[]>
+            {
+                { "Password", new[] { "رمز عبور الزامی است." } }
+            }
+                };
+            }
+
+            // 1) try email first
+            var user = await _userManager.FindByEmailAsync(identifier);
+
+            // 2) if not found, try username
+            user ??= await _userManager.FindByNameAsync(identifier);
+
+            if (user == null)
+            {
+                return new Result
+                {
+                    Success = false,
+                    Message = "ایمیل/نام کاربری یا رمز عبور اشتباه است.",
+                    Errors = new Dictionary<string, string[]>
+            {
+                { "", new[] { "ایمیل/نام کاربری یا رمز عبور اشتباه است." } }
+            }
+                };
+            }
+
+            var signIn = await _signInManager.PasswordSignInAsync(
+                user.UserName!, // ✅ همیشه با UserName ساین-این می‌کنیم
+                password,
+                isPersistent: false,
+                lockoutOnFailure: true);
+
+            if (!signIn.Succeeded)
+            {
+                return new Result
+                {
+                    Success = false,
+                    Message = "ایمیل/نام کاربری یا رمز عبور اشتباه است.",
+                    Errors = new Dictionary<string, string[]>
+            {
+                { "", new[] { "ایمیل/نام کاربری یا رمز عبور اشتباه است." } }
+            }
+                };
+            }
+
+            return new Result { Success = true, User = user };
         }
 
     }
@@ -118,5 +174,4 @@ namespace avatCo.Services
         public ApplicationUser? User { get; set; }
         public Dictionary<string, string[]> Errors { get; set; } = new();
     }
-
 }

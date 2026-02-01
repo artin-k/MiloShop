@@ -35,7 +35,7 @@ namespace avatCo.Areas.Auth.Controllers
             _signInManager = signInManager;
         }
 
-    [HttpGet("Login")]
+        [HttpGet("Login")]
         public IActionResult Login()
         {
             return View();
@@ -71,15 +71,40 @@ namespace avatCo.Areas.Auth.Controllers
 
             var user = result.User!;
 
-            // ✅ Sign in
+            // Sign in
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            // ✅ Leave the Auth area and go to /Profile
+            //  Leave the Auth area and go to /Profile
             return RedirectToAction("Index", "Dashboard", new { area = "Profile" });
 
             // or the most bulletproof:
             // return Redirect("/Profile");
         }
+
+        [HttpPost("Login")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginVM loginVM)
+        {
+            if (!ModelState.IsValid) return View(loginVM);
+
+            var result = await _authService.LoginAsync(loginVM);
+
+            if (!result.Success)
+            {
+                foreach (var fieldErrors in result.Errors)
+                {
+                    foreach (var error in fieldErrors.Value)
+                    {
+                        Console.WriteLine($"Error for {fieldErrors.Key}: {error}");
+                        ModelState.AddModelError(fieldErrors.Key, error);
+                    }
+                }                    
+                return View(loginVM);
+            }
+
+            return Redirect("/Profile");
+        }
+
 
         [HttpPost("Logout")]
         [Authorize]

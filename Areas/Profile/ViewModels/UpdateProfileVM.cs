@@ -13,8 +13,7 @@ namespace avatCo.Areas.Profile.ViewModels
         [StringLength(20)]
         public string? PhoneNumber { get; set; }
 
-        [StringLength(20)]
-        public string? Gender { get; set; } // "Male" / "Female" / "Other" / null
+        public string? Gender { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
 

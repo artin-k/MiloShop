@@ -6,128 +6,86 @@
 
 <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 
-<h3>profile</h3>
-<div class="max-w-xl mx-auto p-6 bg-white shadow rounded">
-    <h2 class="text-2xl font-bold mb-4">Welcome, @Model.UserName</h2>
+<h3>Profile</h3>
 
-    <button type="button" class="btn-primary" id="openEditProfile">
-        Edit Profile
-    </button>
+@if (TempData["ProfileSaved"] is string msg)
+{
+    <div class="alert success">@msg</div>
+}
 
-    <ul class="space-y-2">
-        @if (!string.IsNullOrEmpty(@Model.ProfileImageUrl))
-        {
-            <img src="@Model.ProfileImageUrl" alt="Profile Picture" class="rounded-circle" width="100" />
-        }
-        <li><strong>Email:</strong> @Model.Email</li>
-        <li><strong>date sign up:</strong> @Model.RegisteredAt</li>
-        <li><strong>Gender:</strong> @Model.Gender</li>
-        <span>@(Model.DateOfBirth?.ToShortDateString() ?? "-")</span>
-        <li><strong>Full Name</strong>@Model.FullName</li>
-        <li><strong>Address:</strong> @Model.Address</li>
-        <span>@(Model.RegisteredAt?.ToShortDateString() ?? "-")</span>
-        <li><strong>Orders:</strong> @Model.Orders.Count</li>
-        <li><strong>Cart Items:</strong> @Model.CartItems.Count</li>
-
-    </ul>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Total</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.CartItems)
-        {
-            <tr>
-                <td>@item.ProductName</td>
-                <td>@item.Quantity</td>
-                <td>@item.UnitPrice.ToString("C")</td>
-                <td>@(item.Quantity * item.UnitPrice).ToString("C")</td>
-                <td>
-                    <form method="post" action="/Cart/Remove">
-                        <input type="hidden" name="CartItemId" value="@item.Id" />
-                        <button class="btn btn-danger btn-sm">Remove</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<!-- Modal overlay -->
-<div class="modal-overlay" id="editProfileOverlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
-        <div class="modal-header">
-            <div>
-                <h2 class="modal-title" id="editProfileTitle">Edit your profile</h2>
-                <p class="modal-subtitle">Update your info and save changes.</p>
-            </div>
-            <button type="button" class="icon-btn" id="closeEditProfile" aria-label="Close">✕</button>
+<div class="profile-card">
+    <div class="profile-header">
+        <div class="profile-title">
+            <h2>Welcome, @Model.UserName</h2>
+            <div class="muted">@Model.Email</div>
         </div>
 
-        <form id="editProfileForm" method="post">
-            @Html.AntiForgeryToken()
+        <a class="btn-primary" href="/Profile/Edit">Edit Profile</a>
+    </div>
 
-            <div id="profileAlert" class="alert" hidden></div>
+    <div class="profile-body">
+        @if (!string.IsNullOrWhiteSpace(Model.ProfileImageUrl))
+        {
+            <img src="@Model.ProfileImageUrl" alt="Profile Picture" class="profile-avatar" width="100" height="100" />
+        }
 
-            <div class="form-grid">
-                <div class="field">
-                    <label for="UserName">Username</label>
-                    <input id="UserName" name="UserName" type="text" value="@Model.UserName" autocomplete="username" />
-                    <div class="hint">This is your public name.</div>
-                </div>
+        <ul class="profile-list">
+            <li><strong>Full Name:</strong> <span>@(string.IsNullOrWhiteSpace(Model.FullName) ? "-" : Model.FullName)</span></li>
+            <li><strong>Gender:</strong> <span>@(string.IsNullOrWhiteSpace(Model.Gender) ? "-" : Model.Gender)</span></li>
+            <li><strong>Date of Birth:</strong> <span>@(Model.DateOfBirth?.ToShortDateString() ?? "-")</span></li>
+            <li><strong>Phone:</strong> <span>@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "-" : Model.PhoneNumber)</span></li>
+            <li><strong>Address:</strong> <span>@(string.IsNullOrWhiteSpace(Model.Address) ? "-" : Model.Address)</span></li>
 
-                <div class="field">
-                    <label for="FullName">Full name</label>
-                    <input id="FullName" name="FullName" type="text" value="@Model.FullName" autocomplete="name" />
-                </div>
-
-                <div class="field">
-                    <label for="PhoneNumber">Phone</label>
-                    <input id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.PhoneNumber" autocomplete="tel" />
-                </div>
-
-                <div class="field">
-                    <label for="Gender">Gender</label>
-                    <select id="Gender" name="Gender">
-                        <option value="" selected="@(string.IsNullOrWhiteSpace(Model.Gender) ? "selected" : null)">Select</option>
-                        <option value="Male" selected="@(Model.Gender == "Male" ? "selected" : null)">Male</option>
-                        <option value="Female" selected="@(Model.Gender == "Female" ? "selected" : null)">Female</option>
-                        <option value="Other" selected="@(Model.Gender == "Other" ? "selected" : null)">Other</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label for="DateOfBirth">Date of birth</label>
-                    <input id="DateOfBirth" name="DateOfBirth" type="date"
-                           value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")" />
-                </div>
-
-                <div class="field field-full">
-                    <label for="Address">Address</label>
-                    <textarea id="Address" name="Address" rows="3">@Model.Address</textarea>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" id="cancelEditProfile">Cancel</button>
-
-                <button type="submit" class="btn-success" id="saveProfileBtn">
-                    <span class="btn-text">Save changes</span>
-                    <span class="spinner" aria-hidden="true" hidden></span>
-                </button>
-            </div>
-        </form>
+            <li><strong>Orders:</strong> <span>@Model.OrdersCount</span></li>
+            <li><strong>Cart Items:</strong> <span>@Model.CartItems.Count</span></li>
+        </ul>
     </div>
 </div>
 
-@section Scripts {   
-    <script src="~/js/profile.js" asp-append-version="true"></script>
+<h3 class="section-title">Your Cart</h3>
+
+@if (Model.CartItems.Count == 0)
+{
+    <div class="muted">Your cart is empty.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>
+                        <div class="cart-product">
+                            @if (!string.IsNullOrWhiteSpace(item.ProductImageUrl))
+                            {
+                                <img class="cart-thumb" src="@item.ProductImageUrl" alt="" width="36" height="36" />
+                            }
+                            <span>@item.ProductName</span>
+                        </div>
+                    </td>
+
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice.ToString("0.##")</td>
+                    <td>@(item.Quantity * item.UnitPrice).ToString("0.##")</td>
+                    <td>
+                        <form method="post" action="/Cart/Remove">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="CartItemId" value="@item.Id" />
+                            <button type="submit" class="btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }

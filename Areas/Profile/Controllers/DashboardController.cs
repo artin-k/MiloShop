@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using avatCo.Data;
 using avatCo.Models;
 using avatCo.Areas.Profile.ViewModels;
 
@@ -8,14 +10,16 @@ namespace avatCo.Areas.Profile.Controllers
 {
     [Area("Profile")]
     [Authorize]
-    [Route("Profile")] // ✅ makes this controller respond under /Profile
+    [Route("Profile")]
     public class DashboardController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly MiloDbContext _db;
 
-        public DashboardController(UserManager<ApplicationUser> userManager)
+        public DashboardController(UserManager<ApplicationUser> userManager, MiloDbContext db)
         {
             _userManager = userManager;
+            _db = db;
         }
 
         // GET /Profile
@@ -25,10 +29,50 @@ namespace avatCo.Areas.Profile.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Redirect("/Auth/Login");
 
+            // Load cart items (and product info) for this user
+            var cartItems = await _db.CartItems
+                .Where(c => c.UserId == user.Id)
+                .Include(c => c.Product)
+                .ToListAsync();
+
+            // Load orders count (or orders list if you want)
+            var ordersCount = await _db.Orders.CountAsync(o => o.UserId == user.Id);
+
             var vm = new DashboardVM
             {
                 UserName = user.UserName ?? "",
                 Email = user.Email ?? "",
+                FullName = user.FullName,
+                Gender = user.Gender,
+                PhoneNumber = user.PhoneNumber,
+                DateOfBirth = user.DateOfBirth,
+                Address = user.Address,
+                ProfileImageUrl = user.ProfileImageUrl,
+
+                OrdersCount = ordersCount,
+                CartItems = cartItems.Select(ci => new CartItemVM
+                {
+                    Id = ci.Id,
+                    ProductName = ci.Product?.Title ?? "(Deleted product)",
+                    Quantity = ci.Quantity,
+                    UnitPrice = ci.Product?.Price ?? 0,
+                    ProductImageUrl = ci.Product?.ImageUrl
+                }).ToList()
+            };
+
+            return View(vm);
+        }
+
+        // GET /Profile/Edit
+        [HttpGet("Edit")]
+        public async Task<IActionResult> Edit()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Redirect("/Auth/Login");
+
+            var vm = new UpdateProfileVM
+            {
+                UserName = user.UserName ?? "",
                 FullName = user.FullName,
                 Gender = user.Gender,
                 PhoneNumber = user.PhoneNumber,
@@ -39,74 +83,46 @@ namespace avatCo.Areas.Profile.Controllers
             return View(vm);
         }
 
-        // POST /Profile/UpdateProfile
-        [HttpPost("UpdateProfile")]
+        // POST /Profile/Edit
+        [HttpPost("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([FromForm] UpdateProfileVM vm)
+        public async Task<IActionResult> Edit(UpdateProfileVM vm)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelStateToText(ModelState));
+                return View(vm);
 
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) return Unauthorized("You are not logged in.");
+            if (user == null) return Redirect("/Auth/Login");
 
-            // ✅ Basic normalization
-            vm.UserName = vm.UserName.Trim();
+            var newUserName = vm.UserName.Trim();
 
-            // ✅ Optional: validate Gender values
-            if (!string.IsNullOrWhiteSpace(vm.Gender))
+            if (!string.Equals(user.UserName, newUserName, StringComparison.Ordinal))
             {
-                var allowed = new[] { "Male", "Female", "Other" };
-                if (!allowed.Contains(vm.Gender))
-                    return BadRequest("Invalid gender value.");
+                var setName = await _userManager.SetUserNameAsync(user, newUserName);
+                if (!setName.Succeeded)
+                {
+                    foreach (var e in setName.Errors)
+                        ModelState.AddModelError("", e.Description);
+                    return View(vm);
+                }
             }
 
-            // ✅ If username changed, use Identity API (important)
-            if (!string.Equals(user.UserName, vm.UserName, StringComparison.Ordinal))
-            {
-                var setUserNameResult = await _userManager.SetUserNameAsync(user, vm.UserName);
-                if (!setUserNameResult.Succeeded)
-                    return BadRequest(IdentityErrorsToText(setUserNameResult.Errors));
-            }
-
-            // ✅ Update custom fields
             user.FullName = vm.FullName?.Trim();
+            user.Address = vm.Address?.Trim();
             user.PhoneNumber = vm.PhoneNumber?.Trim();
             user.Gender = string.IsNullOrWhiteSpace(vm.Gender) ? null : vm.Gender;
             user.DateOfBirth = vm.DateOfBirth;
-            user.Address = vm.Address?.Trim();
 
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-                return BadRequest(IdentityErrorsToText(updateResult.Errors));
-
-            // ✅ Return JSON for fetch()
-            return Ok(new
+            var update = await _userManager.UpdateAsync(user);
+            if (!update.Succeeded)
             {
-                success = true,
-                message = "Saved successfully",
-                updated = new
-                {
-                    userName = user.UserName,
-                    fullName = user.FullName,
-                    phoneNumber = user.PhoneNumber,
-                    gender = user.Gender,
-                    dateOfBirth = user.DateOfBirth?.ToString("yyyy-MM-dd"),
-                    address = user.Address
-                }
-            });
-        }
+                foreach (var e in update.Errors)
+                    ModelState.AddModelError("", e.Description);
+                return View(vm);
+            }
 
-        private static string IdentityErrorsToText(IEnumerable<IdentityError> errors)
-            => string.Join(" | ", errors.Select(e => e.Description));
-
-        private static string ModelStateToText(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState)
-        {
-            var all = modelState
-                .Where(kvp => kvp.Value?.Errors.Count > 0)
-                .SelectMany(kvp => kvp.Value!.Errors.Select(e => $"{kvp.Key}: {e.ErrorMessage}"));
-
-            return string.Join(" | ", all);
+            TempData["ProfileSaved"] = "Profile updated ✅";
+            return RedirectToAction(nameof(Index));
         }
     }
 }
