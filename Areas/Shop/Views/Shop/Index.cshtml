@@ -1,89 +1,187 @@
 ﻿@model avatCo.Models.ViewModel.ShopViewModel
 @{
+    ViewData["BodyClass"] = "stage-page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Shop Header with Search --> 
-<section class="bg-light py-5"> 
-    <div class="container text-center">
-    <h2 class="fw-bold mb-3">@Model.Title</h2> 
-    <p class="text-muted mb-4">@Model.Description</p>
-    <!-- Right: Icons --> 
-        <div class="d-flex align-items-center mt-3 mt-lg-0">
-            <!-- AJAX Search -->
-            <div class="position-relative me-3">
-                <input type="text" id="searchBox" class="form-control form-control-sm" placeholder="جستجو..." autocomplete="off" /> 
-                <!-- Search Results Dropdown -->
+<link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
 
-                <div id="searchResults" class="list-group position-absolute w-100 shadow d-none" style="z-index: 2000;">
+<!-- Header / Hero -->
+@* <section class="shop-hero">
+    <div class="container">
+        <div class="shop-hero-row">
+            <div class="shop-hero-text">
+                <h2 class="shop-title">@Model.Title</h2>
+                <p class="shop-subtitle">@Model.Description</p>
+            </div>
 
+            <div class="shop-hero-actions">
+                <div class="shop-search">
+                    <input type="text" id="searchBox" class="form-control" placeholder="جستجو..." autocomplete="off" />
+                    <div id="searchResults" class="list-group search-results d-none"></div>
                 </div>
-                </div> 
-                <div class="input-group">
-                    <input type="text" id="searchBox" class="form-control form-control-sm" placeholder="جستجو..." autocomplete="off" /> 
-                    <button id="searchBtn" class="btn btn-outline-light"><i class="bi bi-search"></i></button> 
-                </div> 
-                <div id="searchResults" class="list-group position-absolute w-100 shadow d-none" style="z-index: 2000;">
 
+                <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtersCanvas">
+                    فیلترها
+                </button>
+            </div>
+        </div>
+    </div>
+</section> *@
+
+<!-- Main layout -->
+<section class="container my-4">
+    <div class="shop-layout">
+
+        <!-- Desktop Filters -->
+        <aside class="filters d-none d-lg-block">
+            <div class="filters-card">
+                <div class="filters-head">
+                    <h5>فیلترها</h5>
+                    <a class="link-reset" href="/Shop">ریست</a>
                 </div>
-                <a href="#" class="nav-icon me-3">
-                    <i class="bi bi-cart"></i></a> 
-                <a href="#" class="nav-icon">
-                    <i class="bi bi-person"></i></a> 
-         </div>
-    </div>
-</section> 
-<!-- Categories Section (buttons only) --> 
-<section class="container my-5"> 
-        <div class="d-flex justify-content-between align-items-center mb-3"> 
-            <h4 class="fw-bold">دسته‌بندی‌ها</h4>
-             <a href="/Products" class="btn btn-outline-dark">مشاهده همه</a> 
-        </div> 
-    <div class="d-flex flex-wrap gap-2">
-        @foreach (var c in Model.Categories)
-        {
-            <a href="@Url.Action("Index", "Products", new { categoryId = c.Id })" class="btn btn-outline-secondary"> @c.Name </a>
-        } 
-    </div> 
-</section>
 
-
-<!-- Products Section -->
-<section class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold">محصولات</h4>
-        <a href="/Products" class="btn btn-outline-dark">مشاهده همه</a>
-    </div>
-
-    <div class="row g-4">
-        @if (!Model.Products.Any())
-        {
-            <p class="text-danger text-center mt-4">محصولی یافت نشد.</p>
-        }
-        @foreach (var p in Model.Products)
-        {
-            <div class="col-6 col-md-3">
-                <div class="card h-100 product-card shadow-sm border-0">
-                    <img src="@p.ImageUrl" class="card-img-top" alt="@p.Title"
-                         style="height:220px; object-fit:cover; border-top-left-radius:1rem; border-top-right-radius:1rem;" />
-                    <div class="card-body text-center">
-                        <h6 class="fw-semibold">@p.Title</h6>
-                        <p class="small text-muted mb-1">@p.Price.ToString("N0") تومان</p>
-                        <button class="btn btn-sm btn-dark rounded-pill mt-2"
-                                type="button"
-                                onclick="openDetailProductModal(@p.Id)">
-                            مشاهده جزئیات
-                        </button>
-
-
+                <form method="get" action="/Shop" class="filters-form">
+                    <div class="filter-group">
+                        <label class="filter-label">مرتب‌سازی</label>
+                        <select class="form-select" name="sort">
+                            <option value="">پیش‌فرض</option>
+                            <option value="new">جدیدترین</option>
+                            <option value="cheap">ارزان‌ترین</option>
+                            <option value="expensive">گران‌ترین</option>
+                        </select>
                     </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">بازه قیمت (تومان)</label>
+                        <div class="range-row">
+                            <input class="form-control" type="number" name="minPrice" placeholder="از" />
+                            <input class="form-control" type="number" name="maxPrice" placeholder="تا" />
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">دسته‌بندی‌ها</label>
+                        <div class="chips">
+                            @foreach (var c in Model.Categories)
+                            {
+                                <label class="chip">
+                                    <input type="radio" name="categoryId" value="@c.Id" />
+                                    <span>@c.Name</span>
+                                </label>
+                            }
+                            <label class="chip">
+                                <input type="radio" name="categoryId" value="" checked />
+                                <span>همه</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-dark w-100" type="submit">اعمال فیلتر</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Products -->
+        <div class="shop-content">
+            <div class="content-head">
+                <div>
+                    <h4 class="fw-bold m-0">محصولات</h4>
+                    <div class="text-muted small">@Model.Products.Count() محصول</div>
+                </div>
+
+                <div class="content-actions d-none d-lg-flex">
+                    <a href="/Products" class="btn btn-outline-dark">مشاهده همه</a>
                 </div>
             </div>
-        }
+
+            <div class="row g-4">
+                @if (!Model.Products.Any())
+                {
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <div class="empty-title">محصولی یافت نشد</div>
+                            <div class="text-muted">فیلترها را تغییر دهید یا جستجو کنید.</div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var p in Model.Products)
+                {
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <div class="product-card">
+                            <div class="product-media">
+                                <img src="@p.ImageUrl" alt="@p.Title" />
+                            </div>
+
+                            <div class="product-body">
+                                <div class="product-title">@p.Title</div>
+                                <div class="product-price">@p.Price.ToString("N0") تومان</div>
+
+                                <button class="btn btn-sm btn-dark rounded-pill mt-2"
+                                        type="button"
+                                        onclick="openDetailProductModal(@p.Id)">
+                                    مشاهده جزئیات
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
     </div>
 </section>
 
+<!-- Mobile Filters Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="filtersCanvas">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">فیلترها</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="get" action="/Shop" class="filters-form">
+            <div class="filter-group">
+                <label class="filter-label">مرتب‌سازی</label>
+                <select class="form-select" name="sort">
+                    <option value="">پیش‌فرض</option>
+                    <option value="new">جدیدترین</option>
+                    <option value="cheap">ارزان‌ترین</option>
+                    <option value="expensive">گران‌ترین</option>
+                </select>
+            </div>
 
+            <div class="filter-group">
+                <label class="filter-label">بازه قیمت (تومان)</label>
+                <div class="range-row">
+                    <input class="form-control" type="number" name="minPrice" placeholder="از" />
+                    <input class="form-control" type="number" name="maxPrice" placeholder="تا" />
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">دسته‌بندی‌ها</label>
+                <div class="chips">
+                    @foreach (var c in Model.Categories)
+                    {
+                        <label class="chip">
+                            <input type="radio" name="categoryId" value="@c.Id" />
+                            <span>@c.Name</span>
+                        </label>
+                    }
+                    <label class="chip">
+                        <input type="radio" name="categoryId" value="" checked />
+                        <span>همه</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn btn-dark w-100" type="submit">اعمال فیلتر</button>
+        </form>
+    </div>
+</div>
+
+<!-- keep your modals below (unchanged) -->
 <!-- Product Details Modal -->
 <!-- Product Details Modal (static shell, body will be filled by JS) -->
 <div class="modal fade" id="productDetailsModal" tabindex="-1" aria-hidden="true">

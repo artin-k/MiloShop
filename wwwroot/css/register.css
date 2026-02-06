@@ -1,97 +1,291 @@
-﻿.content-wrapper {
-    background-image: url("/images/reb-background.png");
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-    width: 100%;
-    position: relative;
-    /* Optional: Add overlay for better text readability */
-    background-blend-mode: overlay;
-    background-color: rgba(0, 0, 0, 0.3);
+﻿/* ===========================
+   register.css — FINAL CLEAN
+   centers correctly + responsive
+   =========================== */
+
+body {
+    margin: 0;
 }
-/* --- CENTERED REGISTRATION CARD --- */
+
+    /* IMPORTANT: Let your layout exist, but don't let it push auth pages down */
+    body.auth-page main,
+    body.auth-page .content-wrapper {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+/* Stage with background image */
 .register-container {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* Background */
+    background: url("/images/auth/mountains_layers_3840w.webp") center/cover no-repeat;
+    /* True full screen */
+    min-height: 100vh;
+    /* Center the card */
+    display: grid;
+    place-items: center;
+    /* Side padding only (NO huge top padding) */
+    padding: 24px 14px;
+    /* If you have a fixed header, this keeps the card from hiding under it
+     WITHOUT pushing it to the bottom */
+    scroll-margin-top: 90px;
 }
 
+    /* overlay for readability */
+    .register-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(900px 520px at 50% 20%, rgba(255,255,255,.10), transparent 55%), linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.45));
+    }
+
+    /* subtle glow */
+    .register-container::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(520px 320px at 50% 45%, rgba(91,87,255,.16), transparent 65%);
+    }
+
+/* Glass card */
 .register-card {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    border-radius: 24px;
-    padding: 45px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    width: 100%;
+    position: relative;
+    z-index: 1;
+    width: min(520px, 92vw);
+    padding: 34px 34px 28px;
+    border-radius: 26px;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.28);
+    box-shadow: 0 30px 90px rgba(0,0,0,.38), inset 0 0 0 1px rgba(255,255,255,.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    direction: rtl;
 }
 
-/* --- FORM STYLING (MATCHES LOGIN PAGE) --- */
+/* Title */
 .form-title {
+    margin: 0 0 10px;
     text-align: center;
-    color: #333;
-    margin-bottom: 35px;
-    font-size: 1.9rem;
-    font-weight: 700;
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: -.2px;
+    color: rgba(10,15,20,.92);
+}
+
+/* Validation */
+.register-card .text-danger {
+    margin: 6px 0 0;
+    color: #b91c1c !important;
+    font-size: 20px;
+    font-weight: 900;
 }
 
 .form-group {
-    margin-bottom: 25px;
+    margin-top: 16px;
 }
 
 .form-label {
     display: block;
-    margin-bottom: 10px;
-    color: #444;
-    font-weight: 600;
-    font-size: 0.95rem;
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: rgba(10,15,20,.78);
+    text-align: right;
 }
 
+/* Inputs */
 .form-control {
     width: 100%;
-    padding: 14px 18px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    height: 48px;
+    border: 0;
+    border-radius: 14px;
+    padding: 0 14px;
+    background: rgba(255,255,255,.40);
+    color: rgba(10,15,20,.92);
     outline: none;
-    background: rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 -2px 0 rgba(10,15,20,.18);
+    transition: box-shadow .15s ease, background .15s ease, transform .15s ease;
+    box-sizing: border-box;
 }
 
-    .form-control:focus {
-        border-color: #764ba2;
-        box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.2);
+    .form-control::placeholder {
+        color: rgba(10,15,20,.45);
     }
 
-.text-danger {
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 5px;
+    .form-control:focus {
+        background: rgba(255,255,255,.55);
+        box-shadow: inset 0 -2px 0 rgba(91,87,255,.55), 0 0 0 4px rgba(91,87,255,.14);
+        transform: translateY(-1px);
+    }
+
+/* Field-level errors */
+span.text-danger {
     display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #b91c1c !important;
 }
 
-/* --- SUBMIT BUTTON (MATCHES LOGIN) --- */
+/* Terms */
+.terms-text {
+    margin: 18px 0 14px;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(10,15,20,.75);
+    line-height: 1.8;
+}
+
+    .terms-text a {
+        color: rgba(91,87,255,.98);
+        font-weight: 900;
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(91,87,255,.55);
+    }
+
+        .terms-text a:hover {
+            border-bottom-style: solid;
+        }
+
+/* Button */
 .btn-submit {
     width: 100%;
-    padding: 15px;
-    background: linear-gradient(to right, #667eea, #764ba2);
+    height: 52px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.30);
+    background: linear-gradient(0deg, rgb(0, 202, 255), rgba(91,87,255,.30));
     color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-weight: 900;
+    font-size: 15px;
+    letter-spacing: -.2px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
+    transition: transform .12s ease, filter .12s ease;
+    box-shadow: 0 18px 35px rgba(91,87,255,.30);
 }
 
     .btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(118, 75, 162, 0.4);
-        background: linear-gradient(to right, #764ba2, #667eea);
+        filter: brightness(1.05);
     }
 
     .btn-submit:active {
-        transform: translateY(0);
-        box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3);
+        transform: translateY(1px);
     }
+
+/* Responsive */
+@media (max-width: 520px) {
+    .register-card {
+        padding: 28px 18px 22px;
+        border-radius: 22px;
+    }
+
+    .form-title {
+        font-size: 26px;
+    }
+}
+
+body.auth-page .content-wrapper {
+    min-height: 0 !important;
+}
+
+body.auth-page main {
+    min-height: 0 !important;
+}
+
+
+
+/* =========================
+   RESPONSIVE + CENTER FIX
+   paste at the bottom
+   ========================= */
+
+/* Make sure the page can truly center */
+.register-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    /* Better vertical centering across devices */
+    min-height: 100vh !important;
+
+}
+
+/* Ensure the card is centered and never “drifts” */
+.register-card {
+    margin: 0 auto !important;
+    width: min(520px, 100%) !important;
+    max-width: 520px !important;
+}
+
+    /* Make the form use full width consistently */
+    .register-card form {
+        width: 100% !important;
+    }
+
+/* Keep fields aligned and clean */
+.form-group {
+    width: 100% !important;
+}
+
+.form-label {
+    width: 100% !important;
+    display: block !important;
+    text-align: right !important; /* RTL */
+}
+
+/* Inputs fill the card and align */
+.form-control {
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+}
+
+/* Button full width and consistent */
+.btn-submit {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Better spacing on small devices */
+@media (max-width: 768px) {
+
+    .register-card {
+        padding: 26px 18px 20px !important;
+        border-radius: 22px !important;
+    }
+
+    .form-title {
+        font-size: 24px !important;
+    }
+
+    .form-control {
+        height: 46px !important;
+        border-radius: 14px !important;
+    }
+
+    .btn-submit {
+        height: 50px !important;
+        border-radius: 14px !important;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 420px) {
+    .register-container {
+        padding: 80px 12px 26px !important;
+    }
+
+    .register-card {
+        width: 100% !important;
+        padding: 22px 14px 18px !important;
+        border-radius: 20px !important;
+    }
+
+    .terms-text {
+        font-size: 12px !important;
+    }
+}
