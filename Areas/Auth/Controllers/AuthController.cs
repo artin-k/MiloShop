@@ -21,6 +21,7 @@ namespace avatCo.Areas.Auth.Controllers
     [Area("Auth")]
     public class AuthController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly MiloDbContext _context;
         private readonly AuthService _authService;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -28,11 +29,13 @@ namespace avatCo.Areas.Auth.Controllers
         public AuthController(
             MiloDbContext context,
             AuthService authController,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _authService = authController;
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [HttpGet("Login")]
@@ -100,6 +103,14 @@ namespace avatCo.Areas.Auth.Controllers
                     }
                 }                    
                 return View(loginVM);
+            }
+
+            var user = result.User!;
+
+            // if admin → send to admin dashboard
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return Redirect("/Admin/Settings");
             }
 
             return Redirect("/Profile");

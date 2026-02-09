@@ -296,6 +296,51 @@ namespace avatCo.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("avatCo.Models.Coupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("MinOrderAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UsageLimit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsedCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Coupons");
+                });
+
             modelBuilder.Entity("avatCo.Models.Order", b =>
                 {
                     b.Property<int>("Id")

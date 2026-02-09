@@ -1,109 +1,129 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using avatCo.Models;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using avatCo.Areas.Admin.ViewModels;
 using avatCo.Data;
+using avatCo.Models;
+using avatCo.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace avatCo.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [Route("Admin/[controller]/[action]")]
+    [AutoValidateAntiforgeryToken]
     public class CategoriesController : Controller
     {
         private readonly MiloDbContext _context;
-        public CategoriesController(MiloDbContext context) => _context = context;
+        private readonly IProductImageStorage _imageStorage; // reuse your existing storage
 
+        public CategoriesController(MiloDbContext context, IProductImageStorage imageStorage)
+        {
+            _context = context;
+            _imageStorage = imageStorage;
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cats = await _context.Categories.ToListAsync();
+            var cats = await _context.Categories
+                .AsNoTracking()
+                .OrderByDescending(c => c.Id)
+                .ToListAsync();
+
             return View(cats);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> Create([FromForm] CategoryUpsertVm vm)
         {
-            if (ModelState.IsValid)
+            if (vm.ImageFile == null)
+                ModelState.AddModelError(nameof(vm.ImageFile), "Image is required.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, errors = ModelStateErrors() });
+
+            var category = new Category
             {
-                if (category.ImageFile != null)
-                {
-                    var fileName = Path.GetFileName(category.ImageFile.FileName);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/Categories", fileName);
+                Name = vm.Name,
+                Description = vm.Description,
+            };
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await category.ImageFile.CopyToAsync(stream);
-                    }
+            category.ImageUrl = await _imageStorage.SaveAsync(vm.ImageFile!);
 
-                    // Save path to DB
-                    category.ImageUrl = "/uploads/Categories/" + fileName;
-                }
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
 
-                _context.Add(category);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(category);
+            return Ok(new { success = true, id = category.Id });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> GetCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null) return NotFound();
+            var category = await _context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
 
-            return Json(category);
+            if (category == null) return NotFound(new { success = false, message = "Category not found." });
+
+            return Json(new
+            {
+                id = category.Id,
+                name = category.Name,
+                description = category.Description,
+                imageUrl = string.IsNullOrEmpty(category.ImageUrl) ? null : category.ImageUrl
+            });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Category category)
+        public async Task<IActionResult> Edit([FromForm] CategoryUpsertVm vm)
         {
-/*            if (ModelState.IsValid)
-            {*/
+            if (vm.Id <= 0)
+                return BadRequest(new { success = false, message = "Invalid category id." });
 
-                var existing = await _context.Categories.FindAsync(category.Id);
-                if (existing != null)
-                {
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, errors = ModelStateErrors() });
 
-                    existing.Name = category.Name;
-                    existing.Description = category.Description;
+            var existing = await _context.Categories.FirstOrDefaultAsync(c => c.Id == vm.Id);
+            if (existing == null)
+                return NotFound(new { success = false, message = "Category not found." });
 
-                    if (category.ImageFile != null)
-                    {
-                        var fileName = Path.GetFileName(category.ImageFile.FileName);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/Categories", fileName);
+            existing.Name = vm.Name;
+            existing.Description = vm.Description;
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await category.ImageFile.CopyToAsync(stream);
-                        }
+            if (vm.ImageFile != null)
+            {
+                _imageStorage.DeleteIfExists(existing.ImageUrl);
+                existing.ImageUrl = await _imageStorage.SaveAsync(vm.ImageFile);
+            }
 
-                        existing.ImageUrl = "/uploads/Categories/" + fileName;
-                    }
-
-                    _context.Update(existing);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                return NotFound();
-
-/*            }*/
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return Json(new { success = false, message = "Category not found" });
-            }
+            var existing = await _context.Categories.FindAsync(id);
+            if (existing == null)
+                return NotFound(new { success = false, message = "Category not found." });
 
-            _context.Categories.Remove(category);
+            _imageStorage.DeleteIfExists(existing.ImageUrl);
+
+            _context.Categories.Remove(existing);
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true });
+            return Ok(new { success = true });
+        }
+
+        private Dictionary<string, string[]> ModelStateErrors()
+        {
+            return ModelState
+                .Where(kvp => kvp.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
         }
     }
 }

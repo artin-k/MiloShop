@@ -2,13 +2,16 @@
 using avatCo.Data;
 using avatCo.Models;
 using avatCo.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace avatCo.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("Admin/[controller]/[action]")]
+    [Authorize(Roles = "Admin")]
+    [AutoValidateAntiforgeryToken]
+
     public class ProductsController : Controller
     {
         private readonly MiloDbContext _context;
@@ -22,14 +25,18 @@ namespace avatCo.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var categories = _context.Categories.ToList();
-            var products = _context.Products.Include(p => p.Category).ToList();
+            ViewBag.Categories = await _context.Categories.AsNoTracking().ToListAsync();
+            var products = await _context.Products
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
 
-            ViewBag.Categories = categories;
-            return View(products); // assuming your model is still List<Product>
+            return View(products);
         }
+
 
         [HttpGet]
         public IActionResult Create()

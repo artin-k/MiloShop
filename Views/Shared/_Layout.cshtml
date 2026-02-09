@@ -32,6 +32,10 @@
                 <a href="" class="nav-icon" title="جستجو">
                     <img src="~/icons/header/search.svg" alt="search">
                 </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-area="Admin" asp-controller="Products" asp-action="Index">Admin</a>
+                }
             </div>
 
             <!-- Left Side: Logo -->

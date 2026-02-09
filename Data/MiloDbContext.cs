@@ -13,6 +13,7 @@ namespace avatCo.Data
         public DbSet<TestEntity> TestEntities { get; set; }
         public DbSet<Product> Products { get; set; }
         // User & order flow
+        public DbSet<Coupon> Coupons { get; set; } = null!;
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
@@ -28,6 +29,14 @@ namespace avatCo.Data
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Coupon>()
+                .HasIndex(c => c.Code)
+                .IsUnique();
+
+            modelBuilder.Entity<Coupon>()
+                .Property(c => c.Code)
+                .HasConversion(v => v.Trim().ToUpper(), v => v);
 
             // ✅ Order -> ApplicationUser
             modelBuilder.Entity<Order>()
@@ -55,8 +64,13 @@ namespace avatCo.Data
             modelBuilder.Entity<CartItem>()
                 .HasIndex(c => new { c.UserId, c.ProductId })
                 .IsUnique();
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Coupon)
+                .WithMany()
+                .HasForeignKey(o => o.CouponId)
+                .OnDelete(DeleteBehavior.SetNull);
+
         }
-
-
     }
 }

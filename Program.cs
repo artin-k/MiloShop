@@ -46,11 +46,15 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
+
 
 // Add MVC (controllers + views)
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+await avatCo.Data.IdentitySeeder.SeedRolesAndAdminAsync(app.Services, app.Configuration);
 
 app.UseHsts();
 

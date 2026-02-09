@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using avatCo.Models;
 
-namespace avatCo.Models.ViewModel
+namespace avatCo.Areas.Shop.ViewModels
 {
     public class ShopViewModel
     {

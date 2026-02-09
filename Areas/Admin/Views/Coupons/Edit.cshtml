@@ -1,0 +1,36 @@
+﻿@model avatCo.Models.Coupon
+@{
+    ViewData["Title"] = "تصحیح کردن کوپن تخفیف ";
+}
+
+<div class="admin-card">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-row">
+            <div>
+                <div class="form-label">کد تخفیف</div>
+                <div class="form-hint">مثال: SPRING2024</div>
+            </div>
+            <div>
+                <input class="input" asp-for="Code" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div>
+                <div class="form-label">مقدار تخفیف</div>
+                <div class="form-hint">درصد یا مبلغ</div>
+            </div>
+            <div>
+                <input class="input" asp-for="Value" />
+            </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="btn" type="submit">ذخیره</button>
+            <a class="btn" asp-area="Admin" asp-controller="Coupons" asp-action="Index">انصراف</a>
+        </div>
+    </form>
+</div>

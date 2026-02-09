@@ -1,6 +1,7 @@
 ﻿using avatCo.Data;
 using avatCo.Models;
-using avatCo.Models.ViewModel;
+using avatCo.Areas.Shop.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace avatCo.Areas.Shop
 {
     [Area("Shop")]
     [Route("Shop")]
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         private readonly MiloDbContext _context;
