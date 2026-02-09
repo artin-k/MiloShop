@@ -1,5 +1,4 @@
-﻿using avatCo.Areas.Admin.ViewModels;
-using avatCo.Data;
+﻿using avatCo.Data;
 using avatCo.Models;
 using avatCo.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +9,11 @@ namespace avatCo.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
-    [Route("Admin/[controller]/[action]")]
     [AutoValidateAntiforgeryToken]
     public class CategoriesController : Controller
     {
         private readonly MiloDbContext _context;
-        private readonly IProductImageStorage _imageStorage; // reuse your existing storage
+        private readonly IProductImageStorage _imageStorage;
 
         public CategoriesController(MiloDbContext context, IProductImageStorage imageStorage)
         {
@@ -26,6 +24,8 @@ namespace avatCo.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            ViewData["Title"] = "دسته‌بندی‌ها";
+
             var cats = await _context.Categories
                 .AsNoTracking()
                 .OrderByDescending(c => c.Id)
@@ -34,96 +34,95 @@ namespace avatCo.Areas.Admin.Controllers
             return View(cats);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CategoryUpsertVm vm)
+        // ✅ CREATE (GET)
+        [HttpGet]
+        public IActionResult Create()
         {
-            if (vm.ImageFile == null)
-                ModelState.AddModelError(nameof(vm.ImageFile), "Image is required.");
+            ViewData["Title"] = "افزودن دسته‌بندی";
+            return View(new Category());
+        }
+
+        // ✅ CREATE (POST)
+        [HttpPost]
+        public async Task<IActionResult> Create(Category model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Name))
+                ModelState.AddModelError(nameof(model.Name), "نام الزامی است.");
+
+            if (model.ImageFile == null)
+                ModelState.AddModelError(nameof(model.ImageFile), "تصویر الزامی است.");
 
             if (!ModelState.IsValid)
-                return BadRequest(new { success = false, errors = ModelStateErrors() });
-
-            var category = new Category
             {
-                Name = vm.Name,
-                Description = vm.Description,
-            };
+                ViewData["Title"] = "افزودن دسته‌بندی";
+                return View(model);
+            }
 
-            category.ImageUrl = await _imageStorage.SaveAsync(vm.ImageFile!);
+            model.ImageUrl = await _imageStorage.SaveAsync(model.ImageFile!);
 
-            _context.Categories.Add(category);
+            _context.Categories.Add(model);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, id = category.Id });
+            return RedirectToAction(nameof(Index));
         }
 
+        // ✅ EDIT (GET)
         [HttpGet]
-        public async Task<IActionResult> GetCategory(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var category = await _context.Categories
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null) return NotFound();
 
-            if (category == null) return NotFound(new { success = false, message = "Category not found." });
-
-            return Json(new
-            {
-                id = category.Id,
-                name = category.Name,
-                description = category.Description,
-                imageUrl = string.IsNullOrEmpty(category.ImageUrl) ? null : category.ImageUrl
-            });
+            ViewData["Title"] = "ویرایش دسته‌بندی";
+            return View(category);
         }
 
+        // ✅ EDIT (POST)
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm] CategoryUpsertVm vm)
+        public async Task<IActionResult> Edit(int id, Category model)
         {
-            if (vm.Id <= 0)
-                return BadRequest(new { success = false, message = "Invalid category id." });
+            if (id != model.Id) return BadRequest();
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+                ModelState.AddModelError(nameof(model.Name), "نام الزامی است.");
+
+            var existing = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if (existing == null) return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest(new { success = false, errors = ModelStateErrors() });
+            {
+                // keep existing image preview
+                model.ImageUrl = existing.ImageUrl;
+                ViewData["Title"] = "ویرایش دسته‌بندی";
+                return View(model);
+            }
 
-            var existing = await _context.Categories.FirstOrDefaultAsync(c => c.Id == vm.Id);
-            if (existing == null)
-                return NotFound(new { success = false, message = "Category not found." });
+            existing.Name = model.Name;
+            existing.Description = model.Description;
 
-            existing.Name = vm.Name;
-            existing.Description = vm.Description;
-
-            if (vm.ImageFile != null)
+            if (model.ImageFile != null)
             {
                 _imageStorage.DeleteIfExists(existing.ImageUrl);
-                existing.ImageUrl = await _imageStorage.SaveAsync(vm.ImageFile);
+                existing.ImageUrl = await _imageStorage.SaveAsync(model.ImageFile);
             }
 
             await _context.SaveChangesAsync();
-            return Ok(new { success = true });
+            return RedirectToAction(nameof(Index));
         }
 
+        // ✅ DELETE (POST)
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _context.Categories.FindAsync(id);
-            if (existing == null)
-                return NotFound(new { success = false, message = "Category not found." });
+            if (existing == null) return NotFound();
 
             _imageStorage.DeleteIfExists(existing.ImageUrl);
 
             _context.Categories.Remove(existing);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true });
-        }
-
-        private Dictionary<string, string[]> ModelStateErrors()
-        {
-            return ModelState
-                .Where(kvp => kvp.Value?.Errors.Count > 0)
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
-                );
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -349,6 +349,18 @@ namespace avatCo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CouponCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CouponId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("FinalAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("OrderedAt")
                         .HasColumnType("datetime2");
 
@@ -360,6 +372,8 @@ namespace avatCo.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CouponId");
 
                     b.HasIndex("UserId");
 
@@ -594,11 +608,18 @@ namespace avatCo.Migrations
 
             modelBuilder.Entity("avatCo.Models.Order", b =>
                 {
+                    b.HasOne("avatCo.Models.Coupon", "Coupon")
+                        .WithMany()
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("avatCo.Models.ApplicationUser", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Coupon");
 
                     b.Navigation("User");
                 });

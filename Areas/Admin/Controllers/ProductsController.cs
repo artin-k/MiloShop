@@ -11,12 +11,10 @@ namespace avatCo.Areas.Admin.Controllers
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     [AutoValidateAntiforgeryToken]
-
     public class ProductsController : Controller
     {
         private readonly MiloDbContext _context;
         private readonly IProductImageStorage _imageStorage;
-
 
         public ProductsController(MiloDbContext context, IProductImageStorage imageStorage)
         {
@@ -27,44 +25,55 @@ namespace avatCo.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewBag.Categories = await _context.Categories.AsNoTracking().ToListAsync();
+            ViewData["Title"] = "محصولات";
+
             var products = await _context.Products
-                .AsNoTracking()
                 .Include(p => p.Category)
+                .AsNoTracking()
                 .OrderByDescending(p => p.Id)
                 .ToListAsync();
 
             return View(products);
         }
 
-
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            ViewData["Title"] = "افزودن محصول";
+            ViewBag.Categories = await _context.Categories.AsNoTracking().OrderByDescending(c => c.Id).ToListAsync();
+            return View(new ProductUpsertVm());
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] ProductUpsertVm vm)
+        public async Task<IActionResult> Create(ProductUpsertVm vm)
         {
-            // For create we require an image
+            ViewBag.Categories = await _context.Categories.AsNoTracking().OrderByDescending(c => c.Id).ToListAsync();
+
             if (vm.ImageFile == null)
-                ModelState.AddModelError(nameof(vm.ImageFile), "Image is required.");
+                ModelState.AddModelError(nameof(vm.ImageFile), "تصویر محصول الزامی است.");
 
             if (!ModelState.IsValid)
-                return BadRequest(new { success = false, errors = ModelStateErrors() });
+            {
+                ViewData["Title"] = "افزودن محصول";
+                return View(vm);
+            }
 
             var product = new Product
             {
                 Title = vm.Title,
+                ShortDescription = vm.ShortDescription,
                 Description = vm.Description,
+                CategoryId = vm.CategoryId,
                 Price = vm.Price,
+                SalePrice = vm.SalePrice,
+                StockQuantity = vm.StockQuantity,
                 Brand = vm.Brand,
                 Material = vm.Material,
-                CategoryId = vm.CategoryId,
                 IsActive = vm.IsActive,
                 IsSpecialOffer = vm.IsSpecialOffer,
+
+                Slug = Slugify(vm.Title),
+                Sku = $"SKU-{Guid.NewGuid().ToString("N")[..8].ToUpper()}",
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -73,85 +82,108 @@ namespace avatCo.Areas.Admin.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, id = product.Id });
+            return RedirectToAction(nameof(Index));
         }
+
 
         [HttpGet]
-        public IActionResult GetProduct(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var product = _context.Products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
+            var p = await _context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            if (p == null) return NotFound();
 
-            return Json(new
+            ViewData["Title"] = "ویرایش محصول";
+            ViewBag.Categories = await _context.Categories.AsNoTracking()
+                .OrderByDescending(c => c.Id).ToListAsync();
+
+            var vm = new ProductUpsertVm
             {
-                id = product.Id,
-                isActive = product.IsActive,
-                isSpecialOffer = product.IsSpecialOffer,
-                title = product.Title,
-                price = product.Price,
-                description = product.Description,
-                categoryId = product.CategoryId,
-                imageUrl = string.IsNullOrEmpty(product.ImageUrl) ? null : product.ImageUrl
-            });
+                Id = p.Id,
+                Title = p.Title,
+                ShortDescription = p.ShortDescription,
+                Description = p.Description,
+                CategoryId = p.CategoryId,
+                Price = p.Price,
+                SalePrice = p.SalePrice,
+                StockQuantity = p.StockQuantity,
+                Brand = p.Brand,
+                Material = p.Material,
+                IsActive = p.IsActive,
+                IsSpecialOffer = p.IsSpecialOffer,
+                ImageUrl = p.ImageUrl
+            };
+
+            return View(vm);
         }
 
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromForm] ProductUpsertVm vm)
+        public async Task<IActionResult> Edit(int id, ProductUpsertVm vm)
         {
-            if (vm.Id <= 0)
-                return BadRequest(new { success = false, message = "Invalid product id." });
+            if (id != vm.Id) return BadRequest();
+
+            var existing = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (existing == null) return NotFound();
+
+            ViewBag.Categories = await _context.Categories.AsNoTracking()
+                .OrderByDescending(c => c.Id).ToListAsync();
 
             if (!ModelState.IsValid)
-                return BadRequest(new { success = false, errors = ModelStateErrors() });
-
-            var existing = await _context.Products.FirstOrDefaultAsync(p => p.Id == vm.Id);
-            if (existing == null)
-                return NotFound(new { success = false, message = "Product not found." });
+            {
+                vm.ImageUrl = existing.ImageUrl;
+                ViewData["Title"] = "ویرایش محصول";
+                return View(vm);
+            }
 
             existing.Title = vm.Title;
+            existing.ShortDescription = vm.ShortDescription;
             existing.Description = vm.Description;
+            existing.CategoryId = vm.CategoryId;
             existing.Price = vm.Price;
+            existing.SalePrice = vm.SalePrice;
+            existing.StockQuantity = vm.StockQuantity;
             existing.Brand = vm.Brand;
             existing.Material = vm.Material;
-            existing.CategoryId = vm.CategoryId;
             existing.IsActive = vm.IsActive;
             existing.IsSpecialOffer = vm.IsSpecialOffer;
 
             if (vm.ImageFile != null)
             {
                 _imageStorage.DeleteIfExists(existing.ImageUrl);
-                existing.ImageUrl = await _imageStorage.SaveAsync(vm.ImageFile);
+                var url = await _imageStorage.SaveAsync(vm.ImageFile);
+                existing.ImageUrl = url;
+                existing.MainImagePath = url;
             }
 
+            existing.UpdatedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
-            return Ok(new { success = true });
+            return RedirectToAction(nameof(Index));
         }
 
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _context.Products.FindAsync(id);
-            if (existing == null)
-                return NotFound(new { success = false, message = "Not found" });
+            if (existing == null) return NotFound();
 
             _imageStorage.DeleteIfExists(existing.ImageUrl);
 
             _context.Products.Remove(existing);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true });
+            return RedirectToAction(nameof(Index));
         }
 
-        private Dictionary<string, string[]> ModelStateErrors()
+        private static string Slugify(string input)
         {
-            return ModelState
-                .Where(kvp => kvp.Value?.Errors.Count > 0)
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
-                );
+            if (string.IsNullOrWhiteSpace(input)) return Guid.NewGuid().ToString("N");
+            input = input.Trim().ToLowerInvariant();
+            input = System.Text.RegularExpressions.Regex.Replace(input, @"\s+", "-");
+            input = System.Text.RegularExpressions.Regex.Replace(input, @"[^a-z0-9\-]+", "");
+            input = System.Text.RegularExpressions.Regex.Replace(input, @"-+", "-").Trim('-');
+            return string.IsNullOrWhiteSpace(input) ? Guid.NewGuid().ToString("N") : input;
         }
     }
 }

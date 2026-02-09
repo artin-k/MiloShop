@@ -24,6 +24,14 @@
         </div>
     }
 
+    @if (TempData["OrderPlaced"] is string orderMsg)
+    {
+        <div class="toast success">
+            <span class="dot"></span>
+            <span>@orderMsg</span>
+        </div>
+    }
+
     <section class="card profile-card">
         <div class="card-top">
             <div class="title-block">

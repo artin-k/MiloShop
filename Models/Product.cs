@@ -48,5 +48,8 @@ namespace avatCo.Models
 
         // Store url
         public string ImageUrl { get; set; } = string.Empty;
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
     }
 }

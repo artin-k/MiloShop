@@ -1,21 +1,24 @@
-﻿@model List<avatCo.Models.Coupon>
+@model List<avatCo.Models.Coupon>
 @{
-    ViewData["Title"] = "کوپن‌های تخفیف";
+    ViewData["Title"] = "Coupons";
 }
 
 <div class="admin-toolbar">
-    <a class="btn" asp-area="Admin" asp-controller="Coupons" asp-action="Create">+ افزودن کوپن</a>
+    <a class="btn" asp-area="Admin" asp-controller="Coupons" asp-action="Create">+ Add Coupon</a>
 </div>
 
 <div class="admin-card">
     <table class="table">
         <thead>
             <tr>
-                <th>کد</th>
-                <th>مقدار</th>
-                <th>انقضا</th>
-                <th>فعال</th>
-                <th>عملیات</th>
+                <th>Code</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th>Expire At</th>
+                <th>Min Order</th>
+                <th>Usage</th>
+                <th>Active</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -23,15 +26,18 @@
             {
                 <tr>
                     <td>@c.Code</td>
-                    <td>@c.Value</td>
-                    <td>@c.ExpireAt</td>
-                    <td>@(c.IsActive ? "✅" : "❌")</td>
+                    <td>@(c.Type == avatCo.Models.CouponType.Percent ? "Percent" : "Fixed")</td>
+                    <td>@(c.Type == avatCo.Models.CouponType.Percent ? $"{c.Value}%" : c.Value.ToString("N0"))</td>
+                    <td>@(c.ExpireAt.HasValue ? c.ExpireAt.Value.ToString("yyyy-MM-dd") : "-")</td>
+                    <td>@(c.MinOrderAmount.HasValue ? c.MinOrderAmount.Value.ToString("N0") : "-")</td>
+                    <td>@(c.UsageLimit.HasValue ? $"{c.UsedCount}/{c.UsageLimit.Value}" : $"{c.UsedCount}/-")</td>
+                    <td>@(c.IsActive ? "Yes" : "No")</td>
                     <td style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <a class="btn" asp-area="Admin" asp-controller="Coupons" asp-action="Edit" asp-route-id="@c.Id">ویرایش</a>
+                        <a class="btn" asp-area="Admin" asp-controller="Coupons" asp-action="Edit" asp-route-id="@c.Id">Edit</a>
 
                         <form asp-area="Admin" asp-controller="Coupons" asp-action="Delete" asp-route-id="@c.Id" method="post">
                             @Html.AntiForgeryToken()
-                            <button class="btn" type="submit">حذف</button>
+                            <button class="btn" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using avatCo.Validation;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace avatCo.Areas.Admin.ViewModels
 {
@@ -7,33 +7,31 @@ namespace avatCo.Areas.Admin.ViewModels
     {
         public int Id { get; set; }
 
-        [Required, StringLength(160)]
+        [Required, MaxLength(160)]
         public string Title { get; set; } = string.Empty;
 
-        [Required, StringLength(5000)]
+        [MaxLength(200)]
+        public string? ShortDescription { get; set; }
+
         public string Description { get; set; } = string.Empty;
 
-        [Range(0.01, 1_000_000_000)]
+        [Required]
+        public int CategoryId { get; set; }
+
+        [Range(0.01, double.MaxValue)]
         public decimal Price { get; set; }
 
-        [StringLength(80)]
-        public string Brand { get; set; } = string.Empty;
+        public decimal? SalePrice { get; set; }
 
-        [StringLength(80)]
-        public string Material { get; set; } = string.Empty;
+        public int StockQuantity { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Category is required")]
-        public int CategoryId { get; set; }
+        public string? Brand { get; set; }
+        public string? Material { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsSpecialOffer { get; set; }
 
-        // For Create, you may require it; for Edit, optional.
-        // We'll enforce it in controller based on mode.
-        [AllowedImage(MaxBytes = 3 * 1024 * 1024, AllowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" })]
-        public IFormFile? ImageFile { get; set; }
-
-        // Helpful for edit UI (preview)
-        public string? ExistingImageUrl { get; set; }
+        public string? ImageUrl { get; set; } // for edit preview
+        public IFormFile? ImageFile { get; set; } // upload
     }
 }
