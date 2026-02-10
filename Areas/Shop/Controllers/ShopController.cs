@@ -1,15 +1,14 @@
 ﻿using avatCo.Data;
 using avatCo.Models;
 using avatCo.Areas.Shop.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using avatCo.Areas.Admin.ViewModels;
 
 namespace avatCo.Areas.Shop
 {
     [Area("Shop")]
     [Route("Shop")]
-    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         private readonly MiloDbContext _context;
@@ -18,22 +17,58 @@ namespace avatCo.Areas.Shop
             _context = context;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> Index(string? q)
+        [HttpGet("", Name = "ShopIndex")]
+        public async Task<IActionResult> Index(
+            string? q,
+            string? sort,
+            decimal? minPrice,
+            decimal? maxPrice,
+            int? categoryId)
         {
             var query = _context.Products.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(q))
             {
-                query = query.Where(p => p.Title.Contains(q) || p.Description.Contains(q));
+                query = query.Where(p =>
+                    p.Title.Contains(q) ||
+                    p.Description.Contains(q) ||
+                    (p.ShortDescription != null && p.ShortDescription.Contains(q)));
             }
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => (p.SalePrice ?? p.Price) >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => (p.SalePrice ?? p.Price) <= maxPrice.Value);
+            }
+
+            query = sort switch
+            {
+                "new" => query.OrderByDescending(p => p.CreatedAt),
+                "cheap" => query.OrderBy(p => p.SalePrice ?? p.Price),
+                "expensive" => query.OrderByDescending(p => p.SalePrice ?? p.Price),
+                _ => query.OrderByDescending(p => p.Id)
+            };
 
             var model = new ShopViewModel
             {
                 ShopName = "avatCo Shop",
                 ShopDescription = "Welcome to avatCo Shop - Your one-stop destination for quality products!",
                 Products = await query.ToListAsync(),
-                Categories = await _context.Categories.ToListAsync()
+                Categories = await _context.Categories.ToListAsync(),
+                Query = q,
+                Sort = sort,
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                CategoryId = categoryId
             };
 
             return View(model);
@@ -47,7 +82,10 @@ namespace avatCo.Areas.Shop
                 return Json(new List<object>());
 
             var results = await _context.Products
-                .Where(p => p.Title.Contains(term) || p.Description.Contains(term))
+                .Where(p =>
+                    p.Title.Contains(term) ||
+                    p.Description.Contains(term) ||
+                    (p.ShortDescription != null && p.ShortDescription.Contains(term)))
                 .Select(p => new
                 {
                     p.Id,
@@ -75,20 +113,23 @@ namespace avatCo.Areas.Shop
                 id = product.Id,
                 title = product.Title ?? "",
                 description = product.Description ?? "",
-                imageUrl = string.IsNullOrEmpty(product.ImageUrl) ? Url.Content("~/images/placeholder.png") : product.ImageUrl,
-                price = product.Price,
+                imageUrl = string.IsNullOrEmpty(product.ImageUrl) ? Url.Content("~/images/1.webp") : product.ImageUrl,
+                price = product.SalePrice ?? product.Price,
                 isActive = product.IsActive,
                 brand = product.Brand ?? "",
                 material = product.Material ?? "",
-                categoryName = product.Category?.Name ?? "",
-                opinions = product.Reviews?
-                .Select(r => new Review
-                {
-                    UserName = r.UserName,
-                    Rating = r.Rating,
-                    Comment = r.Comment,
-                    CreatedAt = r.CreatedAt
-                }).ToList() ?? new List<Review>()
+                CategoryName = product.Category?.Name ?? "",
+                Opinions = (object?)(product.Reviews?
+                    .Select(r => new
+                    {
+                        r.UserName,
+                        r.Rating,
+                        r.Comment,
+                        r.CreatedAt
+                    })
+                    .ToList()
+                    .Cast<object>()
+                    .ToList()) ?? new List<object>()
             };
 
             return Json(result);

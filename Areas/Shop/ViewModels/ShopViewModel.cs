@@ -9,6 +9,12 @@ namespace avatCo.Areas.Shop.ViewModels
         public string ShopDescription { get; set; } = string.Empty;
         public List<Product> Products { get; set; } = new();// ✅ correct type
         public List<Category> Categories { get; set; } = new(); // ✅ correct type
+        public List<Review> Reviews { get; set; } = new(); // ✅ correct type
+        public string? Query { get; set; }
+        public string? Sort { get; set; }
+        public decimal? MinPrice { get; set; }
+        public decimal? MaxPrice { get; set; }
+        public int? CategoryId { get; set; }
 
 
         //
@@ -21,7 +27,7 @@ namespace avatCo.Areas.Shop.ViewModels
         public string CategoryName { get; set; } = "";
         public bool IsActive { get; set; }
         public decimal Price { get; set; }
-        public List<Review> Opinions { get; set; } = new();
+
 
 
 

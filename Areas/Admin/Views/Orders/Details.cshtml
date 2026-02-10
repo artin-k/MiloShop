@@ -70,7 +70,7 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (var it in Model.Items)
+            @foreach (var it in Model.Items ?? Array.Empty<avatCo.Models.OrderItem>())
             {
                 // This assumes OrderItem has UnitPrice. If not, we fallback to product price.
                 var unit = (decimal?)it.GetType().GetProperty("UnitPrice")?.GetValue(it)

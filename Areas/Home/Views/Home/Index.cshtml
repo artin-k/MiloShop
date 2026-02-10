@@ -6,7 +6,7 @@
 
 <link rel="stylesheet" href="~/css/animate.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/flexboxgrid.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/home-products.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/home-hero.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/promos.css" asp-append-version="true" />
 
@@ -62,7 +62,7 @@
         <div class="row">
             @foreach (var p in Model.NewProducts)
             {
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                     <div class="shoping-card">
                         <div class="img-sec">
                             <img src="@p.ImageUrl" alt="@p.Title">
@@ -74,13 +74,13 @@
                                 }
                                 @for (int i = 1; i <= 5; i++)
                                 {
-                                    if (i <= avg)
+                                    @if (i <= avg)
                                     {
                                         <i class="fa-solid fa-star"></i>
                                     }
                                     else
                                     {
-                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-regular fa-star"></i>
                                     }
                                 }
                             </div>
@@ -234,122 +234,6 @@
         </div>
     </section>
 
-
-@*     <section class="dragble-list" dir="rtl">
-        <div class="title">
-            <span>هندزفری ها</span>
-        </div>
-
-        <div class="custom-slider-wrapper">
-            <div class="custom-slider-track" id="productTrack">
-
-                <!-- Item 1 -->
-                <div class="slide-item">
-                    <div class="shoping-card">
-                        <div class="img-sec">
-                            <img src="./images/5.webp" alt="Product">
-                            <div class="stars">⭐⭐⭐⭐</div>
-                        </div>
-                        <div class="title">ایرپاد مدل اول</div>
-                        <div class="buttons">
-                            <div class="right"><span class="price">700,000 تومان</span></div>
-                            <div class="left">
-                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
-                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 2 -->
-                <div class="slide-item">
-                    <div class="shoping-card">
-                        <div class="img-sec">
-                            <img src="./images/12.jpg" alt="Product">
-                            <div class="stars">⭐⭐⭐⭐</div>
-                        </div>
-                        <div class="title">ایرپاد مدل دوم</div>
-                        <div class="buttons">
-                            <div class="right"><span class="price">850,000 تومان</span></div>
-                            <div class="left">
-                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
-                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="slide-item">
-                    <div class="shoping-card">
-                        <div class="img-sec">
-                            <div class="stars">⭐⭐⭐⭐</div>
-                        </div>
-                        <div class="title">ایرپاد مدل سوم</div>
-                        <div class="buttons">
-                            <div class="right"><span class="price">900,000 تومان</span></div>
-                            <div class="left">
-                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
-                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 4 -->
-                <div class="slide-item">
-                    <div class="shoping-card">
-                        <div class="img-sec">
-                            <div class="stars">⭐⭐⭐⭐</div>
-                        </div>
-                        <div class="title">محصول چهارم</div>
-                        <div class="buttons">
-                            <div class="right"><span class="price">500,000 تومان</span></div>
-                            <div class="left">
-                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
-                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 5 -->
-                <div class="slide-item">
-                    <div class="shoping-card">
-                        <div class="img-sec">
-                            <div class="stars">⭐⭐⭐⭐</div>
-                        </div>
-                        <div class="title">محصول پنجم</div>
-                        <div class="buttons">
-                            <div class="right"><span class="price">1,200,000 تومان</span></div>
-                            <div class="left">
-                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
-                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 6 -->
-                <div class="slide-item">
-                    <div class="shoping-card">
-                        <div class="img-sec">
-                            <div class="stars">⭐⭐⭐⭐</div>
-                        </div>
-                        <div class="title">محصول ششم</div>
-                        <div class="buttons">
-                            <div class="right"><span class="price">600,000 تومان</span></div>
-                            <div class="left">
-                                <a href="#" class="extend-btn"><span class="b-text">علاقه</span><span class="b-icon">❤️</span></a>
-                                <a href="#" class="extend-btn"><span class="b-text">خرید</span><span class="b-icon">🛒</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section> *@
 </main>
 
 @section Scripts {
