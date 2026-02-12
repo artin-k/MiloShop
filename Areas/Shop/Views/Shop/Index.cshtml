@@ -450,3 +450,60 @@
         });
     });
 </script>
+
+
+@* <section class="product-sec-new">
+    <div class="row">
+        @foreach (var p in Model.NewProducts)
+        {
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="shoping-card">
+                    <div class="img-sec">
+                        <img src="@p.ImageUrl" alt="@p.Title">
+                        <div class="stars">
+                            @{
+                                var avg = p.Reviews != null && p.Reviews.Any()
+                                ? (int)Math.Round(p.Reviews.Average(r => r.Rating))
+                                : 0;
+                            }
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                @if (i <= avg)
+                                {
+                                    <i class="fa-solid fa-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa-regular fa-star"></i>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="title">@p.Title</div>
+
+                    <div class="buttons">
+                        <div class="right">
+                            <span class="price">@p.Price.ToString("N0") تومان</span>
+                        </div>
+                        <div class="left">
+                            <div class="extend-btn">
+                                <a class="b-text" asp-controller="Wishlist" asp-action="Add" asp-route-id="@p.Id">علاقه</a>
+                                <a class="b-icon" asp-controller="Wishlist" asp-action="Add" asp-route-id="@p.Id">
+                                    <i class="fas fa-heart"></i>
+                                </a>
+                            </div>
+
+                            <div class="extend-btn">
+                                <a class="b-text" asp-controller="Cart" asp-action="Add" asp-route-id="@p.Id">خرید</a>
+                                <a class="b-icon" asp-controller="Cart" asp-action="Add" asp-route-id="@p.Id">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section> *@

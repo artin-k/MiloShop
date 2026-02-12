@@ -53,6 +53,7 @@ body {
     flex: 1 0 auto; /* key for flex layouts */
     display: block;
     overflow: visible; /* IMPORTANT: don't hide scroll */
+    background: #f5f5f7;
 }
 
 .site-wrapper,

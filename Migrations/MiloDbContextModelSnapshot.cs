@@ -341,6 +341,59 @@ namespace avatCo.Migrations
                     b.ToTable("Coupons");
                 });
 
+            modelBuilder.Entity("avatCo.Models.Offer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BannerImageUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int?>("CouponId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("OfferPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductPercentOff")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Offers");
+                });
+
             modelBuilder.Entity("avatCo.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -519,6 +572,34 @@ namespace avatCo.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("avatCo.Models.SiteSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("SiteSettings");
+                });
+
             modelBuilder.Entity("avatCo.Models.TestEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -604,6 +685,21 @@ namespace avatCo.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("avatCo.Models.Offer", b =>
+                {
+                    b.HasOne("avatCo.Models.Coupon", "Coupon")
+                        .WithMany()
+                        .HasForeignKey("CouponId");
+
+                    b.HasOne("avatCo.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Coupon");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("avatCo.Models.Order", b =>

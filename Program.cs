@@ -47,6 +47,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 
 
 // Add MVC (controllers + views)

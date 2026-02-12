@@ -2,6 +2,7 @@
 using avatCo.Data;
 using avatCo.Models;
 using avatCo.Models.ViewModels;
+using avatCo.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -12,15 +13,42 @@ namespace avatCo.Areas.Home.Controllers
     public class HomeController : Controller
     {
         private readonly MiloDbContext _context;
-
-        public HomeController(MiloDbContext context)
+        private readonly ISiteSettingsService _settings;
+        public HomeController(MiloDbContext context, ISiteSettingsService settings)
         {
             _context = context;
+            _settings = settings;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
+            var now = DateTime.Now;
+
+            var coupon = await _context.Coupons
+                .OrderByDescending(c => c.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            var offer = await _context.Offers
+                .AsNoTracking()
+                .Include(o => o.Product)
+                .Include(o => o.Coupon)
+                .Where(o => o.IsActive)
+                .Where(o => o.StartsAt <= now)
+                .Where(o => o.EndsAt == null || o.EndsAt > now)
+                .OrderByDescending(o => o.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            var couponsCount = await _context.Coupons.CountAsync();
+            var activeCount = await _context.Coupons.CountAsync(c => c.IsActive);
+
+            Console.WriteLine($"Coupons total: {couponsCount}, active: {activeCount}");
+            Console.WriteLine($"Coupon picked: {(coupon == null ? "NULL" : coupon.Code)}");
+
+            var dict = await _settings.GetManyAsync(
+                "SupportEmail", "MainPhone", "InstagramUrl", "WhatsappUrl", "TwitterUrl"
+            );
+
             var vm = new HomePageViewModel
             {
                 HeroTitle = "Welcome to Your Shop",
@@ -73,8 +101,19 @@ namespace avatCo.Areas.Home.Controllers
                     .AsNoTracking()
                     .Where(p => p.IsActive) // if you have
                     .Take(8)
-                    .ToListAsync()
+                    .ToListAsync(),
+
+                ActiveOffer = offer,
+                ActiveCoupon = coupon,
+
+                SupportEmail = dict["SupportEmail"],
+                MainPhone = dict["MainPhone"],
+                InstagramUrl = dict["InstagramUrl"],
+                WhatsappUrl = dict["WhatsappUrl"],
+                TwitterUrl = dict["TwitterUrl"]
+
             };
+
 
             return View(vm);
         }

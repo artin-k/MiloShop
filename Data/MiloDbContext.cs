@@ -11,9 +11,12 @@ namespace avatCo.Data
         : base(options) { }
 
         public DbSet<TestEntity> TestEntities { get; set; }
+        public DbSet<SiteSetting> SiteSettings { get; set; } = default!;
+
         public DbSet<Product> Products { get; set; }
         // User & order flow
         public DbSet<Coupon> Coupons { get; set; } = null!;
+        public DbSet<Offer> Offers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
@@ -23,6 +26,10 @@ namespace avatCo.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<SiteSetting>()
+                .HasIndex(x => x.Key)
+                .IsUnique();
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)

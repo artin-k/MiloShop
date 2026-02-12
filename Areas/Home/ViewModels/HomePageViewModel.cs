@@ -16,6 +16,14 @@ namespace avatCo.Models.ViewModels
         public List<Category> Categories { get; set; } = [];
         public List<HeroSlideVm> HeroSlides { get; set; } = new();
 
+        public Coupon? ActiveCoupon { get; set; }
+        public Offer? ActiveOffer { get; set; }
+
+        public string? SupportEmail { get; set; }
+        public string? MainPhone { get; set; }
+        public string? InstagramUrl { get; set; }
+        public string? WhatsappUrl { get; set; }
+        public string? TwitterUrl { get; set; }
 
     }
 }

@@ -1,0 +1,300 @@
+/* ✅ FORCE GRID FOR PRODUCT SECTION (works even without bootstrap) */
+.product-sec-new .row{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin: 0;              /* kill grid libs margins */
+}
+
+.product-sec-new [class*="col-"]{
+  width: auto !important; /* ignore col-lg-3 widths */
+  padding: 0 !important;  /* remove gutter issues */
+  margin: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 1200px){
+  .product-sec-new .row{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px){
+  .product-sec-new .row{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px){
+  .product-sec-new .row{ grid-template-columns: 1fr; }
+}
+
+/* PRODUCTS */
+.product-sec-new .row{
+  row-gap: 18px;
+}
+
+.shoping-card{
+  background: rgba(15,22,36,.85);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  overflow:hidden;
+  box-shadow: 0 10px 24px rgba(0,0,0,.22);
+  transition: transform .15s ease, border-color .15s ease;
+}
+.shoping-card:hover{
+  transform: translateY(-4px);
+  border-color: rgba(109,94,252,.45);
+}
+
+.shoping-card .img-sec{
+  position: relative;
+  background: rgba(255,255,255,.04);
+  padding: 10px;
+}
+
+.shoping-card .img-sec img{
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  border-radius: 14px;
+  transition: transform .2s ease;
+}
+.shoping-card:hover .img-sec img{ transform: scale(1.03); }
+
+.shoping-card .stars{
+  position:absolute;
+  top: 14px;
+  left: 14px;
+  display:flex;
+  gap: 3px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15,22,36,.65);
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+.shoping-card .stars i{
+  font-size: 12px;
+  color: #fbbf24;
+}
+
+/* title + price */
+.shoping-card .title{
+  padding: 14px 14px 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: rgba(255,255,255,.92);
+  height: 44px;
+  overflow:hidden;
+}
+
+.shoping-card .buttons{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 10px 14px 14px;
+  gap: 10px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.shoping-card .price{
+  font-weight: 800;
+  color: rgba(255,255,255,.95);
+}
+
+/* action buttons */
+.shoping-card .left{
+  display:flex;
+  gap: 10px;
+}
+
+.extend-btn{
+  display:flex;
+  align-items:center;
+  border-radius: 14px;
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  transition: background .15s ease, border-color .15s ease;
+}
+.extend-btn:hover{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(109,94,252,.45);
+}
+
+.extend-btn .b-text{
+  padding: 9px 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,.9);
+}
+.extend-btn .b-icon{
+  width: 38px;
+  height: 34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-right: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.9);
+}
+
+@media (max-width: 576px){
+  .shoping-card .img-sec img{ height: 190px; }
+  .extend-btn .b-text{ display:none; }
+}
+
+/*categories*/
+.cat-rail {
+    position: relative;
+    padding: 14px 0 6px;
+}
+
+/* The scrolling row */
+.cat-rail__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 108px;
+    gap: 22px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 52px; /* room for nav buttons + fades */
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 52px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+    .cat-rail__track::-webkit-scrollbar {
+        display: none;
+    }
+
+/* Tiles */
+.cat-tile {
+    scroll-snap-align: start;
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cat-tile__icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+    .cat-tile__icon img {
+        width: 72%;
+        height: 72%;
+        object-fit: contain;
+    }
+
+.cat-tile__label {
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    opacity: .9;
+    text-align: center;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cat-tile:hover .cat-tile__icon {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0,0,0,.12);
+}
+
+/* Nav buttons */
+.cat-rail__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-52%);
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 3;
+}
+
+    .cat-rail__nav.is-left {
+        left: 8px;
+    }
+
+    .cat-rail__nav.is-right {
+        right: 8px;
+    }
+
+    .cat-rail__nav:disabled {
+        opacity: .35;
+        cursor: default;
+    }
+
+/* Edge fades (like Apple) */
+.cat-rail__fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 58px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+    .cat-rail__fade.is-left {
+        left: 0;
+        background: linear-gradient(to right, rgba(245,245,247,1), rgba(245,245,247,0));
+    }
+
+    .cat-rail__fade.is-right {
+        right: 0;
+        background: linear-gradient(to left, rgba(245,245,247,1), rgba(245,245,247,0));
+    }
+
+
+/* Responsive tuning */
+@media (max-width: 720px) {
+    .cat-rail__track {
+        grid-auto-columns: 92px;
+        gap: 16px;
+        padding: 10px 16px;
+        scroll-padding-inline: 16px;
+    }
+
+    .cat-rail__nav, .cat-rail__fade {
+        display: none;
+    }
+    /* mobile: swipe */
+}
+
+/* tile container */
+.cat-tile__icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    overflow: hidden; /* IMPORTANT: clips image to rounded corners */
+    background: #fff;
+    display: block; /* simpler than grid here */
+}
+
+    /* make the image fill */
+    .cat-tile__icon img {
+        width: 100%;
+        height: 100%;
+        display: block; /* removes baseline gap */
+        object-fit: cover; /* fills, crops if needed (Apple-like) */
+        object-position: center; /* keeps crop centered */
+    }
+.cat-tile:hover .cat-tile__icon img {
+    transform: scale(1.04);
+    transition: transform .18s ease;
+}
