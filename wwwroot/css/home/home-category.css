@@ -186,10 +186,10 @@
     transition: transform .18s ease, box-shadow .18s ease;
 }
 
-    .cat-tile__icon img {
-        width: 72%;
-        height: 72%;
-        object-fit: contain;
+    .cat-tile__icon i {
+        font-size: 30px;
+        color: #334155;
+        transition: transform .18s ease, color .18s ease;
     }
 
 .cat-tile__label {
@@ -286,15 +286,16 @@
     display: block; /* simpler than grid here */
 }
 
-    /* make the image fill */
-    .cat-tile__icon img {
+    .cat-tile__icon i {
         width: 100%;
         height: 100%;
-        display: block; /* removes baseline gap */
-        object-fit: cover; /* fills, crops if needed (Apple-like) */
-        object-position: center; /* keeps crop centered */
+        display: grid;
+        place-items: center;
+        font-size: 30px;
+        color: #334155;
+        transition: transform .18s ease, color .18s ease;
     }
-.cat-tile:hover .cat-tile__icon img {
+.cat-tile:hover .cat-tile__icon i {
     transform: scale(1.04);
-    transition: transform .18s ease;
+    color: #1f2937;
 }

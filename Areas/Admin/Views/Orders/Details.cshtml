@@ -35,17 +35,22 @@
             </div>
             <div class="d-flex justify-content-between">
                 <span class="text-muted">مبلغ کل</span>
-                <span>@Model.TotalAmount</span>
+                <span>@Model.TotalAmount.ToString("N0") تومان</span>
             </div>
 
             <div class="d-flex justify-content-between">
                 <span class="text-muted">تخفیف</span>
-                <span>@(Model.DiscountAmount ?? 0m)</span>
+                <span>@(Model.DiscountAmount ?? 0m).ToString("N0") تومان</span>
             </div>
 
             <div class="d-flex justify-content-between mt-2">
                 <span class="fw-bold">مبلغ نهایی</span>
-                <span class="fw-bold">@final</span>
+                <span class="fw-bold">@final.ToString("N0") تومان</span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+                <span class="text-muted">وضعیت</span>
+                <span class="badge text-bg-info">@Model.Status</span>
             </div>
 
             @if (!string.IsNullOrWhiteSpace(Model.CouponCode))
@@ -53,6 +58,23 @@
                 <div class="mt-2">
                     <span class="badge text-bg-primary">کوپن: @Model.CouponCode</span>
                 </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card bg-transparent border border-opacity-10 p-3">
+            <div class="fw-bold mb-2">اطلاعات ارسال</div>
+            <div class="mb-1"><span class="text-muted">تحویل گیرنده:</span> @Model.RecipientFullName</div>
+            <div class="mb-1"><span class="text-muted">تماس:</span> @Model.RecipientPhoneNumber</div>
+            @if (!string.IsNullOrWhiteSpace(Model.PostalCode))
+            {
+                <div class="mb-1"><span class="text-muted">کد پستی:</span> @Model.PostalCode</div>
+            }
+            <div class="mb-1"><span class="text-muted">آدرس:</span> @Model.ShippingAddress</div>
+            @if (!string.IsNullOrWhiteSpace(Model.CustomerNote))
+            {
+                <div class="mb-1"><span class="text-muted">توضیحات:</span> @Model.CustomerNote</div>
             }
         </div>
     </div>
@@ -72,10 +94,7 @@
             <tbody>
             @foreach (var it in Model.Items ?? Array.Empty<avatCo.Models.OrderItem>())
             {
-                // This assumes OrderItem has UnitPrice. If not, we fallback to product price.
-                var unit = (decimal?)it.GetType().GetProperty("UnitPrice")?.GetValue(it)
-                           ?? (it.Product?.SalePrice ?? it.Product?.Price ?? 0m);
-
+                var unit = it.UnitPrice;
                 var lineTotal = unit * it.Quantity;
 
                 <tr>
@@ -84,8 +103,8 @@
                         <div class="text-muted small">@it.Product?.Sku</div>
                     </td>
                     <td>@it.Quantity</td>
-                    <td>@unit</td>
-                    <td>@lineTotal</td>
+                    <td>@unit.ToString("N0") تومان</td>
+                    <td>@lineTotal.ToString("N0") تومان</td>
                 </tr>
             }
             </tbody>

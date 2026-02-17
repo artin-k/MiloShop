@@ -485,3 +485,21 @@ body.login-page .content-wrapper {
         padding: 30px 20px 34px;
     }
 }
+
+.remember-me {
+    margin: 2px 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #15363b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0b3f46;
+}

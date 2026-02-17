@@ -46,7 +46,7 @@ namespace avatCo.Controllers
         }
 
         [HttpGet("Add/{id}")]
-        public async Task<IActionResult> Add(int id)
+        public async Task<IActionResult> Add(int id, string? returnUrl = null)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Redirect("/Auth/Login");
@@ -72,6 +72,12 @@ namespace avatCo.Controllers
             }
 
             await _db.SaveChangesAsync();
+
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl!);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -93,42 +99,85 @@ namespace avatCo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost("Checkout")]
-        [ValidateAntiForgeryToken]
+        [HttpGet("Checkout")]
         public async Task<IActionResult> Checkout(string? couponCode)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Redirect("/Auth/Login");
+
+            var model = await BuildCheckoutViewModelAsync(user, couponCode);
+            if (model.Items.Count == 0)
+            {
+                TempData["OrderError"] = "سبد خرید شما خالی است.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
+        }
+
+        [HttpPost("Checkout")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Checkout(CheckoutViewModel input)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Redirect("/Auth/Login");
+
+            var model = await BuildCheckoutViewModelAsync(user, input.CouponCode);
+            ApplyCheckoutInput(model, input);
+
+            if (model.Items.Count == 0)
+            {
+                TempData["OrderError"] = "سبد خرید شما خالی است.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CouponCode) && !model.CouponOk)
+            {
+                ModelState.AddModelError(nameof(CheckoutViewModel.CouponCode), model.CouponMessage ?? "کد تخفیف نامعتبر است.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
             var cartItems = await _db.CartItems
                 .Where(c => c.UserId == user.Id)
                 .Include(c => c.Product)
                 .ToListAsync();
 
-            if (cartItems.Count == 0)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
-            var subtotal = cartItems.Sum(ci => (ci.Product?.Price ?? 0) * ci.Quantity);
+            var subtotal = cartItems.Sum(ci => GetEffectivePrice(ci.Product) * ci.Quantity);
             Coupon? coupon = null;
             decimal discount = 0;
             decimal finalTotal = subtotal;
 
-            if (!string.IsNullOrWhiteSpace(couponCode))
+            if (!string.IsNullOrWhiteSpace(model.CouponCode))
             {
-                var check = await _couponService.ValidateAndCalculateAsync(couponCode, subtotal);
+                var check = await _couponService.ValidateAndCalculateAsync(model.CouponCode, subtotal);
                 if (!check.Ok)
                 {
-                    var failedModel = await BuildCartViewModelAsync(user.Id, couponCode);
-                    failedModel.CouponOk = false;
-                    failedModel.CouponMessage = check.Message;
-                    return View("Index", failedModel);
+                    model.CouponOk = false;
+                    model.CouponMessage = check.Message;
+                    ModelState.AddModelError(nameof(CheckoutViewModel.CouponCode), check.Message ?? "کد تخفیف نامعتبر است.");
+                    return View(model);
                 }
 
                 coupon = check.Coupon;
                 discount = check.DiscountAmount;
                 finalTotal = check.FinalAmount;
+            }
+
+            user.FullName = model.FullName.Trim();
+            user.PhoneNumber = model.PhoneNumber.Trim();
+            user.Address = model.Address.Trim();
+            var userUpdate = await _userManager.UpdateAsync(user);
+            if (!userUpdate.Succeeded)
+            {
+                foreach (var error in userUpdate.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(model);
             }
 
             await using var tx = await _db.Database.BeginTransactionAsync();
@@ -142,11 +191,17 @@ namespace avatCo.Controllers
                 CouponCode = coupon?.Code,
                 DiscountAmount = discount,
                 FinalAmount = finalTotal,
+                RecipientFullName = model.FullName.Trim(),
+                RecipientPhoneNumber = model.PhoneNumber.Trim(),
+                ShippingAddress = model.Address.Trim(),
+                PostalCode = string.IsNullOrWhiteSpace(model.PostalCode) ? null : model.PostalCode.Trim(),
+                CustomerNote = string.IsNullOrWhiteSpace(model.Note) ? null : model.Note.Trim(),
+                Status = "در انتظار بررسی",
                 Items = cartItems.Select(ci => new OrderItem
                 {
                     ProductId = ci.ProductId,
                     Quantity = ci.Quantity,
-                    UnitPrice = ci.Product?.Price ?? 0
+                    UnitPrice = GetEffectivePrice(ci.Product)
                 }).ToList()
             };
 
@@ -159,10 +214,10 @@ namespace avatCo.Controllers
                 if (!consume.ok)
                 {
                     await tx.RollbackAsync();
-                    var failedModel = await BuildCartViewModelAsync(user.Id, coupon.Code);
-                    failedModel.CouponOk = false;
-                    failedModel.CouponMessage = consume.message;
-                    return View("Index", failedModel);
+                    model.CouponOk = false;
+                    model.CouponMessage = consume.message;
+                    ModelState.AddModelError(nameof(CheckoutViewModel.CouponCode), consume.message ?? "خطا در اعمال کد تخفیف.");
+                    return View(model);
                 }
             }
 
@@ -171,7 +226,7 @@ namespace avatCo.Controllers
 
             await tx.CommitAsync();
 
-            TempData["OrderPlaced"] = "Order placed successfully.";
+            TempData["OrderPlaced"] = "سفارش شما با موفقیت ثبت شد.";
             return Redirect("/Profile");
         }
 
@@ -188,10 +243,10 @@ namespace avatCo.Controllers
                 {
                     Id = ci.Id,
                     ProductId = ci.ProductId,
-                    ProductName = ci.Product?.Title ?? "(Deleted product)",
+                    ProductName = ci.Product?.Title ?? "(محصول حذف شده)",
                     ProductImageUrl = ci.Product?.ImageUrl,
                     Quantity = ci.Quantity,
-                    UnitPrice = ci.Product?.Price ?? 0
+                    UnitPrice = GetEffectivePrice(ci.Product)
                 }).ToList()
             };
 
@@ -213,6 +268,67 @@ namespace avatCo.Controllers
             }
 
             return model;
+        }
+
+        private async Task<CheckoutViewModel> BuildCheckoutViewModelAsync(ApplicationUser user, string? code)
+        {
+            var cartItems = await _db.CartItems
+                .Where(c => c.UserId == user.Id)
+                .Include(c => c.Product)
+                .ToListAsync();
+
+            var model = new CheckoutViewModel
+            {
+                Items = cartItems.Select(ci => new CartItemViewModel
+                {
+                    Id = ci.Id,
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product?.Title ?? "(محصول حذف شده)",
+                    ProductImageUrl = ci.Product?.ImageUrl,
+                    Quantity = ci.Quantity,
+                    UnitPrice = GetEffectivePrice(ci.Product)
+                }).ToList(),
+                FullName = user.FullName ?? user.UserName ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                Address = user.Address ?? string.Empty,
+                CouponCode = string.IsNullOrWhiteSpace(code) ? null : code.Trim().ToUpper()
+            };
+
+            model.Subtotal = model.Items.Sum(i => i.UnitPrice * i.Quantity);
+            model.FinalTotal = model.Subtotal;
+
+            if (!string.IsNullOrWhiteSpace(model.CouponCode))
+            {
+                var result = await _couponService.ValidateAndCalculateAsync(model.CouponCode, model.Subtotal);
+                model.CouponOk = result.Ok;
+                model.CouponMessage = result.Message;
+                model.CouponCode = result.Coupon?.Code ?? model.CouponCode;
+
+                if (result.Ok)
+                {
+                    model.DiscountAmount = result.DiscountAmount;
+                    model.FinalTotal = result.FinalAmount;
+                }
+            }
+
+            return model;
+        }
+
+        private static void ApplyCheckoutInput(CheckoutViewModel model, CheckoutViewModel input)
+        {
+            model.FullName = input.FullName?.Trim() ?? string.Empty;
+            model.PhoneNumber = input.PhoneNumber?.Trim() ?? string.Empty;
+            model.Address = input.Address?.Trim() ?? string.Empty;
+            model.PostalCode = input.PostalCode?.Trim();
+            model.Note = input.Note?.Trim();
+            model.ConfirmPurchase = input.ConfirmPurchase;
+            model.CouponCode = input.CouponCode?.Trim().ToUpper();
+        }
+
+        private static decimal GetEffectivePrice(Product? product)
+        {
+            if (product == null) return 0;
+            return product.SalePrice ?? product.Price;
         }
     }
 }

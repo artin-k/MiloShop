@@ -146,7 +146,7 @@ namespace avatCo.Services
             var signIn = await _signInManager.PasswordSignInAsync(
                 user.UserName!, // ✅ همیشه با UserName ساین-این می‌کنیم
                 password,
-                isPersistent: false,
+                isPersistent: model.RememberMe,
                 lockoutOnFailure: true);
 
             if (!signIn.Succeeded)

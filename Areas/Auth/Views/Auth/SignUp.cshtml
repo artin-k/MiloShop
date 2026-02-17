@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "ثبت نام";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnUrl = ViewData["ReturnUrl"] as string;
 }
 <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
 <div class="register-container">
@@ -10,6 +11,7 @@
         <form asp-area="Auth" asp-controller="Auth" asp-action="SignUp" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
             <div class="form-group">
                 <label asp-for="UserName" class="form-label">نام کاربری</label>
                 <input name="UserName" asp-for="UserName" class="form-control" placeholder="نام کاربری" required />

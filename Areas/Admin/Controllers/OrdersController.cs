@@ -1,6 +1,4 @@
 using avatCo.Data;
-using avatCo.Models;
-using avatCo.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

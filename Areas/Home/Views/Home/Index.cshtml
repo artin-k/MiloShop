@@ -2,6 +2,20 @@
 @{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string GetCategoryIconClass(string? name)
+    {
+        var n = (name ?? string.Empty).ToLowerInvariant();
+
+        if (n.Contains("اسباب") || n.Contains("toy")) return "fa-solid fa-puzzle-piece";
+        if (n.Contains("بازی") || n.Contains("game")) return "fa-solid fa-gamepad";
+        if (n.Contains("نوشت") || n.Contains("تحریر") || n.Contains("station")) return "fa-solid fa-pen-ruler";
+        if (n.Contains("کتاب") || n.Contains("book")) return "fa-solid fa-book";
+        if (n.Contains("هنر") || n.Contains("art")) return "fa-solid fa-palette";
+        if (n.Contains("نوزاد") || n.Contains("baby")) return "fa-solid fa-baby";
+
+        return "fa-solid fa-shapes";
+    }
 }
 
 @* <link rel="stylesheet" href="~/css/animate.css" asp-append-version="true" /> *@
@@ -75,8 +89,7 @@
                    asp-route-sort="@c.Description">
 
                     <span class="cat-tile__icon">
-                        @* Option A: if you have an image url *@
-                        <img src="@(c.ImageUrl ?? "/img/categories/default.png")" alt="" loading="lazy" />
+                        <i class="@GetCategoryIconClass(c.Name)" aria-hidden="true"></i>
                     </span>
 
                     <span class="cat-tile__label">@c.Name</span>
@@ -308,23 +321,22 @@
             <!-- Card -->
             <a class="feature-card" href="#">
                 <div class="feature-card__icon">
-                    <!-- use svg or img -->
-                    <img src="~/images/icons/" alt="" />
+                    <i class="fa-solid fa-fire" aria-hidden="true"></i>
                 </div>
 
                 <div class="feature-card__text">
                     <div class="feature-card__headline">
-                        دستگاه قدیمی‌تو بده، اعتبار بگیر.
+                        ترند ترین محصولات روز دنیارو اینجا بخر
                     </div>
                     <div class="feature-card__desc">
-                        و باهاش خرید جدیدت رو ارزون‌تر کن.
+                        با بهترین قیمت و تخفیف‌های ویژه.
                     </div>
                 </div>
             </a>
 
             <a class="feature-card" href="#">
                 <div class="feature-card__icon">
-                    <img src="@Url.Content("~/images/home/payMoney.jpg")" alt="pay money" />
+                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
                 </div>
                 <div class="feature-card__text">
                     <div class="feature-card__headline">
@@ -338,7 +350,7 @@
 
             <a class="feature-card" href="#">
                 <div class="feature-card__icon">
-                    <img src="~/images/icons/gift.svg" alt="" />
+                    <i class="fa-solid fa-gift" aria-hidden="true"></i>
                 </div>
                 <div class="feature-card__text">
                     <div class="feature-card__headline">
@@ -352,7 +364,7 @@
 
             <a class="feature-card" href="#">
                 <div class="feature-card__icon">
-                    <img src="~/images/icons/delivery.svg" alt="" />
+                    <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
                 </div>
                 <div class="feature-card__text">
                     <div class="feature-card__headline">
@@ -375,52 +387,46 @@
                     <p class="social-sub">در شبکه‌های اجتماعی زیر همراه‌مون باشید و از تخفیف‌ها و محصولات جدید باخبر شوید.</p>
                 </div>
 
-                <div class="social-icons wa">
-                    <div class="social-icons">
-                        <a href="@(Model.WhatsappUrl ?? "https://www.whatsapp.com")" target="_blank" class="social-icon wa">
-                            <span class="icon-badge">
-                                <img src="~/icons/home/whatsapp.svg" alt="WhatsApp" />
-                            </span>
-                            <span class="label">WhatsApp</span>
-                        </a>
+                <div class="social-icons">
+                    <a href="@(Model.WhatsappUrl ?? "https://www.whatsapp.com")" target="_blank" class="social-icon wa">
+                        <span class="icon-badge">
+                            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                        </span>
+                        <span class="label">WhatsApp</span>
+                    </a>
 
-                        <a href="@(Model.InstagramUrl ?? "https://www.instagram.com")" target="_blank" class="social-icon ig">
-                            <span class="icon-badge">
-                                <img src="~/icons/home/insta.svg" alt="Instagram" />
-                            </span>
-                            <span class="label">Instagram</span>
-                        </a>
+                    <a href="@(Model.InstagramUrl ?? "https://www.instagram.com")" target="_blank" class="social-icon ig">
+                        <span class="icon-badge">
+                            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                        </span>
+                        <span class="label">Instagram</span>
+                    </a>
 
-                        <a href="@(Model.TwitterUrl ?? "https://www.twitter.com")" target="_blank" class="social-icon x">
-                            <span class="icon-badge">
-                                <img src="~/icons/home/x.svg" alt="X" />
-                            </span>
-                            <span class="label">X</span>
-                        </a>
-                    </div>
-
+                    <a href="@(Model.TwitterUrl ?? "https://www.twitter.com")" target="_blank" class="social-icon x">
+                        <span class="icon-badge">
+                            <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+                        </span>
+                        <span class="label">X</span>
+                    </a>
                 </div>
 
                 <div class="support-info">
                     <p class="support-text">پشتیبانی ۲۴/۷ — پاسخ‌گویی سریع</p>
 
                     <div class="support-links">
-                        <div class="support-links">
-                            <a href="mailto:@(Model.SupportEmail ?? "support@yourdomain.com")" class="support-link">
-                                <span class="icon-badge">
-                                    <img src="~/icons/home/email.svg" alt="Email" />
-                                </span>
-                                <span class="label">@(Model.SupportEmail ?? "support@yourdomain.com")</span>
-                            </a>
+                        <a href="mailto:@(Model.SupportEmail ?? "support@yourdomain.com")" class="support-link">
+                            <span class="icon-badge">
+                                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                            </span>
+                            <span class="label">@(Model.SupportEmail ?? "support@yourdomain.com")</span>
+                        </a>
 
-                            <a href="tel:@(Model.MainPhone ?? "+1234567890")" class="support-link">
-                                <span class="icon-badge">
-                                    <img src="~/icons/home/phone.svg" alt="Phone" />
-                                </span>
-                                <span class="label">@(Model.MainPhone ?? "+123 456 7890")</span>
-                            </a>
-                        </div>
-
+                        <a href="tel:@(Model.MainPhone ?? "+1234567890")" class="support-link">
+                            <span class="icon-badge">
+                                <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                            </span>
+                            <span class="label">@(Model.MainPhone ?? "+123 456 7890")</span>
+                        </a>
                     </div>
                 </div>
             </div>

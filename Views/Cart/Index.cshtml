@@ -1,7 +1,8 @@
 @model avatCo.Models.ViewModels.CartViewModel
 @{
-    ViewData["Title"] = "Your Cart";
+    ViewData["Title"] = "سبد خرید";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.BodyClass = "solid-header-page";
 }
 
 <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
@@ -9,10 +10,18 @@
 <div class="profile-page">
     <div class="page-head">
         <div>
-            <h1 class="page-title">Your Cart</h1>
-            <p class="page-subtitle">Review your items and apply a coupon.</p>
+            <h1 class="page-title">سبد خرید</h1>
+            <p class="page-subtitle">اقلام سفارش خود را بررسی کنید و در صورت نیاز کد تخفیف اعمال کنید.</p>
         </div>
     </div>
+
+    @if (TempData["OrderError"] is string orderError)
+    {
+        <div class="toast">
+            <span class="dot"></span>
+            <span>@orderError</span>
+        </div>
+    }
 
     @if (!string.IsNullOrWhiteSpace(Model.CouponMessage))
     {
@@ -24,29 +33,29 @@
 
     <section class="card cart-card">
         <div class="card-head">
-            <h2 class="section-title">Cart Items</h2>
-            <div class="muted">Items currently in your cart</div>
+            <h2 class="section-title">اقلام سبد</h2>
+            <div class="muted">محصولات انتخاب‌شده برای خرید</div>
         </div>
 
         @if (Model.Items.Count == 0)
         {
             <div class="empty">
                 <div>
-                    <div class="empty-title">Your cart is empty</div>
-                    <div class="muted">Browse products and add something you like.</div>
+                    <div class="empty-title">سبد خرید شما خالی است</div>
+                    <div class="muted">از فروشگاه محصولی انتخاب کنید.</div>
                 </div>
             </div>
         }
         else
         {
             <div class="table-wrap">
-                <table class="table modern">
+                <table class="table modern cart-items-table">
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th class="num">Qty</th>
-                            <th class="num">Price</th>
-                            <th class="num">Total</th>
+                            <th>محصول</th>
+                            <th class="num">تعداد</th>
+                            <th class="num">قیمت</th>
+                            <th class="num">جمع</th>
                             <th class="actions"></th>
                         </tr>
                     </thead>
@@ -66,19 +75,19 @@
                                         }
                                         <div class="cart-meta">
                                             <div class="cart-name">@item.ProductName</div>
-                                            <div class="muted small">Unit: @item.UnitPrice.ToString("0.##")</div>
+                                            <div class="muted small">قیمت واحد: @item.UnitPrice.ToString("N0") تومان</div>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td class="num" data-label="Qty">@item.Quantity</td>
-                                <td class="num" data-label="Price">@item.UnitPrice.ToString("0.##")</td>
-                                <td class="num" data-label="Total">@((item.Quantity * item.UnitPrice).ToString("0.##"))</td>
+                                <td class="num" data-label="Price">@item.UnitPrice.ToString("N0") تومان</td>
+                                <td class="num" data-label="Total">@((item.Quantity * item.UnitPrice).ToString("N0")) تومان</td>
                                 <td class="actions">
                                     <form method="post" action="/Cart/Remove">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="cartItemId" value="@item.Id" />
-                                        <button type="submit" class="btn btn-danger">Remove</button>
+                                        <button type="submit" class="btn btn-danger">حذف</button>
                                     </form>
                                 </td>
                             </tr>
@@ -91,39 +100,39 @@
 
     <section class="card cart-card">
         <div class="card-head">
-            <h2 class="section-title">Coupon</h2>
-            <div class="muted">Enter your coupon code to get a discount.</div>
+            <h2 class="section-title">کد تخفیف</h2>
+            <div class="muted">در صورت داشتن کد، آن را وارد کنید.</div>
         </div>
 
         <div class="table-wrap">
             <form method="post" action="/Cart/ApplyCoupon" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
                 @Html.AntiForgeryToken()
-                <input class="input" type="text" name="code" value="@Model.CouponCode" placeholder="Coupon code" />
-                <button class="btn btn-primary" type="submit">Apply</button>
+                <input class="input" type="text" name="code" value="@Model.CouponCode" placeholder="کد تخفیف" />
+                <button class="btn btn-primary" type="submit">اعمال کد</button>
             </form>
         </div>
     </section>
 
     <section class="card cart-card">
         <div class="card-head">
-            <h2 class="section-title">Summary</h2>
-            <div class="muted">Totals and discounts</div>
+            <h2 class="section-title">خلاصه پرداخت</h2>
+            <div class="muted">جمع مبالغ سفارش</div>
         </div>
 
         <div class="table-wrap">
             <table class="table modern">
                 <tbody>
                     <tr>
-                        <td>Subtotal</td>
-                        <td class="num">@Model.Subtotal.ToString("0.##")</td>
+                        <td>مبلغ کل</td>
+                        <td class="num">@Model.Subtotal.ToString("N0") تومان</td>
                     </tr>
                     <tr>
-                        <td>Discount</td>
-                        <td class="num">@Model.DiscountAmount.ToString("0.##")</td>
+                        <td>تخفیف</td>
+                        <td class="num">@Model.DiscountAmount.ToString("N0") تومان</td>
                     </tr>
                     <tr>
-                        <td>Total</td>
-                        <td class="num">@Model.FinalTotal.ToString("0.##")</td>
+                        <td>قابل پرداخت</td>
+                        <td class="num">@Model.FinalTotal.ToString("N0") تومان</td>
                     </tr>
                 </tbody>
             </table>
@@ -131,12 +140,12 @@
 
         @if (Model.Items.Count > 0)
         {
-            <div class="table-wrap">
-                <form method="post" action="/Cart/Checkout">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="couponCode" value="@Model.CouponCode" />
-                    <button class="btn btn-primary" type="submit">Checkout</button>
-                </form>
+            <div class="table-wrap cart-actions">
+                <a class="btn btn-primary"
+                   asp-area=""
+                   asp-controller="Cart"
+                   asp-action="Checkout"
+                   asp-route-couponCode="@Model.CouponCode">ادامه و تکمیل سفارش</a>
             </div>
         }
     </section>

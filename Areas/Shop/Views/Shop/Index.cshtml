@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["BodyClass"] = "site-page";
+    var currentUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
 }
 
 <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
@@ -163,9 +164,21 @@
                                             <span class="p-price-old">@p.Price.ToString("N0") تومان</span>
                                         }
                                     </div>
-                                    <button class="p-btn" type="button" onclick="openDetailProductModal(@p.Id)">
-                                        جزئیات
-                                    </button>
+                                    <div class="p-actions">
+                                        <button class="p-btn" type="button" onclick="openDetailProductModal(@p.Id)">
+                                            <i class="fa-solid fa-circle-info"></i>
+                                            <span>جزئیات</span>
+                                        </button>
+                                        <a class="p-btn p-btn-add"
+                                           asp-area=""
+                                           asp-controller="Cart"
+                                           asp-action="Add"
+                                           asp-route-id="@p.Id"
+                                           asp-route-returnUrl="@currentUrl">
+                                            <i class="fa-solid fa-cart-plus"></i>
+                                            <span>افزودن</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -197,6 +210,17 @@
                 </div>
 
                 <div id="pmodalDesc" class="pmodal-desc"></div>
+
+                <div class="pmodal-actions">
+                    <a id="pmodalAddToCart" class="p-btn p-btn-add" href="/Cart">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <span>افزودن به سبد</span>
+                    </a>
+                    <a class="p-btn p-btn-checkout" href="/Cart">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>رفتن به تسویه</span>
+                    </a>
+                </div>
 
                 <div class="pmodal-reviews">
                     <div class="pmodal-reviews-title">نظرات</div>
@@ -290,6 +314,12 @@
         const brandEl = document.getElementById("pmodalBrand");
         const materialEl = document.getElementById("pmodalMaterial");
         const reviewsEl = document.getElementById("pmodalReviews");
+        const addToCartEl = document.getElementById("pmodalAddToCart");
+
+        if (addToCartEl) {
+            const returnUrl = `${window.location.pathname}${window.location.search}`;
+            addToCartEl.href = `/Cart/Add/${id}?returnUrl=${encodeURIComponent(returnUrl)}`;
+        }
 
         if (titleEl) titleEl.textContent = "در حال بارگذاری...";
         if (priceEl) priceEl.textContent = "";

@@ -78,6 +78,46 @@ namespace avatCo.Data
                 .HasForeignKey(o => o.CouponId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Order>()
+                .Property(o => o.RecipientFullName)
+                .HasMaxLength(120);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.RecipientPhoneNumber)
+                .HasMaxLength(30);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.ShippingAddress)
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.PostalCode)
+                .HasMaxLength(20);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.CustomerNote)
+                .HasMaxLength(800);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Status)
+                .HasMaxLength(40);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.DiscountAmount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.FinalAmount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.UnitPrice)
+                .HasColumnType("decimal(18,2)");
+
         }
     }
 }

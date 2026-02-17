@@ -55,7 +55,7 @@ namespace avatCo.Areas.Profile.Controllers
                     Id = ci.Id,
                     ProductName = ci.Product?.Title ?? "(Deleted product)",
                     Quantity = ci.Quantity,
-                    UnitPrice = ci.Product?.Price ?? 0,
+                    UnitPrice = ci.Product?.SalePrice ?? ci.Product?.Price ?? 0,
                     ProductImageUrl = ci.Product?.ImageUrl
                 }).ToList()
             };
@@ -121,7 +121,7 @@ namespace avatCo.Areas.Profile.Controllers
                 return View(vm);
             }
 
-            TempData["ProfileSaved"] = "Profile updated ✅";
+            TempData["ProfileSaved"] = "پروفایل با موفقیت به‌روزرسانی شد.";
             return RedirectToAction(nameof(Index));
         }
     }

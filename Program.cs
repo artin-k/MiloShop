@@ -41,7 +41,8 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.Cookie.SameSite = SameSiteMode.Lax;
 
     opt.SlidingExpiration = true;
-    opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+    // Used for persistent cookies when RememberMe is enabled.
+    opt.ExpireTimeSpan = TimeSpan.FromDays(30);
 });
 
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();

@@ -1,4 +1,25 @@
-﻿<!DOCTYPE html>
+﻿@using avatCo.Data
+@using avatCo.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject MiloDbContext _db
+@inject UserManager<ApplicationUser> _userManager
+@{
+    var cartItemsCount = 0;
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            cartItemsCount = await _db.CartItems
+                .Where(c => c.UserId == userId)
+                .SumAsync(c => (int?)c.Quantity) ?? 0;
+        }
+    }
+}
+
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 
@@ -11,6 +32,7 @@
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/avatCo.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
@@ -21,17 +43,17 @@
             <!-- Right Side: Icons -->
             <div class="nav-right">
                 <a href="/Auth/Login" class="nav-icon" title="پروفایل">
-                    <img src="~/icons/header/user.svg" alt="user">
+                    <i class="fa-regular fa-user" aria-hidden="true"></i>
                 </a>
                 <a href="/shop" class="nav-icon" title="دیدن محصولات">
-                    <img src="~/icons/header/shop.svg" alt="shop">
+                    <i class="fa-solid fa-shop" aria-hidden="true"></i>
                 </a>
                 <a href="/Cart" class="nav-icon" title="سبد خرید">
-                    <img src="~/icons/header/cart.svg" alt="cart">
-                    <span class="cart-badge">0</span>
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <span class="cart-badge">@cartItemsCount</span>
                 </a>
                 <a href="" class="nav-icon" title="جستجو">
-                    <img src="~/icons/header/search.svg" alt="search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </a>
                 @if (User.IsInRole("Admin"))
                 {
@@ -88,9 +110,9 @@
                 <div class="footer-column">
                     <h6 class="footer-title">ارتباط با ما</h6>
                     <ul class="footer-list">
-                        <li><i class="bi bi-telephone"></i> شماره تماس</li>
-                        <li><i class="bi bi-envelope"></i> ایمیل</li>
-                        <li><i class="bi bi-geo-alt"></i> آدرس</li>
+                        <li><i class="fa-solid fa-phone"></i> شماره تماس</li>
+                        <li><i class="fa-solid fa-envelope"></i> ایمیل</li>
+                        <li><i class="fa-solid fa-location-dot"></i> آدرس</li>
                     </ul>
                 </div>
             </div>

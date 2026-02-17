@@ -112,93 +112,59 @@
     }
 }
 
-/*support section*/
-/* =========================
-   Apple-ish Support + Social
-========================= */
-
+/* support section */
 .social-support-section {
     padding: 42px 0;
-    background: transparent; /* no loud gradient */
+    background: transparent;
     color: #111;
 }
 
 .social-support-wrap {
     background: #fff;
-    border: 1px solid rgba(0,0,0,.08);
+    border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 28px;
     padding: 28px;
-    box-shadow: 0 14px 34px rgba(0,0,0,.08);
-}
-
-/* Header */
-/* --- Icon base (for <img>) --- */
-.icon {
-    width: 22px;
-    height: 22px;
-    display: block;
-    object-fit: contain;
-}
-
-/* --- Social buttons row --- */
-.social-icons {
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .08);
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin-top: 18px;
+    gap: 18px;
 }
 
-.social-icon {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,.06);
-    box-shadow: 0 10px 30px rgba(0,0,0,.06);
-    text-decoration: none;
-    color: #111;
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+.social-head {
+    display: grid;
+    gap: 6px;
 }
 
-    /* text */
-    .social-icon span {
-        font-weight: 700;
-        font-size: 14px;
-    }
+.social-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+}
 
-    /* the colored bubble behind the icon (replaces FA styling) */
-    .social-icon .icon {
-        width: 20px;
-        height: 20px;
-    }
+.social-sub {
+    margin: 0;
+    font-size: 13px;
+    opacity: .75;
+}
 
-    .social-icon::after {
-        content: "";
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        flex: 0 0 auto;
-        background: rgba(0,0,0,.06);
-        margin-right: 8px; /* RTL: puts bubble on the left side visually */
-    }
+.support-text {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: .8;
+}
 
-/* place icon inside that bubble */
 /* layout */
 .social-icons {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0,1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
-    margin-top: 18px;
 }
 
 .support-links {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0,1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
-    margin-top: 14px;
+    margin-top: 12px;
 }
 
 /* shared button styles */
@@ -206,77 +172,82 @@
 .support-link {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* RTL: badge on right, text on left */
+    justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
     border-radius: 16px;
+    width: 100%;
     background: #fff;
-    border: 1px solid rgba(0,0,0,.06);
-    box-shadow: 0 10px 26px rgba(0,0,0,.06);
+    border: 1px solid rgba(0, 0, 0, .06);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .06);
     text-decoration: none;
     color: #111;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
-    .social-icon:hover,
-    .support-link:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 34px rgba(0,0,0,.10);
-        border-color: rgba(0,0,0,.10);
-    }
+.social-icon:hover,
+.support-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .10);
+    border-color: rgba(0, 0, 0, .10);
+}
 
-    /* text */
-    .social-icon .label {
-        font-weight: 700;
-        font-size: 14px;
-    }
+.social-icon .label {
+    font-weight: 700;
+    font-size: 14px;
+}
 
-    .support-link .label {
-        font-weight: 600;
-        font-size: 13px;
-        opacity: .9;
-        direction: ltr; /* helps emails/phones look correct inside RTL */
-    }
+.support-link .label {
+    font-weight: 600;
+    font-size: 13px;
+    opacity: .9;
+    direction: ltr;
+}
 
 /* icon badge */
 .icon-badge {
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
     border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    background: rgba(0,0,0,.06);
+    background: rgba(0, 0, 0, .06);
 }
 
-    .icon-badge img {
-        width: 20px;
-        height: 20px;
-        display: block;
-        object-fit: contain;
-    }
+.icon-badge i {
+    font-size: 24px;
+    color: #fff;
+}
 
 /* per-icon colors */
 .social-icon.wa .icon-badge {
-    background: rgba(37, 211, 102, .16);
+    background: #25d366;
 }
 
 .social-icon.ig .icon-badge {
-    background: rgba(225, 48, 108, .14);
+    background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 50%, #6228d7 100%);
 }
 
 .social-icon.x .icon-badge {
-    background: rgba(0, 0, 0, .10);
+    background: #000;
 }
 
 .support-link .icon-badge {
     background: rgba(59, 130, 246, .10);
 }
-/* subtle blue */
+
+.support-link .icon-badge i {
+    color: #2563eb;
+}
 
 /* responsive */
 @media (max-width: 900px) {
+    .social-support-wrap {
+        padding: 22px;
+    }
+
     .social-icons {
         grid-template-columns: 1fr;
     }
@@ -285,50 +256,3 @@
         grid-template-columns: 1fr;
     }
 }
-
-
-/* Support links */
-.support-links {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-    gap: 14px;
-    margin-top: 14px;
-}
-
-.support-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,.06);
-    box-shadow: 0 10px 30px rgba(0,0,0,.06);
-    text-decoration: none;
-    color: #111;
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-}
-
-    .support-link span {
-        font-weight: 600;
-        font-size: 13px;
-        opacity: .9;
-    }
-
-    .support-link .icon {
-        width: 20px;
-        height: 20px;
-    }
-
-/* mobile */
-@media (max-width: 900px) {
-    .social-icons {
-        grid-template-columns: 1fr;
-    }
-
-    .support-links {
-        grid-template-columns: 1fr;
-    }
-}
-

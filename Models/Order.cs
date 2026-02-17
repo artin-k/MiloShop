@@ -20,6 +20,13 @@
         public decimal? DiscountAmount { get; set; }  // how much we discounted
         public decimal? FinalAmount { get; set; }     // total - discount
 
+        public string RecipientFullName { get; set; } = string.Empty;
+        public string RecipientPhoneNumber { get; set; } = string.Empty;
+        public string ShippingAddress { get; set; } = string.Empty;
+        public string? PostalCode { get; set; }
+        public string? CustomerNote { get; set; }
+        public string Status { get; set; } = "در انتظار بررسی";
+
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 }

@@ -1,7 +1,8 @@
 ﻿@model avatCo.Areas.Profile.ViewModels.DashboardVM
 @{
-    ViewData["Title"] = "User Profile";
+    ViewData["Title"] = "پروفایل کاربری";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.BodyClass = "solid-header-page";
 }
 
 <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
@@ -10,10 +11,10 @@
 
     <div class="page-head">
         <div>
-            <h1 class="page-title">Profile</h1>
-            <p class="page-subtitle">Manage your account details and view your cart.</p>
+            <h1 class="page-title">پروفایل</h1>
+            <p class="page-subtitle">مدیریت اطلاعات حساب و مشاهده سبد خرید</p>
         </div>
-        <a class="btn btn-primary" href="/Profile/Edit">Edit Profile</a>
+        <a class="btn btn-primary" href="/Profile/Edit">ویرایش پروفایل</a>
     </div>
 
     @if (TempData["ProfileSaved"] is string msg)
@@ -35,11 +36,11 @@
     <section class="card profile-card">
         <div class="card-top">
             <div class="title-block">
-                <h2 class="card-title">Profile</h2>
-                <div class="muted">Manage your account details</div>
+                <h2 class="card-title">اطلاعات کاربری</h2>
+                <div class="muted">مشخصات حساب شما</div>
             </div>
 
-            <a class="btn btn-primary" href="/Profile/Edit">Edit Profile</a>
+            <a class="btn btn-primary" href="/Profile/Edit">ویرایش پروفایل</a>
         </div>
 
         <div class="profile-top">
@@ -65,11 +66,11 @@
 
             <div class="profile-stats">
                 <div class="stat">
-                    <div class="stat-label">Orders</div>
+                    <div class="stat-label">تعداد سفارش‌ها</div>
                     <div class="stat-value">@Model.OrdersCount</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">Cart Items</div>
+                    <div class="stat-label">اقلام سبد خرید</div>
                     <div class="stat-value">@Model.CartItems.Count</div>
                 </div>
             </div>
@@ -79,27 +80,27 @@
 
         <div class="details-grid">
             <div class="field">
-                <div class="label">Full name</div>
+                <div class="label">نام کامل</div>
                 <div class="value">@(string.IsNullOrWhiteSpace(Model.FullName) ? "-" : Model.FullName)</div>
             </div>
 
             <div class="field">
-                <div class="label">Gender</div>
+                <div class="label">جنسیت</div>
                 <div class="value">@(string.IsNullOrWhiteSpace(Model.Gender) ? "-" : Model.Gender)</div>
             </div>
 
             <div class="field">
-                <div class="label">Date of birth</div>
+                <div class="label">تاریخ تولد</div>
                 <div class="value">@(Model.DateOfBirth?.ToShortDateString() ?? "-")</div>
             </div>
 
             <div class="field">
-                <div class="label">Phone</div>
+                <div class="label">شماره تماس</div>
                 <div class="value">@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "-" : Model.PhoneNumber)</div>
             </div>
 
             <div class="field span-2">
-                <div class="label">Address</div>
+                <div class="label">آدرس</div>
                 <div class="value">@(string.IsNullOrWhiteSpace(Model.Address) ? "-" : Model.Address)</div>
             </div>
         </div>
@@ -107,27 +108,27 @@
 
     <section class="card cart-card">
         <div class="card-head">
-            <h2 class="section-title">Your Cart</h2>
-            <div class="muted">Items currently in your cart</div>
+            <h2 class="section-title">سبد خرید شما</h2>
+            <div class="muted">اقلام فعلی سبد</div>
         </div>
 
         @if (Model.CartItems.Count == 0)
         {
             <div class="empty">
-                <div class="empty-title">Your cart is empty</div>
-                <div class="muted">Browse products and add something you like.</div>
+                <div class="empty-title">سبد خرید شما خالی است</div>
+                <div class="muted">از فروشگاه محصول اضافه کنید.</div>
             </div>
         }
         else
         {
             <div class="table-wrap">
-                <table class="table modern">
+                <table class="table modern cart-items-table">
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th class="num">Qty</th>
-                            <th class="num">Price</th>
-                            <th class="num">Total</th>
+                            <th>محصول</th>
+                            <th class="num">تعداد</th>
+                            <th class="num">قیمت</th>
+                            <th class="num">جمع</th>
                             <th class="actions"></th>
                         </tr>
                     </thead>
@@ -147,25 +148,29 @@
                                         }
                                         <div class="cart-meta">
                                             <div class="cart-name">@item.ProductName</div>
-                                            <div class="muted small">Unit: @item.UnitPrice.ToString("0.##")</div>
+                                            <div class="muted small">قیمت واحد: @item.UnitPrice.ToString("N0") تومان</div>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td class="num" data-label="Qty">@item.Quantity</td>
-                                <td class="num" data-label="Price">@item.UnitPrice.ToString("0.##")</td>
-                                <td class="num" data-label="Total">@((item.Quantity * item.UnitPrice).ToString("0.##"))</td>
+                                <td class="num" data-label="Price">@item.UnitPrice.ToString("N0") تومان</td>
+                                <td class="num" data-label="Total">@((item.Quantity * item.UnitPrice).ToString("N0")) تومان</td>
                                 <td class="actions">
                                     <form method="post" action="/Cart/Remove">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="CartItemId" value="@item.Id" />
-                                        <button type="submit" class="btn btn-danger">Remove</button>
+                                        <button type="submit" class="btn btn-danger">حذف</button>
                                     </form>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+            </div>
+
+            <div class="table-wrap cart-actions">
+                <a class="btn btn-primary" href="/Cart/Checkout">ادامه و تکمیل سفارش</a>
             </div>
         }
     </section>

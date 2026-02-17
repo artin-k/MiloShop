@@ -39,21 +39,33 @@ namespace avatCo.Areas.Auth.Controllers
         }
 
         [HttpGet("Login")]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                if (Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl!);
+
+                return Redirect("/Profile");
+            }
+
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpGet("SignUp")]
-        public IActionResult SignUp()
+        public IActionResult SignUp(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost("SignUp")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(SignUpVM model)
+        public async Task<IActionResult> SignUp(SignUpVM model, string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -77,6 +89,9 @@ namespace avatCo.Areas.Auth.Controllers
             // Sign in
             await _signInManager.SignInAsync(user, isPersistent: false);
 
+            if (Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl!);
+
             //  Leave the Auth area and go to /Profile
             return RedirectToAction("Index", "Dashboard", new { area = "Profile" });
 
@@ -86,8 +101,10 @@ namespace avatCo.Areas.Auth.Controllers
 
         [HttpPost("Login")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginVM loginVM)
+        public async Task<IActionResult> Login(LoginVM loginVM, string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (!ModelState.IsValid) return View(loginVM);
 
             var result = await _authService.LoginAsync(loginVM);
@@ -106,6 +123,11 @@ namespace avatCo.Areas.Auth.Controllers
             }
 
             var user = result.User!;
+
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl!);
+            }
 
             // if admin → send to admin dashboard
             if (await _userManager.IsInRoleAsync(user, "Admin"))
