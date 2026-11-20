@@ -12,6 +12,9 @@
   <ItemGroup>
     <Content Remove="wwwroot\js\home.js" />
     <Content Remove="wwwroot\js\SignUp.js" />
+    <Compile Remove="avatCo.Tests\**\*.cs" />
+    <Content Remove="avatCo.Tests\**\*" />
+    <None Remove="avatCo.Tests\**\*" />
   </ItemGroup>
 
   <ItemGroup>

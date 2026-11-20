@@ -2,19 +2,53 @@
 @{
     ViewData["Title"] = "پروفایل کاربری";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.BodyClass = "solid-header-page";
+    ViewBag.BodyClass = "solid-header-page profile-dashboard-page";
+    var cartItemsCount = Model.CartItems.Sum(i => i.Quantity);
+    var cartTotal = Model.CartItems.Sum(i => i.Quantity * i.UnitPrice);
 }
 
 <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 
 <div class="profile-page">
+    <section class="profile-hero">
+        <div class="profile-hero-copy">
+            <div class="profile-kicker">Milo ID</div>
+            <h3 class="profile-hero-title">پروفایل کاربری</h3>
+            <div class="profile-hero-meta">
+                <span class="hero-pill">@Model.OrdersCount سفارش</span>
+                <span class="hero-pill">@cartItemsCount قلم در سبد</span>
+                <span class="hero-pill">@(cartTotal.ToString("N0")) تومان</span>
+            </div>
+        </div>
+        <div class="profile-hero-side">
+            <a class="btn btn-primary" href="/Profile/Edit">ویرایش پروفایل</a>
+            <a class="btn" href="/Shop">مشاهده فروشگاه</a>
+        </div>
+    </section>
+
+    <section class="profile-glance" aria-label="Quick Overview">
+        <article class="glance-card">
+            <div class="glance-label">Order Activity</div>
+            <div class="glance-value">@Model.OrdersCount</div>
+            <div class="glance-sub">تعداد سفارش‌های ثبت‌ شده</div>
+        </article>
+        <article class="glance-card">
+            <div class="glance-label">Cart Items</div>
+            <div class="glance-value">@cartItemsCount</div>
+            <div class="glance-sub">اقلام فعلی سبد خرید</div>
+        </article>
+        <article class="glance-card">
+            <div class="glance-label">Cart Value</div>
+            <div class="glance-value">@cartTotal.ToString("N0")</div>
+            <div class="glance-sub">مجموع ارزش سبد (تومان)</div>
+        </article>
+    </section>
 
     <div class="page-head">
         <div>
-            <h1 class="page-title">پروفایل</h1>
-            <p class="page-subtitle">مدیریت اطلاعات حساب و مشاهده سبد خرید</p>
+            <h2 class="page-title">نمای کلی حساب</h2>
+            <p class="page-subtitle">جزئیات هویت، اطلاعات تماس و سبد خرید شما</p>
         </div>
-        <a class="btn btn-primary" href="/Profile/Edit">ویرایش پروفایل</a>
     </div>
 
     @if (TempData["ProfileSaved"] is string msg)
@@ -39,8 +73,6 @@
                 <h2 class="card-title">اطلاعات کاربری</h2>
                 <div class="muted">مشخصات حساب شما</div>
             </div>
-
-            <a class="btn btn-primary" href="/Profile/Edit">ویرایش پروفایل</a>
         </div>
 
         <div class="profile-top">

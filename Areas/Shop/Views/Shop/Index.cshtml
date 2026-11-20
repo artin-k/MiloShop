@@ -2,13 +2,44 @@
 @using System.Globalization
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["BodyClass"] = "site-page";
+    var bodyClass = "site-page shop-page solid-header-page";
+    ViewData["BodyClass"] = bodyClass;
+    ViewBag.BodyClass = bodyClass;
     var currentUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+    var products = Model.Products.ToList();
+    var productCount = products.Count;
+    var inStockCount = products.Count(p => p.StockQuantity > 0);
+    var saleCount = products.Count(p => p.SalePrice.HasValue && p.SalePrice.Value < p.Price);
+    var featuredProducts = products.Take(3).ToList();
+    var latestProduct = products.OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+    var activeFilterCount = 0;
+
+    if (!string.IsNullOrWhiteSpace(Model.Query)) activeFilterCount++;
+    if (Model.CategoryId.HasValue) activeFilterCount++;
+    if (Model.MinPrice.HasValue || Model.MaxPrice.HasValue) activeFilterCount++;
+    if (!string.IsNullOrWhiteSpace(Model.Sort)) activeFilterCount++;
 }
 
 <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
 
 <section class="shop-shell">
+    <div class="shop-hero">
+        <div class="shop-hero-copy">
+            <div class="shop-kicker">Milo Shop</div>
+            <div class="shop-hero-meta">
+                <span class="hero-pill">@productCount تعداد محصولات</span>
+                <span class="hero-pill">@inStockCount موجود در انبار</span>
+                @if (saleCount > 0)
+                {
+                    <span class="hero-pill hero-pill-hot">@saleCount تخفیف دار ها</span>
+                }
+                @if (activeFilterCount > 0)
+                {
+                    <span class="hero-pill">@(activeFilterCount) فیلتر فعال</span>
+                }
+            </div>
+        </div>
+    </div>
 
     <!-- Top Bar -->
     <div class="shop-toolbar">
@@ -41,7 +72,7 @@
                 <input type="hidden" name="minPrice" value="@Model.MinPrice" />
                 <input type="hidden" name="maxPrice" value="@Model.MaxPrice" />
                 <input type="hidden" name="categoryId" value="@Model.CategoryId" />
-                <span class="search-ico">⌕</span>
+                <span class="search-ico">?</span>
                 <div id="searchResults" class="search-results d-none"></div>
             </form>
 
@@ -68,70 +99,18 @@
     <!-- Content -->
     <div class="shop-grid">
 
-        <!-- Sidebar Filters (desktop) -->
-        <aside class="filters filters-desktop">
-            <div class="filters-card">
-                <div class="filters-head">
-                    <div class="filters-title">فیلترها</div>
-                    <a class="filters-reset" href="/Shop">ریست</a>
-                </div>
-
-                <form method="get" action="/Shop" class="filters-form">
-                    <input type="hidden" name="q" value="@Model.Query" />
-
-                    <div class="fg">
-                        <div class="lbl">مرتب‌سازی</div>
-                        <select class="ctl" name="sort" onchange="this.form.submit()">
-                            <option value="" asp-selected="@string.IsNullOrWhiteSpace(Model.Sort)">پیش‌فرض</option>
-                            <option value="new" asp-selected="@(Model.Sort == "new")">جدیدترین</option>
-                            <option value="cheap" asp-selected="@(Model.Sort == "cheap")">ارزان‌ترین</option>
-                            <option value="expensive" asp-selected="@(Model.Sort == "expensive")">گران‌ترین</option>
-                        </select>
-                    </div>
-
-                    <div class="fg">
-                        <div class="lbl">بازه قیمت (تومان)</div>
-                        <div class="range">
-                            <input class="ctl" type="number" name="minPrice" placeholder="از" value="@(Model.MinPrice?.ToString(CultureInfo.InvariantCulture))" />
-                            <input class="ctl" type="number" name="maxPrice" placeholder="تا" value="@(Model.MaxPrice?.ToString(CultureInfo.InvariantCulture))" />
-                        </div>
-                    </div>
-
-                    <div class="fg">
-                        <div class="lbl">دسته‌بندی</div>
-                        <div class="list">
-                            <label class="check">
-                                <input type="radio" name="categoryId" value="" @(Model.CategoryId == null ? "checked" : "") />
-                                <span>همه</span>
-                            </label>
-
-                            @foreach (var c in Model.Categories)
-                            {
-                                <label class="check">
-                                    <input type="radio" name="categoryId" value="@c.Id" @(Model.CategoryId == c.Id ? "checked" : "") />
-                                    <span>@c.Name</span>
-                                </label>
-                            }
-                        </div>
-                    </div>
-
-                    <button class="apply" type="submit">اعمال فیلتر</button>
-                </form>
-            </div>
-        </aside>
-
         <!-- Products -->
         <main class="products">
             <div class="products-head">
                 <div>
                     <div class="products-title">محصولات</div>
-                    <div class="products-sub">@Model.Products.Count() مورد</div>
+                    <div class="products-sub">@productCount مورد</div>
                 </div>
 
                 <a class="see-all" href="/Shop">مشاهده همه</a>
             </div>
 
-            @if (!Model.Products.Any())
+            @if (!products.Any())
             {
                 <div class="empty">
                     <div class="empty-title">محصولی یافت نشد</div>
@@ -141,20 +120,38 @@
             else
             {
                 <div class="cards">
-                    @foreach (var p in Model.Products)
+                    @foreach (var p in products)
                     {
                         var imgUrl = string.IsNullOrWhiteSpace(p.ImageUrl) ? Url.Content("~/images/1.webp") : p.ImageUrl;
                         var effectivePrice = p.SalePrice ?? p.Price;
                         var hasSale = p.SalePrice.HasValue && p.SalePrice.Value < p.Price;
+                        var isOutOfStock = p.StockQuantity <= 0;
+                        var productMeta = string.Join(" • ", new[] { p.Brand, p.Material, p.Category?.Name }
+                            .Where(x => !string.IsNullOrWhiteSpace(x))
+                            .Take(2));
+                        var subtitle = string.IsNullOrWhiteSpace(productMeta) ? "انتخاب ویژه Milo Shop" : productMeta;
 
-                        <div class="p-card">
+                        <div class="p-card @(isOutOfStock ? "is-out" : "")">
                             <div class="p-img">
                                 <img src="@imgUrl" alt="@p.Title" />
+                                <div class="p-badges">
+                                    @if (hasSale)
+                                    {
+                                        <span class="p-badge p-badge-sale">تخفیف</span>
+                                    }
+                                    <span class="p-badge @(isOutOfStock ? "p-badge-out" : "p-badge-stock")">
+                                        @(isOutOfStock ? "ناموجود" : "موجود")
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="p-body">
                                 <div class="p-title">@p.Title</div>
-                                <div class="p-desc">کیفیت عالی • ارسال سریع</div>
+                                <div class="p-meta-line">
+                                    <span>@(string.IsNullOrWhiteSpace(p.Brand) ? "Milo Select" : p.Brand)</span>
+                                    <span>@(isOutOfStock ? "ناموجود" : "آماده ارسال")</span>
+                                </div>
+                                <div class="p-desc">@subtitle</div>
 
                                 <div class="p-foot">
                                     <div class="p-price">
@@ -231,7 +228,7 @@
     </div>
 </div>
 
-<!-- Mobile Filters Drawer -->
+<!-- Filters Drawer -->
 <div id="filtersDrawer" class="drawer" aria-hidden="true">
     <div class="drawer-backdrop" onclick="closeFilters()"></div>
 
@@ -248,7 +245,7 @@
                 <div class="fg">
                     <div class="lbl">مرتب‌سازی</div>
                     <select class="ctl" name="sort">
-                        <option value="default" asp-selected="@string.IsNullOrWhiteSpace(Model.Sort)">پیش‌فرض</option>
+                        <option value="" asp-selected="@string.IsNullOrWhiteSpace(Model.Sort)">پیش‌فرض</option>
                         <option value="new" asp-selected="@(Model.Sort == "new")">جدیدترین</option>
                         <option value="cheap" asp-selected="@(Model.Sort == "cheap")">ارزان‌ترین</option>
                         <option value="expensive" asp-selected="@(Model.Sort == "expensive")">گران‌ترین</option>
@@ -368,7 +365,7 @@
                             user.textContent = o.userName || "کاربر";
 
                             const stars = document.createElement("span");
-                            stars.textContent = "★".repeat(rate) + "☆".repeat(Math.max(0, 5 - rate));
+                            stars.textContent = "?".repeat(rate) + "?".repeat(Math.max(0, 5 - rate));
 
                             head.appendChild(user);
                             head.appendChild(stars);
@@ -411,6 +408,12 @@
         let timer;
 
         if (!input || !results) return;
+
+        if (window.location.hash === "#searchBox") {
+            input.focus();
+            input.select();
+            input.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
 
         input.addEventListener("input", function () {
             const term = input.value.trim();

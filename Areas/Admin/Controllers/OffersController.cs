@@ -140,18 +140,20 @@ namespace avatCo.Areas.Admin.Controllers
                 return View(vm);
             }
 
-            // keep old image unless new uploaded
-            offer.BannerImageUrl = uploadedUrl ?? offer.BannerImageUrl;
-
-            // ... rest of update logic
-            await _context.SaveChangesAsync();
+            var finalBannerImageUrl = uploadedUrl;
+            if (string.IsNullOrWhiteSpace(finalBannerImageUrl))
+            {
+                finalBannerImageUrl = string.IsNullOrWhiteSpace(vm.BannerImageUrl)
+                    ? offer.BannerImageUrl
+                    : vm.BannerImageUrl.Trim();
+            }
 
             offer.Kind = vm.Kind;
             offer.Title = vm.Title.Trim();
             offer.IsActive = vm.IsActive;
             offer.StartsAt = vm.StartsAt;
             offer.EndsAt = vm.EndsAt;
-            offer.BannerImageUrl = string.IsNullOrWhiteSpace(vm.BannerImageUrl) ? null : vm.BannerImageUrl.Trim();
+            offer.BannerImageUrl = finalBannerImageUrl;
 
             if (vm.Kind == OfferKind.Product)
             {
