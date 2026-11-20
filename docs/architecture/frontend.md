@@ -4,7 +4,7 @@
 
 MiloShop will continue with ASP.NET Core MVC and Razor views while the commerce domain, checkout workflow, and visual system are rebuilt.
 
-Razor views fit the current application well because authentication, validation, admin screens, and the storefront already run in one server process. This keeps the redesign focused on customer experience and order correctness. ASP.NET Core MVC remains actively supported in .NET 8.
+Razor views fit the current application well because authentication, validation, admin screens, and the storefront already run in one server process. This keeps the redesign focused on customer experience and order correctness. ASP.NET Core MVC remains actively supported in .NET 11.
 
 ## When Next.js becomes valuable
 

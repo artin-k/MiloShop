@@ -83,6 +83,14 @@ namespace MiloShop.Web.Areas.Profile.Controllers
             return View(vm);
         }
 
+        // GET /Profile/Terms
+        [AllowAnonymous]
+        [HttpGet("Terms")]
+        public IActionResult Terms()
+        {
+            return View();
+        }
+
         // POST /Profile/Edit
         [HttpPost("Edit")]
         [ValidateAntiForgeryToken]

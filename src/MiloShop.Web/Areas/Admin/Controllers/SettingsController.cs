@@ -14,6 +14,12 @@ namespace MiloShop.Web.Areas.Admin.Controllers
         public SettingsController(ISiteSettingsService settings) => _settings = settings;
 
         [HttpGet]
+        public IActionResult Index()
+        {
+            return RedirectToAction(nameof(General));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> General()
         {
             var dict = await _settings.GetManyAsync(

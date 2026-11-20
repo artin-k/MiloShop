@@ -1,6 +1,6 @@
 # MiloShop
 
-MiloShop is an ASP.NET Core 8 storefront organized as a clean, layered solution.
+MiloShop is an ASP.NET Core 11 storefront organized as a clean, layered solution.
 
 ## Projects
 

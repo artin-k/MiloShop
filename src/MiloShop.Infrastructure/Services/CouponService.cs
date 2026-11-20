@@ -79,6 +79,24 @@ namespace MiloShop.Infrastructure.Services
             int couponId,
             CancellationToken cancellationToken = default)
         {
+            if (!_context.Database.IsRelational())
+            {
+                var coupon = await _context.Coupons
+                    .FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken);
+
+                if (coupon == null ||
+                    !coupon.IsActive ||
+                    (coupon.ExpireAt.HasValue && coupon.ExpireAt.Value < DateTime.UtcNow.Date) ||
+                    (coupon.UsageLimit.HasValue && coupon.UsedCount >= coupon.UsageLimit.Value))
+                {
+                    return new CouponConsumeResult(false, "کوپن دیگر معتبر یا قابل استفاده نیست.");
+                }
+
+                coupon.UsedCount += 1;
+                await _context.SaveChangesAsync(cancellationToken);
+                return new CouponConsumeResult(true, null);
+            }
+
             var today = DateTime.UtcNow.Date;
             var affectedRows = await _context.Coupons
                 .Where(c => c.Id == couponId)

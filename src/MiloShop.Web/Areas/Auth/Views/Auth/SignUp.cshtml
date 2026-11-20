@@ -1,15 +1,18 @@
 ﻿@model MiloShop.Web.Areas.Auth.ViewModels.SignUpVM
 @{
     ViewData["Title"] = "ثبت نام";
+    ViewBag.BodyClass = "auth-page register-page";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var returnUrl = ViewData["ReturnUrl"] as string;
 }
-<link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
+}
 <div class="register-container">
     <div class="register-card">
         <h2 class="form-title">ثبت نام</h2>
         <form asp-area="Auth" asp-controller="Auth" asp-action="SignUp" method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
+            @* <div asp-validation-summary="All" class="text-danger"></div> *@
             @Html.AntiForgeryToken()
             <input type="hidden" name="returnUrl" value="@returnUrl" />
             <div class="form-group">
@@ -35,7 +38,7 @@
 
             <p class="terms-text">
                 با ثبت نام یا ورود، شما
-                <a href="/Profile/Terms" target="_blank">قوانین و مقررات</a>
+                <a asp-area="Profile" asp-controller="Dashboard" asp-action="Terms" target="_blank">قوانین و مقررات</a>
                 را می‌پذیرید
             </p>
 

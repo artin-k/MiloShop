@@ -1,0 +1,34 @@
+﻿@using System
+@using Microsoft.AspNetCore.Http.Features
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var isLoginPage = Context.Request.Path.Equals("/Auth/Login", StringComparison.OrdinalIgnoreCase);
+    var showBanner = isLoginPage && consentFeature?.IsConsentNeeded == true && !(consentFeature?.CanTrack ?? true);
+    var cookieString = consentFeature?.CreateConsentCookie();
+    var consentLabel = "\u0631\u0636\u0627\u06cc\u062a \u06a9\u0648\u06a9\u06cc";
+    var consentText1 = "\u0645\u0627 \u0628\u0631\u0627\u06cc \u0628\u0647\u0628\u0648\u062f \u062a\u062c\u0631\u0628\u0647 \u0634\u0645\u0627 \u0627\u0632 \u06a9\u0648\u06a9\u06cc \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0645\u06cc\u200c\u06a9\u0646\u06cc\u0645.";
+    var consentText2 = "\u06a9\u0648\u06a9\u06cc\u200c\u0647\u0627\u06cc \u0636\u0631\u0648\u0631\u06cc \u0647\u0645\u06cc\u0634\u0647 \u0641\u0639\u0627\u0644 \u0647\u0633\u062a\u0646\u062f.";
+    var consentText3 = "\u0628\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u00ab\u067e\u0630\u06cc\u0631\u0634 \u0647\u0645\u0647\u00bb\u060c \u06a9\u0648\u06a9\u06cc\u200c\u0647\u0627\u06cc \u0627\u062e\u062a\u06cc\u0627\u0631\u06cc \u0647\u0645 \u0641\u0639\u0627\u0644 \u0645\u06cc\u200c\u0634\u0648\u0646\u062f.";
+    var acceptText = "\u067e\u0630\u06cc\u0631\u0634 \u0647\u0645\u0647";
+    var rejectText = "\u0641\u0642\u0637 \u0636\u0631\u0648\u0631\u06cc";
+}
+
+@if (showBanner)
+{
+    <section id="cookieConsentBanner"
+             class="cookie-consent"
+             role="dialog"
+             aria-live="polite"
+             aria-label="@consentLabel"
+             data-cookie-string="@cookieString">
+        <p class="cookie-consent__text">
+            @consentText1
+            @consentText2
+            @consentText3
+        </p>
+        <div class="cookie-consent__actions">
+            <button id="cookieAcceptBtn" type="button" class="cookie-btn cookie-btn--accept">@acceptText</button>
+            <button id="cookieRejectBtn" type="button" class="cookie-btn cookie-btn--reject">@rejectText</button>
+        </div>
+    </section>
+}

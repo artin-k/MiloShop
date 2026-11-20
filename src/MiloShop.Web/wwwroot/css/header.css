@@ -90,6 +90,16 @@ body.solid-header-page .logo-container {
     text-decoration: none;
 }
 
+.nav-logout-form {
+    margin: 0;
+    display: flex;
+}
+
+.nav-icon-btn {
+    padding: 0;
+    cursor: pointer;
+}
+
     .nav-icon i {
         font-size: 18px;
         color: rgba(255,255,255,.92);

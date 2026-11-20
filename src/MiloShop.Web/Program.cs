@@ -32,6 +32,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.LogoutPath = "/Auth/Logout";        // if you have it
     opt.AccessDeniedPath = "/Auth/Login";   // or "/Auth/AccessDenied" if you make one
 
+    opt.Cookie.IsEssential = true;
     opt.Cookie.HttpOnly = true;
     opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // dev
     opt.Cookie.SameSite = SameSiteMode.Lax;
@@ -39,6 +40,24 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.SlidingExpiration = true;
     // Used for persistent cookies when RememberMe is enabled.
     opt.ExpireTimeSpan = TimeSpan.FromDays(30);
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = _ => true;
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.Secure = CookieSecurePolicy.SameAsRequest;
+});
+
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions>(options =>
+{
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
@@ -59,6 +78,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCookiePolicy();
 
 app.UseRouting();
 app.UseAuthentication();
