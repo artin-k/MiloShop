@@ -1,0 +1,65 @@
+﻿@model MiloShop.Web.Areas.Profile.ViewModels.UpdateProfileVM
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.BodyClass = "solid-header-page";
+}
+
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+
+<h2>Edit Profile</h2>
+
+<form method="post" action="/Profile/Edit" class="profile-form">
+    @Html.AntiForgeryToken()
+
+    <div class="validation">
+        @Html.ValidationSummary(excludePropertyErrors: false)
+    </div>
+
+    <div class="form-grid">
+        <div class="field">
+            <label for="UserName">Username</label>
+            <input id="UserName" name="UserName" type="text" value="@Model.UserName" />
+            @Html.ValidationMessageFor(m => m.UserName)
+        </div>
+
+        <div class="field">
+            <label for="FullName">Full name</label>
+            <input id="FullName" name="FullName" type="text" value="@Model.FullName" />
+            @Html.ValidationMessageFor(m => m.FullName)
+        </div>
+
+        <div class="field">
+            <label for="PhoneNumber">Phone</label>
+            <input id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.PhoneNumber" />
+            @Html.ValidationMessageFor(m => m.PhoneNumber)
+        </div>
+
+        <div class="field">
+            <label for="Gender">Gender</label>
+            <select id="Gender" name="Gender">
+                <option value="" selected="@(string.IsNullOrWhiteSpace(Model.Gender) ? "selected" : null)">Select</option>
+                <option value="Male" selected="@(Model.Gender == "Male" ? "selected" : null)">Male</option>
+                <option value="Female" selected="@(Model.Gender == "Female" ? "selected" : null)">Female</option>
+                <option value="Other" selected="@(Model.Gender == "Other" ? "selected" : null)">Other</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="DateOfBirth">Date of birth</label>
+            <input id="DateOfBirth" name="DateOfBirth" type="date"
+                   value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")" />
+        </div>
+
+        <div class="field field-full">
+            <label for="Address">Address</label>
+            <textarea id="Address" name="Address" rows="3">@Model.Address</textarea>
+            @Html.ValidationMessageFor(m => m.Address)
+        </div>
+    </div>
+
+    <div class="actions">
+        <a class="btn-secondary" href="/Profile">Cancel</a>
+        <button type="submit" class="btn-success">Save changes</button>
+    </div>
+</form>

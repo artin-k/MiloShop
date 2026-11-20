@@ -1,0 +1,32 @@
+@model MiloShop.Web.Areas.Admin.ViewModels.CategoryUpsertVm
+@{
+    ViewData["Title"] = "افزودن دسته‌بندی";
+}
+
+<div class="card bg-transparent border border-opacity-10 p-3">
+    <form method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">نام</label>
+            <input class="form-control" asp-for="Name" />
+            <span class="text-danger">@Html.ValidationMessageFor(m => m.Name)</span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">توضیحات</label>
+            <textarea class="form-control" asp-for="Description" rows="4"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">تصویر</label>
+            <input class="form-control" asp-for="ImageFile" type="file" />
+            <span class="text-danger">@Html.ValidationMessageFor(m => m.ImageFile)</span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit">ذخیره</button>
+            <a class="btn btn-outline-light" asp-area="Admin" asp-controller="Categories" asp-action="Index">انصراف</a>
+        </div>
+    </form>
+</div>

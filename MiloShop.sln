@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiloShop.Domain", "src\MiloShop.Domain\MiloShop.Domain.csproj", "{938EA479-D5C6-4248-B0EC-5A12953DF43A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiloShop.Application", "src\MiloShop.Application\MiloShop.Application.csproj", "{1EC9F04C-0404-4E55-94A7-444AD9506770}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiloShop.Infrastructure", "src\MiloShop.Infrastructure\MiloShop.Infrastructure.csproj", "{13E31B12-AD8C-4C25-977E-B89DAE68F019}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiloShop.Web", "src\MiloShop.Web\MiloShop.Web.csproj", "{AC893C87-0408-411E-8C5F-6E00C29A2197}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{938EA479-D5C6-4248-B0EC-5A12953DF43A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{938EA479-D5C6-4248-B0EC-5A12953DF43A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{938EA479-D5C6-4248-B0EC-5A12953DF43A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{938EA479-D5C6-4248-B0EC-5A12953DF43A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EC9F04C-0404-4E55-94A7-444AD9506770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC9F04C-0404-4E55-94A7-444AD9506770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC9F04C-0404-4E55-94A7-444AD9506770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC9F04C-0404-4E55-94A7-444AD9506770}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E31B12-AD8C-4C25-977E-B89DAE68F019}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E31B12-AD8C-4C25-977E-B89DAE68F019}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E31B12-AD8C-4C25-977E-B89DAE68F019}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E31B12-AD8C-4C25-977E-B89DAE68F019}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC893C87-0408-411E-8C5F-6E00C29A2197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC893C87-0408-411E-8C5F-6E00C29A2197}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC893C87-0408-411E-8C5F-6E00C29A2197}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC893C87-0408-411E-8C5F-6E00C29A2197}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

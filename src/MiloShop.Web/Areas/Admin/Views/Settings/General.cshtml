@@ -1,0 +1,75 @@
+﻿@model MiloShop.Web.Areas.Admin.ViewModels.GeneralSettingsVM
+@{
+    ViewData["Title"] = "تنظیمات عمومی";
+}
+
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-muted">تنظیمات عمومی سایت</div>
+        <button class="btn btn-primary" type="submit">ذخیره تغییرات</button>
+    </div>
+
+    <div class="card bg-transparent border border-opacity-10">
+        <div class="card-body">
+
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-12 col-lg-4">
+                    <div class="fw-bold">شماره تماس اصلی</div>
+                    <div class="text-muted small">Phone</div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <input class="form-control" asp-for="MainPhone" />
+                </div>
+            </div>
+
+            <hr class="border-opacity-10" />
+
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-12 col-lg-4">
+                    <div class="fw-bold">ایمیل پشتیبانی</div>
+                    <div class="text-muted small">Email</div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <input class="form-control" asp-for="SupportEmail" />
+                </div>
+            </div>
+
+            <hr class="border-opacity-10" />
+
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-12 col-lg-4">
+                    <div class="fw-bold">آدرس دفتر مرکزی</div>
+                    <div class="text-muted small">Address</div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <input class="form-control" asp-for="OfficeAddress" />
+                </div>
+            </div>
+
+            <hr class="border-opacity-10" />
+
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-12 col-lg-4"><div class="fw-bold">Instagram URL</div></div>
+                <div class="col-12 col-lg-8"><input class="form-control" asp-for="InstagramUrl" /></div>
+            </div>
+
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-12 col-lg-4"><div class="fw-bold">WhatsApp URL</div></div>
+                <div class="col-12 col-lg-8"><input class="form-control" asp-for="WhatsappUrl" /></div>
+            </div>
+
+            <div class="row g-3 align-items-center">
+                <div class="col-12 col-lg-4"><div class="fw-bold">Twitter/X URL</div></div>
+                <div class="col-12 col-lg-8"><input class="form-control" asp-for="TwitterUrl" /></div>
+            </div>
+
+        </div>
+    </div>
+</form>

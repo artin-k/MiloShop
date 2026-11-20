@@ -1,27 +1,24 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
+ENV ASPNETCORE_URLS=http://+:8080
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["avatCo.csproj", "."]
-RUN dotnet restore "./avatCo.csproj"
+COPY ["src/MiloShop.Domain/MiloShop.Domain.csproj", "src/MiloShop.Domain/"]
+COPY ["src/MiloShop.Application/MiloShop.Application.csproj", "src/MiloShop.Application/"]
+COPY ["src/MiloShop.Infrastructure/MiloShop.Infrastructure.csproj", "src/MiloShop.Infrastructure/"]
+COPY ["src/MiloShop.Web/MiloShop.Web.csproj", "src/MiloShop.Web/"]
+RUN dotnet restore "src/MiloShop.Web/MiloShop.Web.csproj"
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./avatCo.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "src/MiloShop.Web/MiloShop.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./avatCo.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "src/MiloShop.Web/MiloShop.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "avatCo.dll"]
+ENTRYPOINT ["dotnet", "MiloShop.Web.dll"]

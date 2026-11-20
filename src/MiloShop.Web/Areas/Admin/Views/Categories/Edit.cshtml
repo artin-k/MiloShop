@@ -1,0 +1,44 @@
+@model MiloShop.Web.Areas.Admin.ViewModels.CategoryUpsertVm
+@{
+    ViewData["Title"] = "ویرایش دسته‌بندی";
+}
+
+<div class="card bg-transparent border border-opacity-10 p-3">
+    <form method="post" enctype="multipart/form-data" asp-route-id="@Model.Id">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">نام</label>
+            <input class="form-control" asp-for="Name" />
+            <span class="text-danger">@Html.ValidationMessageFor(m => m.Name)</span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">توضیحات</label>
+            <textarea class="form-control" asp-for="Description" rows="4"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">تصویر فعلی</label><br />
+            @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl))
+            {
+                <img src="@Model.ExistingImageUrl" class="rounded" style="width:110px;height:110px;object-fit:cover;" />
+            }
+            else
+            {
+                <span class="text-muted">—</span>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">تعویض تصویر (اختیاری)</label>
+            <input class="form-control" asp-for="ImageFile" type="file" />
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit">ذخیره</button>
+            <a class="btn btn-outline-light" asp-area="Admin" asp-controller="Categories" asp-action="Index">بازگشت</a>
+        </div>
+    </form>
+</div>

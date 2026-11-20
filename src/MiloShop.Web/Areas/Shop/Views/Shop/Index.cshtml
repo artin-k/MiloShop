@@ -1,0 +1,550 @@
+﻿@model MiloShop.Web.Areas.Shop.ViewModels.ShopViewModel
+@using System.Globalization
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["BodyClass"] = "site-page";
+    var currentUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+}
+
+<link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
+
+<section class="shop-shell">
+
+    <!-- Top Bar -->
+    <div class="shop-toolbar">
+        <div class="toolbar-row">
+
+            <!-- Categories chips -->
+            <div class="toolbar-chips">
+                <a class="chip @(Model.CategoryId == null ? "is-active" : "")"
+                   asp-route="ShopIndex"
+                   asp-route-q="@Model.Query" asp-route-sort="@Model.Sort"
+                   asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">
+                    همه
+                </a>
+
+                @foreach (var c in Model.Categories.Take(10))
+                {
+                    <a class="chip @(Model.CategoryId == c.Id ? "is-active" : "")"
+                       asp-route="ShopIndex"
+                       asp-route-categoryId="@c.Id" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort"
+                       asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">
+                        @c.Name
+                    </a>
+                }
+            </div>
+
+            <!-- Search -->
+            <form class="toolbar-search" method="get" action="/Shop">
+                <input id="searchBox" type="text" name="q" placeholder="جستجو در محصولات..." autocomplete="off" value="@Model.Query" />
+                <input type="hidden" name="sort" value="@Model.Sort" />
+                <input type="hidden" name="minPrice" value="@Model.MinPrice" />
+                <input type="hidden" name="maxPrice" value="@Model.MaxPrice" />
+                <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                <span class="search-ico">⌕</span>
+                <div id="searchResults" class="search-results d-none"></div>
+            </form>
+
+            <!-- Sort + Filters -->
+            <form class="toolbar-actions" method="get" action="/Shop">
+                <input type="hidden" name="q" value="@Model.Query" />
+                <input type="hidden" name="minPrice" value="@Model.MinPrice" />
+                <input type="hidden" name="maxPrice" value="@Model.MaxPrice" />
+                <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+
+                <select class="sort" name="sort" onchange="this.form.submit()">
+                    <option value="" asp-selected="@string.IsNullOrWhiteSpace(Model.Sort)">پیش‌فرض</option>
+                    <option value="new" asp-selected="@(Model.Sort == "new")">جدیدترین</option>
+                    <option value="cheap" asp-selected="@(Model.Sort == "cheap")">ارزان‌ترین</option>
+                    <option value="expensive" asp-selected="@(Model.Sort == "expensive")">گران‌ترین</option>
+                </select>
+
+                <button class="btn-filter" type="button" onclick="openFilters()">فیلترها</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="shop-grid">
+
+        <!-- Sidebar Filters (desktop) -->
+        <aside class="filters filters-desktop">
+            <div class="filters-card">
+                <div class="filters-head">
+                    <div class="filters-title">فیلترها</div>
+                    <a class="filters-reset" href="/Shop">ریست</a>
+                </div>
+
+                <form method="get" action="/Shop" class="filters-form">
+                    <input type="hidden" name="q" value="@Model.Query" />
+
+                    <div class="fg">
+                        <div class="lbl">مرتب‌سازی</div>
+                        <select class="ctl" name="sort" onchange="this.form.submit()">
+                            <option value="" asp-selected="@string.IsNullOrWhiteSpace(Model.Sort)">پیش‌فرض</option>
+                            <option value="new" asp-selected="@(Model.Sort == "new")">جدیدترین</option>
+                            <option value="cheap" asp-selected="@(Model.Sort == "cheap")">ارزان‌ترین</option>
+                            <option value="expensive" asp-selected="@(Model.Sort == "expensive")">گران‌ترین</option>
+                        </select>
+                    </div>
+
+                    <div class="fg">
+                        <div class="lbl">بازه قیمت (تومان)</div>
+                        <div class="range">
+                            <input class="ctl" type="number" name="minPrice" placeholder="از" value="@(Model.MinPrice?.ToString(CultureInfo.InvariantCulture))" />
+                            <input class="ctl" type="number" name="maxPrice" placeholder="تا" value="@(Model.MaxPrice?.ToString(CultureInfo.InvariantCulture))" />
+                        </div>
+                    </div>
+
+                    <div class="fg">
+                        <div class="lbl">دسته‌بندی</div>
+                        <div class="list">
+                            <label class="check">
+                                <input type="radio" name="categoryId" value="" @(Model.CategoryId == null ? "checked" : "") />
+                                <span>همه</span>
+                            </label>
+
+                            @foreach (var c in Model.Categories)
+                            {
+                                <label class="check">
+                                    <input type="radio" name="categoryId" value="@c.Id" @(Model.CategoryId == c.Id ? "checked" : "") />
+                                    <span>@c.Name</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                    <button class="apply" type="submit">اعمال فیلتر</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Products -->
+        <main class="products">
+            <div class="products-head">
+                <div>
+                    <div class="products-title">محصولات</div>
+                    <div class="products-sub">@Model.Products.Count() مورد</div>
+                </div>
+
+                <a class="see-all" href="/Shop">مشاهده همه</a>
+            </div>
+
+            @if (!Model.Products.Any())
+            {
+                <div class="empty">
+                    <div class="empty-title">محصولی یافت نشد</div>
+                    <div class="empty-sub">فیلترها را تغییر دهید یا جستجو کنید.</div>
+                </div>
+            }
+            else
+            {
+                <div class="cards">
+                    @foreach (var p in Model.Products)
+                    {
+                        var imgUrl = string.IsNullOrWhiteSpace(p.ImageUrl) ? Url.Content("~/images/1.webp") : p.ImageUrl;
+                        var effectivePrice = p.SalePrice ?? p.Price;
+                        var hasSale = p.SalePrice.HasValue && p.SalePrice.Value < p.Price;
+
+                        <div class="p-card">
+                            <div class="p-img">
+                                <img src="@imgUrl" alt="@p.Title" />
+                            </div>
+
+                            <div class="p-body">
+                                <div class="p-title">@p.Title</div>
+                                <div class="p-desc">کیفیت عالی • ارسال سریع</div>
+
+                                <div class="p-foot">
+                                    <div class="p-price">
+                                        @effectivePrice.ToString("N0") تومان
+                                        @if (hasSale)
+                                        {
+                                            <span class="p-price-old">@p.Price.ToString("N0") تومان</span>
+                                        }
+                                    </div>
+                                    <div class="p-actions">
+                                        <button class="p-btn" type="button" onclick="openDetailProductModal(@p.Id)">
+                                            <i class="fa-solid fa-circle-info"></i>
+                                            <span>جزئیات</span>
+                                        </button>
+                                        <form method="post"
+                                              asp-area=""
+                                              asp-controller="Cart"
+                                              asp-action="Add"
+                                              asp-route-id="@p.Id"
+                                              asp-route-returnUrl="@currentUrl">
+                                            @Html.AntiForgeryToken()
+                                            <button class="p-btn p-btn-add" type="submit">
+                                                <i class="fa-solid fa-cart-plus"></i>
+                                                <span>افزودن</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </main>
+    </div>
+</section>
+
+<!-- Product Details Modal -->
+<div id="productModal" class="pmodal" aria-hidden="true">
+    <div class="pmodal-backdrop" onclick="closeDetailProductModal()"></div>
+    <div class="pmodal-panel" role="dialog" aria-modal="true" aria-labelledby="pmodalTitle">
+        <button type="button" class="pmodal-close" onclick="closeDetailProductModal()">×</button>
+
+        <div class="pmodal-content">
+            <div class="pmodal-media">
+                <img id="pmodalImage" src="" alt="" />
+            </div>
+            <div class="pmodal-info">
+                <div id="pmodalTitle" class="pmodal-title">در حال بارگذاری...</div>
+                <div id="pmodalPrice" class="pmodal-price"></div>
+
+                <div class="pmodal-meta">
+                    <span id="pmodalCategory"></span>
+                    <span id="pmodalBrand"></span>
+                    <span id="pmodalMaterial"></span>
+                </div>
+
+                <div id="pmodalDesc" class="pmodal-desc"></div>
+
+                <div class="pmodal-actions">
+                    <form method="post" id="pmodalAddToCartForm">
+                        @Html.AntiForgeryToken()
+                        <input id="pmodalReturnUrl" type="hidden" name="returnUrl" />
+                        <button class="p-btn p-btn-add" type="submit">
+                            <i class="fa-solid fa-cart-plus"></i>
+                            <span>افزودن به سبد</span>
+                        </button>
+                    </form>
+                    <a class="p-btn p-btn-checkout" href="/Cart">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>رفتن به تسویه</span>
+                    </a>
+                </div>
+
+                <div class="pmodal-reviews">
+                    <div class="pmodal-reviews-title">نظرات</div>
+                    <div id="pmodalReviews" class="pmodal-reviews-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Filters Drawer -->
+<div id="filtersDrawer" class="drawer" aria-hidden="true">
+    <div class="drawer-backdrop" onclick="closeFilters()"></div>
+
+    <div class="drawer-panel">
+        <div class="drawer-head">
+            <div class="drawer-title">فیلترها</div>
+            <button type="button" class="drawer-close" onclick="closeFilters()">×</button>
+        </div>
+
+        <div class="drawer-body">
+            <form method="get" action="/Shop" class="filters-form">
+                <input type="hidden" name="q" value="@Model.Query" />
+
+                <div class="fg">
+                    <div class="lbl">مرتب‌سازی</div>
+                    <select class="ctl" name="sort">
+                        <option value="default" asp-selected="@string.IsNullOrWhiteSpace(Model.Sort)">پیش‌فرض</option>
+                        <option value="new" asp-selected="@(Model.Sort == "new")">جدیدترین</option>
+                        <option value="cheap" asp-selected="@(Model.Sort == "cheap")">ارزان‌ترین</option>
+                        <option value="expensive" asp-selected="@(Model.Sort == "expensive")">گران‌ترین</option>
+                    </select>
+                </div>
+
+                <div class="fg">
+                    <div class="lbl">بازه قیمت (تومان)</div>
+                    <div class="range">
+                        <input class="ctl" type="number" name="minPrice" placeholder="از" value="@(Model.MinPrice?.ToString(CultureInfo.InvariantCulture))" />
+                        <input class="ctl" type="number" name="maxPrice" placeholder="تا" value="@(Model.MaxPrice?.ToString(CultureInfo.InvariantCulture))" />
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <div class="lbl">دسته‌بندی</div>
+                    <div class="list">
+                        <label class="check">
+                            <input type="radio" name="categoryId" value="" @(Model.CategoryId == null ? "checked" : "") />
+                            <span>همه</span>
+                        </label>
+
+                        @foreach (var c in Model.Categories)
+                        {
+                            <label class="check">
+                                <input type="radio" name="categoryId" value="@c.Id" @(Model.CategoryId == c.Id ? "checked" : "") />
+                                <span>@c.Name</span>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <button class="apply" type="submit">اعمال فیلتر</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function openFilters() {
+        document.body.classList.add("drawer-open");
+        document.getElementById("filtersDrawer")?.classList.add("is-open");
+    }
+
+    function closeFilters() {
+        document.body.classList.remove("drawer-open");
+        document.getElementById("filtersDrawer")?.classList.remove("is-open");
+    }
+
+    function openDetailProductModal(id) {
+        const modal = document.getElementById("productModal");
+        if (!modal) return;
+
+        modal.classList.add("is-open");
+        document.body.classList.add("modal-open");
+
+        const titleEl = document.getElementById("pmodalTitle");
+        const priceEl = document.getElementById("pmodalPrice");
+        const descEl = document.getElementById("pmodalDesc");
+        const imgEl = document.getElementById("pmodalImage");
+        const catEl = document.getElementById("pmodalCategory");
+        const brandEl = document.getElementById("pmodalBrand");
+        const materialEl = document.getElementById("pmodalMaterial");
+        const reviewsEl = document.getElementById("pmodalReviews");
+        const addToCartForm = document.getElementById("pmodalAddToCartForm");
+        const returnUrlEl = document.getElementById("pmodalReturnUrl");
+
+        if (addToCartForm && returnUrlEl) {
+            const returnUrl = `${window.location.pathname}${window.location.search}`;
+            addToCartForm.action = `/Cart/Add/${id}`;
+            returnUrlEl.value = returnUrl;
+        }
+
+        if (titleEl) titleEl.textContent = "در حال بارگذاری...";
+        if (priceEl) priceEl.textContent = "";
+        if (descEl) descEl.textContent = "";
+        if (catEl) catEl.textContent = "";
+        if (brandEl) brandEl.textContent = "";
+        if (materialEl) materialEl.textContent = "";
+        if (reviewsEl) reviewsEl.innerHTML = "";
+
+        fetch(`/Shop/GetProduct/${id}`, { headers: { "Accept": "application/json" } })
+            .then(r => {
+                if (!r.ok) throw new Error("fetch_failed");
+                return r.json();
+            })
+            .then(p => {
+                if (titleEl) titleEl.textContent = p.title || "بدون عنوان";
+                if (priceEl) priceEl.textContent = `${Number(p.price).toLocaleString()} تومان`;
+                if (descEl) descEl.textContent = p.description || "توضیحی ثبت نشده است.";
+                if (catEl) catEl.textContent = p.categoryName ? `دسته: ${p.categoryName}` : "";
+                if (brandEl) brandEl.textContent = p.brand ? `برند: ${p.brand}` : "";
+                if (materialEl) materialEl.textContent = p.material ? `متریال: ${p.material}` : "";
+
+                if (imgEl) {
+                    imgEl.src = p.imageUrl || '@Url.Content("~/images/1.webp")';
+                    imgEl.alt = p.title || "";
+                }
+
+                if (reviewsEl) {
+                    reviewsEl.innerHTML = "";
+
+                    if (!p.opinions || p.opinions.length === 0) {
+                        const empty = document.createElement("div");
+                        empty.className = "pmodal-review empty";
+                        empty.textContent = "نظری ثبت نشده است.";
+                        reviewsEl.appendChild(empty);
+                    } else {
+                        p.opinions.forEach(o => {
+                            const rate = Number(o.rating || 0);
+                            const item = document.createElement("div");
+                            item.className = "pmodal-review";
+
+                            const head = document.createElement("div");
+                            head.className = "pmodal-review-head";
+
+                            const user = document.createElement("span");
+                            user.textContent = o.userName || "کاربر";
+
+                            const stars = document.createElement("span");
+                            stars.textContent = "★".repeat(rate) + "☆".repeat(Math.max(0, 5 - rate));
+
+                            head.appendChild(user);
+                            head.appendChild(stars);
+
+                            const body = document.createElement("div");
+                            body.className = "pmodal-review-body";
+                            body.textContent = o.comment || "";
+
+                            item.appendChild(head);
+                            item.appendChild(body);
+                            reviewsEl.appendChild(item);
+                        });
+                    }
+                }
+            })
+            .catch(() => {
+                if (titleEl) titleEl.textContent = "خطا در دریافت جزئیات محصول";
+            });
+    }
+
+    function closeDetailProductModal() {
+        const modal = document.getElementById("productModal");
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        document.body.classList.remove("modal-open");
+    }
+
+    // Close with ESC
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            closeFilters();
+            closeDetailProductModal();
+        }
+    });
+
+    // Search suggestions
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("searchBox");
+        const results = document.getElementById("searchResults");
+        let timer;
+
+        if (!input || !results) return;
+
+        input.addEventListener("input", function () {
+            const term = input.value.trim();
+            clearTimeout(timer);
+
+            if (!term) {
+                results.classList.add("d-none");
+                results.innerHTML = "";
+                return;
+            }
+
+            timer = setTimeout(() => {
+                fetch(`/Shop/Search?term=${encodeURIComponent(term)}`)
+                    .then(r => r.ok ? r.json() : [])
+                    .then(items => {
+                        results.innerHTML = "";
+
+                        if (!items.length) {
+                            const empty = document.createElement("div");
+                            empty.className = "sr-empty";
+                            empty.textContent = "نتیجه‌ای یافت نشد";
+                            results.appendChild(empty);
+                            results.classList.remove("d-none");
+                            return;
+                        }
+
+                        items.forEach(p => {
+                            const btn = document.createElement("button");
+                            btn.type = "button";
+                            btn.className = "sr-item";
+                            btn.addEventListener("click", () => openDetailProductModal(p.id));
+
+                            const img = document.createElement("img");
+                            img.src = p.imageUrl || '@Url.Content("~/images/1.webp")';
+                            img.alt = "";
+
+                            const title = document.createElement("span");
+                            title.textContent = p.title || "";
+
+                            btn.appendChild(img);
+                            btn.appendChild(title);
+                            results.appendChild(btn);
+                        });
+
+                        results.classList.remove("d-none");
+                    });
+            }, 200);
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!results.contains(e.target) && e.target !== input) {
+                results.classList.add("d-none");
+            }
+        });
+
+        // Move drawer to <body> to escape stacking contexts
+        const d = document.getElementById("filtersDrawer");
+        if (d && d.parentElement !== document.body) {
+            document.body.appendChild(d);
+        }
+
+        // Submit search on Enter
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                input.form?.submit?.();
+            }
+        });
+    });
+</script>
+
+
+@* <section class="product-sec-new">
+    <div class="row">
+        @foreach (var p in Model.NewProducts)
+        {
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="shoping-card">
+                    <div class="img-sec">
+                        <img src="@p.ImageUrl" alt="@p.Title">
+                        <div class="stars">
+                            @{
+                                var avg = p.Reviews != null && p.Reviews.Any()
+                                ? (int)Math.Round(p.Reviews.Average(r => r.Rating))
+                                : 0;
+                            }
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                @if (i <= avg)
+                                {
+                                    <i class="fa-solid fa-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa-regular fa-star"></i>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="title">@p.Title</div>
+
+                    <div class="buttons">
+                        <div class="right">
+                            <span class="price">@p.Price.ToString("N0") تومان</span>
+                        </div>
+                        <div class="left">
+                            <div class="extend-btn">
+                                <a class="b-text" asp-controller="Wishlist" asp-action="Add" asp-route-id="@p.Id">علاقه</a>
+                                <a class="b-icon" asp-controller="Wishlist" asp-action="Add" asp-route-id="@p.Id">
+                                    <i class="fas fa-heart"></i>
+                                </a>
+                            </div>
+
+                            <form class="extend-btn" method="post"
+                                  asp-area="" asp-controller="Cart" asp-action="Add" asp-route-id="@p.Id">
+                                @Html.AntiForgeryToken()
+                                <button class="b-text" type="submit">خرید</button>
+                                <button class="b-icon" type="submit" aria-label="افزودن به سبد">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section> *@

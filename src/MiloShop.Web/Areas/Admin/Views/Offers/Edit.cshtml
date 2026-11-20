@@ -1,0 +1,143 @@
+﻿@model MiloShop.Web.Areas.Admin.ViewModels.OfferEditVm
+@using MiloShop.Domain.Entities
+@{
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Offer" : "Create Offer";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    @if (isEdit)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Kind" class="form-label"></label>
+            <select asp-for="Kind" class="form-select" id="kindSelect">
+                <option value="Product">Product</option>
+                <option value="Coupon">Coupon</option>
+            </select>
+            <span asp-validation-for="Kind" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="StartsAt" class="form-label"></label>
+            <input asp-for="StartsAt" class="form-control" type="datetime-local" />
+            <span asp-validation-for="StartsAt" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="EndsAt" class="form-label"></label>
+            <input asp-for="EndsAt" class="form-control" type="datetime-local" />
+            <span asp-validation-for="EndsAt" class="text-danger"></span>
+            <div class="form-text">Leave empty for no timer.</div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Banner Image</label>
+        <img id="bannerPreview" style="display:none;max-width:320px;border-radius:12px;margin-top:10px;" />
+        <input asp-for="BannerFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" />
+        <span asp-validation-for="BannerFile" class="text-danger"></span>
+
+        @if (!string.IsNullOrWhiteSpace(Model.BannerImageUrl))
+        {
+            <div class="mt-2">
+                <div class="text-muted mb-1">Current:</div>
+                <img src="@Model.BannerImageUrl" alt="banner" style="max-width:320px;border-radius:12px;border:1px solid rgba(255,255,255,.15);" />
+            </div>
+        }
+    </div>
+
+
+    <div class="form-check mb-4">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <hr />
+
+    <!-- Product Fields -->
+    <div id="productFields" class="mb-4">
+        <h5>Product Offer</h5>
+
+        <div class="mb-3">
+            <label asp-for="ProductId" class="form-label">Product</label>
+            <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
+                <option value="">-- Select product --</option>
+            </select>
+            <span asp-validation-for="ProductId" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="ProductPercentOff" class="form-label">Percent Off</label>
+                <input asp-for="ProductPercentOff" class="form-control" type="number" min="1" max="100" />
+                <span asp-validation-for="ProductPercentOff" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="OfferPrice" class="form-label">Offer Price</label>
+                <input asp-for="OfferPrice" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="OfferPrice" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-text">Use either Percent Off OR Offer Price (not both).</div>
+    </div>
+
+    <!-- Coupon Fields -->
+    <div id="couponFields" class="mb-4">
+        <h5>Coupon Offer</h5>
+
+        <div class="mb-3">
+            <label asp-for="CouponId" class="form-label">Coupon</label>
+            <select asp-for="CouponId" class="form-select" asp-items="ViewBag.Coupons">
+                <option value="">-- Select coupon --</option>
+            </select>
+            <span asp-validation-for="CouponId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-secondary" asp-area="Admin" asp-controller="Offers" asp-action="Index">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleOfferFields() {
+            const kind = document.getElementById("kindSelect").value;
+            document.getElementById("productFields").style.display = (kind === "Product") ? "block" : "none";
+            document.getElementById("couponFields").style.display = (kind === "Coupon") ? "block" : "none";
+        }
+
+        document.getElementById("kindSelect").addEventListener("change", toggleOfferFields);
+        toggleOfferFields();
+
+
+        const fileInput = document.querySelector('input[name="BannerFile"]');
+        const img = document.getElementById('bannerPreview');
+
+        if (fileInput && img) {
+            fileInput.addEventListener('change', () => {
+                const f = fileInput.files && fileInput.files[0];
+                if (!f) { img.style.display = "none"; return; }
+                img.src = URL.createObjectURL(f);
+                img.style.display = "block";
+            });
+        }
+    </script>
+
+}
