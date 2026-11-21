@@ -6,6 +6,9 @@
 @inject UserManager<ApplicationUser> _userManager
 @{
     var cartItemsCount = 0;
+    var pageTitle = ViewData["Title"]?.ToString() ?? "فروشگاه آنلاین";
+    var pageDescription = ViewData["Description"]?.ToString() ?? "MiloShop؛ فروشگاه آنلاین لوازم‌التحریر، ابزار خلاقیت و هدیه.";
+    var canonicalUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
 
     if (User.Identity?.IsAuthenticated == true)
     {
@@ -25,8 +28,16 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#FFE52A"/>
-    <title>@ViewData["Title"] - MiloShop</title>
+    <meta name="theme-color" content="#f7f4ed"/>
+    <meta name="description" content="@pageDescription" />
+    <link rel="canonical" href="@canonicalUrl" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MiloShop" />
+    <meta property="og:title" content="@pageTitle | MiloShop" />
+    <meta property="og:description" content="@pageDescription" />
+    <meta property="og:url" content="@canonicalUrl" />
+    <title>@pageTitle | MiloShop</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
@@ -36,11 +47,11 @@
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
+    @RenderSection("Head", required: false)
 </head>
 <body class="@ViewBag.BodyClass">
     <header class="header">
         <nav class="navbar">
-            <!-- Right Side: Icons -->
             <div class="nav-right">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
@@ -72,13 +83,19 @@
                 </a>
                 @if (User.IsInRole("Admin"))
                 {
-                    <a asp-area="Admin" asp-controller="Products" asp-action="Index">Admin</a>
+                    <a class="nav-admin" asp-area="Admin" asp-controller="Products" asp-action="Index">مدیریت</a>
                 }
             </div>
 
-            <!-- Left Side: Logo -->
+            <div class="nav-center" aria-label="ناوبری اصلی">
+                <a href="/">خانه</a>
+                <a href="/Shop">فروشگاه</a>
+                <a href="/#collections">مجموعه‌ها</a>
+            </div>
+
             <div class="nav-left">
                 <a href="/" class="logo-container">
+                    <span class="logo-mark">م</span>
                     <span class="Logo-text">Milo Shop</span>
                 </a>
             </div>
@@ -96,43 +113,34 @@
     <footer class="site-footer" dir="rtl">
         <div class="footer-container">
             <div class="footer-grid">
-                <!-- Column 1: About -->
                 <div class="footer-column">
-                    <h5 class="footer-title">MiloShop</h5>
-                    <p class="footer-text">خاص ترین فروشگاه لوازم تحریر</p>
+                    <a href="/" class="footer-brand"><span>م</span> MiloShop</a>
+                    <p class="footer-text">لوازم‌التحریر و هدیه برای فکرهای تازه و لحظه‌های خلاقانه.</p>
                 </div>
-                <!-- Column 2: Quick Links -->
                 <div class="footer-column">
-                    <h6 class="footer-title">لینک های سریع</h6>
+                    <h6 class="footer-title">دسترسی سریع</h6>
                     <ul class="footer-list">
                         <li><a href="/" class="footer-link">خانه</a></li>
                         <li><a href="/shop" class="footer-link">فروشگاه</a></li>
-                        <li><a href="#" class="footer-link">وبلاگ</a></li>
-                        <li><a href="/" class="footer-link">تماس با ما</a></li>
+                        <li><a href="/#collections" class="footer-link">مجموعه‌ها</a></li>
                     </ul>
                 </div>
-                <!-- Column 3: Support -->
                 <div class="footer-column">
                     <h6 class="footer-title">پشتیبانی</h6>
                     <ul class="footer-list">
-                        <li><a href="#" class="footer-link">سوالات متداول</a></li>
-                        <li><a href="#" class="footer-link">پیگیری سفارش</a></li>
-                        <li><a href="#" class="footer-link">شرایط بازگشت</a></li>
-                        <li><a href="#" class="footer-link">حریم خصوصی</a></li>
+                        <li><a href="/Profile" class="footer-link">حساب کاربری</a></li>
+                        <li><a href="/Cart" class="footer-link">سبد خرید</a></li>
+                        <li><a asp-area="Home" asp-controller="Home" asp-action="Privacy" class="footer-link">حریم خصوصی</a></li>
                     </ul>
                 </div>
-                <!-- Column 4: Contact -->
                 <div class="footer-column">
-                    <h6 class="footer-title">ارتباط با ما</h6>
-                    <ul class="footer-list">
-                        <li><i class="fa-solid fa-phone"></i> شماره تماس</li>
-                        <li><i class="fa-solid fa-envelope"></i> ایمیل</li>
-                        <li><i class="fa-solid fa-location-dot"></i> آدرس</li>
-                    </ul>
+                    <h6 class="footer-title">برای شروع آماده‌ای؟</h6>
+                    <p class="footer-text">محصول مناسب ایده بعدی‌ات را پیدا کن.</p>
+                    <a class="footer-cta" href="/Shop">رفتن به فروشگاه <i class="fa-solid fa-arrow-left"></i></a>
                 </div>
             </div>
             <hr class="footer-divider">
-            <div class="footer-copyright">© @DateTime.UtcNow.Year MiloShop - تمامی حقوق محفوظ است</div>
+            <div class="footer-copyright"><span>© @DateTime.UtcNow.Year MiloShop</span><span>ساخته‌شده برای ایده‌های تازه.</span></div>
         </div>
     </footer>
 

@@ -1,448 +1,166 @@
-﻿@model MiloShop.Web.ViewModels.HomePageViewModel
+@model MiloShop.Web.ViewModels.HomePageViewModel
+@using MiloShop.Domain.Entities
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "لوازم‌التحریر برای ایده‌های تازه";
+    ViewData["Description"] = "خرید آنلاین لوازم‌التحریر، نوشت‌افزار و هدیه‌های خلاقانه از میلوشاپ؛ انتخاب ساده، پرداخت امن و ارسال سریع.";
+    ViewData["BodyClass"] = "milo-home";
+    ViewBag.BodyClass = "milo-home";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var products = Model.NewProducts.Take(8).ToList();
+    var currentUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
 
-    string GetCategoryIconClass(string? name)
+    string CategoryIcon(string? name)
     {
-        var n = (name ?? string.Empty).ToLowerInvariant();
-
-        if (n.Contains("اسباب") || n.Contains("toy")) return "fa-solid fa-puzzle-piece";
-        if (n.Contains("بازی") || n.Contains("game")) return "fa-solid fa-gamepad";
-        if (n.Contains("نوشت") || n.Contains("تحریر") || n.Contains("station")) return "fa-solid fa-pen-ruler";
-        if (n.Contains("کتاب") || n.Contains("book")) return "fa-solid fa-book";
-        if (n.Contains("هنر") || n.Contains("art")) return "fa-solid fa-palette";
-        if (n.Contains("نوزاد") || n.Contains("baby")) return "fa-solid fa-baby";
-
-        return "fa-solid fa-shapes";
+        var value = (name ?? string.Empty).ToLowerInvariant();
+        if (value.Contains("کتاب") || value.Contains("book")) return "fa-book-open";
+        if (value.Contains("هنر") || value.Contains("art")) return "fa-palette";
+        if (value.Contains("بازی") || value.Contains("game")) return "fa-puzzle-piece";
+        if (value.Contains("هدیه") || value.Contains("gift")) return "fa-gift";
+        return "fa-pen-ruler";
     }
 }
 
-@* <link rel="stylesheet" href="~/css/animate.css" asp-append-version="true" /> *@
-<link rel="stylesheet" href="~/css/home/super-offer.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/home/home-category.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/home/home-hero.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/home/promos.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/home/feature-cards.css" asp-append-version="true" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/home/milo-landing.css" asp-append-version="true" />
+}
 
-<!--hero section-->
-<section class="aparat-hero" dir="rtl">
+@section Head {
+    <script type="application/ld+json">
+        {"@@context":"https://schema.org","@@type":"WebSite","name":"MiloShop","url":"@($"{Context.Request.Scheme}://{Context.Request.Host}/")","potentialAction":{"@@type":"SearchAction","target":"@($"{Context.Request.Scheme}://{Context.Request.Host}/Shop?q={{search_term_string}}")","query-input":"required name=search_term_string"}}
+    </script>
+}
 
-    <div class="aparat-slider">
-        @foreach (var s in Model.HeroSlides)
-        {
-            <div class="slide-item" style="display: none;">
-                <div class="slide-bg" style="background-image: url('@Url.Content("~" + s.BackgroundImageUrl)'); background-color: #333;"></div>
-                <div class="slide-overlay"></div>
-
-                <div class="slide-content container">
-                    <div class="content-box">
-                        <span class="badge-tag">@s.Badge</span>
-                        <h1 class="slide-title">@s.Title</h1>
-                        <p class="desc-text">@s.Subtitle</p>
-
-                        <button href="@s.CtaUrl" class="action-btn">@s.CtaText</button>
-                    </div>
-                </div>
+<section class="milo-hero" aria-labelledby="hero-title">
+    <div class="milo-shell milo-hero__grid">
+        <div class="milo-hero__copy">
+            <p class="milo-eyebrow"><span></span> از فکر تا کاغذ، با میلو</p>
+            <h1 id="hero-title">برای ایده‌هایی که هنوز <em>روی کاغذ</em> نیامده‌اند.</h1>
+            <p class="milo-hero__lead">نوشت‌افزار، ابزار خلاقیت و هدیه‌هایی که با دقت انتخاب شده‌اند؛ برای مدرسه، کار و لحظه‌های شخصی شما.</p>
+            <div class="milo-actions">
+                <a class="milo-button milo-button--primary" asp-route="ShopIndex">ورود به فروشگاه <i class="fa-solid fa-arrow-left" aria-hidden="true"></i></a>
+                <a class="milo-button milo-button--text" href="#collections">دیدن مجموعه‌ها</a>
             </div>
-        }
-
-        <!-- Navigation Arrows -->
-        <div class="slider-nav">
-            <button class="nav-arrow prev-arrow"><</button>
-            <button class="nav-arrow next-arrow">></button>
+            <ul class="milo-trust" aria-label="مزایای خرید از میلوشاپ">
+                <li><i class="fa-solid fa-check"></i> انتخاب‌های باکیفیت</li>
+                <li><i class="fa-solid fa-check"></i> پرداخت امن</li>
+                <li><i class="fa-solid fa-check"></i> ارسال سریع</li>
+            </ul>
         </div>
 
-        <!-- THUMBNAILS MOVED HERE (Inside Slider) -->
-        <div class="thumbs-container">
-            @foreach (var s in Model.HeroSlides)
-            {
-                var thumbUrl = string.IsNullOrWhiteSpace(s.ThumbImageUrl) ? s.BackgroundImageUrl : s.ThumbImageUrl;
-
-                <div class="thumb-card">
-                    <div class="thumb-img" style="background-image: url('@Url.Content("~" + thumbUrl)'); background-color: #444;"></div>
-                    <div class="thumb-info">
-                        <span class="thumb-badge">@s.Badge</span>
-                    </div>
-                </div>
-            }
+        <div class="milo-hero__art" aria-label="مجموعه‌ای از لوازم‌التحریر رنگی">
+            <div class="milo-orbit milo-orbit--one"></div><div class="milo-orbit milo-orbit--two"></div>
+            <figure class="milo-photo milo-photo--main"><img src="~/images/hero/hero2.jpg" alt="دفترها و مدادهای رنگی" /></figure>
+            <figure class="milo-photo milo-photo--small"><img src="~/images/hero/hero1.jpg" alt="میز کار با نوشت‌افزار رنگی" /></figure>
+            <div class="milo-note"><span class="milo-note__mark">م</span><span>انتخاب امروز<br /><strong>شروع یک ایده تازه</strong></span></div>
+            <span class="milo-spark milo-spark--one">✦</span><span class="milo-spark milo-spark--two">✦</span>
         </div>
     </div>
-
 </section>
-<main>
 
-    <!--products / categories-->
-    <section class="cat-rail" aria-label="Categories">
-        <button class="cat-rail__nav is-left" type="button" aria-label="Scroll left">
-            ‹
-        </button>
+<div class="milo-main">
+    <section class="milo-section" id="collections" aria-labelledby="collections-title">
+        <div class="milo-shell">
+            <header class="milo-section__head">
+                <div><p class="milo-kicker">از همین‌جا شروع کن</p><h2 id="collections-title">هر چیزی، برای یک جور خلق کردن.</h2></div>
+                <a class="milo-inline-link" asp-route="ShopIndex">همه محصولات <i class="fa-solid fa-arrow-left"></i></a>
+            </header>
 
-        <div class="cat-rail__track" id="catRail" role="list">
-            @foreach (var c in Model.Categories)
+            @if (Model.Categories.Any())
             {
-                <a class="cat-tile"
-                   role="listitem"
-                   asp-route="ShopIndex"
-                   asp-route-categoryId="@c.Id"
-                   asp-route-q="@c.Name"
-                   asp-route-sort="@c.Description">
-
-                    <span class="cat-tile__icon">
-                        <i class="@GetCategoryIconClass(c.Name)" aria-hidden="true"></i>
-                    </span>
-
-                    <span class="cat-tile__label">@c.Name</span>
-                </a>
+                <div class="milo-category-grid">
+                    @foreach (var category in Model.Categories.Take(6))
+                    {
+                        <a class="milo-category" asp-route="ShopIndex" asp-route-categoryId="@category.Id">
+                            <span class="milo-category__number">@category.Id.ToString("00")</span><i class="fa-solid @CategoryIcon(category.Name)" aria-hidden="true"></i>
+                            <span class="milo-category__copy"><strong>@category.Name</strong><small>@(string.IsNullOrWhiteSpace(category.Description) ? "انتخاب‌های تازه و کاربردی" : category.Description)</small></span>
+                            <span class="milo-category__arrow">←</span>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="milo-category-grid milo-category-grid--editorial">
+                    <a class="milo-category" asp-route="ShopIndex"><span class="milo-category__number">01</span><i class="fa-solid fa-pen-ruler"></i><span class="milo-category__copy"><strong>نوشتن و طراحی</strong><small>برای فکرهایی که باید ثبت شوند</small></span><span class="milo-category__arrow">←</span></a>
+                    <a class="milo-category" asp-route="ShopIndex"><span class="milo-category__number">02</span><i class="fa-solid fa-book-open"></i><span class="milo-category__copy"><strong>دفتر و کاغذ</strong><small>صفحه‌های تازه برای شروع تازه</small></span><span class="milo-category__arrow">←</span></a>
+                    <a class="milo-category" asp-route="ShopIndex"><span class="milo-category__number">03</span><i class="fa-solid fa-gift"></i><span class="milo-category__copy"><strong>هدیه‌های کوچک</strong><small>برای آدم‌های مهم زندگی</small></span><span class="milo-category__arrow">←</span></a>
+                </div>
             }
         </div>
-
-        <button class="cat-rail__nav is-right" type="button" aria-label="Scroll right">
-            ›
-        </button>
-
-        <div class="cat-rail__fade is-left" aria-hidden="true"></div>
-        <div class="cat-rail__fade is-right" aria-hidden="true"></div>
     </section>
 
-
-    <!--special offer section-->
-    @if (Model.ActiveOffer != null)
+    @if (Model.ActiveOffer is not null)
     {
-        var o = Model.ActiveOffer;
-        var endsAt = o.EndsAt?.ToLocalTime();
-
-        <section class="supper-offer-section" dir="rtl" data-ends="@endsAt?.ToString("yyyy-MM-ddTHH:mm:ss")">
-            <div class="row">
-
-                <div class="col-lg-9">
-                    <div class="supper-offer-box">
-
-                        <div class="supper-offer-head">
-                            <h3 class="offer-title">@o.Title</h3>
-
-                            @if (o.EndsAt != null)
-                            {
-                                <div class="offer-timer">
-                                    <span class="t" id="oh">00</span>:
-                                    <span class="t" id="om">00</span>:
-                                    <span class="t" id="os">00</span>
-                                    <span class="timer-label">زمان باقی مانده</span>
-                                </div>
-                            }
-                        </div>
-
-                        <div class="body">
-
-                            @* PRODUCT OFFER *@
-                            @if (o.Kind == OfferKind.Product && o.Product != null)
-                            {
-                                <div class="offer-grid">
-                                    <div class="offer-img">
-                                        <img src="@o.Product.ImageUrl" alt="@o.Product.Title">
-                                    </div>
-
-                                    <div class="offer-info">
-                                        <div class="offer-name">@o.Product.Title</div>
-
-                                        <div class="offer-price-row">
-                                            @if (o.OfferPrice != null)
-                                            {
-                                                <span class="offer-price">@o.OfferPrice.Value.ToString("N0") تومان</span>
-                                                <span class="offer-badge">@((o.ProductPercentOff ?? 0))% تخفیف</span>
-                                            }
-                                            else if (o.ProductPercentOff != null)
-                                            {
-                                                <span class="offer-badge">@o.ProductPercentOff% تخفیف</span>
-                                                <span class="offer-price">@o.Product.Price.ToString("N0") تومان</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="offer-price">@o.Product.Price.ToString("N0") تومان</span>
-                                            }
-                                        </div>
-
-                                        <div class="offer-actions">
-                                            <a class="btn-primary" asp-controller="Products" asp-action="Details" asp-route-id="@o.Product.Id">مشاهده محصول</a>
-                                            <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" asp-route-id="@o.Product.Id">
-                                                @Html.AntiForgeryToken()
-                                                <button class="btn-ghost" type="submit">افزودن به سبد</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-
-                            @* COUPON OFFER *@
-                            else if (o.Kind == OfferKind.Coupon && o.Coupon != null)
-                            {
-                                var c = o.Coupon;
-
-                                <div class="coupon-row">
-                                    <div class="coupon-code">
-                                        <span class="label">کد:</span>
-                                        <span class="code">@c.Code</span>
-                                    </div>
-
-                                    <div class="coupon-value">
-                                        @if (c.Type == CouponType.Percent)
-                                        {
-                                            <span class="pill danger">@c.Value.ToString("0")٪ تخفیف</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="pill danger">@c.Value.ToString("N0") تومان تخفیف</span>
-                                        }
-
-                                        @if (c.MinOrderAmount != null)
-                                        {
-                                            <span class="pill">حداقل خرید: @c.MinOrderAmount.Value.ToString("N0") تومان</span>
-                                        }
-                                        @if (c.ExpireAt != null)
-                                        {
-                                            <span class="pill">تا: @c.ExpireAt.Value.ToLocalTime().ToString("yyyy/MM/dd")</span>
-                                        }
-                                    </div>
-
-                                    <div class="coupon-actions">
-                                        <button type="button" class="btn-ghost copy-btn" data-code="@c.Code">کپی کردن کد</button>
-                                        <a class="btn-primary" href="/products">استفاده از تخفیف</a>
-                                    </div>
-                                </div>
-                            }
-
-                        </div>
-                    </div>
+        var offer = Model.ActiveOffer;
+        <section class="milo-offer" aria-label="پیشنهاد امروز"><div class="milo-shell"><div class="milo-offer__card">
+            <div class="milo-offer__intro"><p class="milo-kicker">پیشنهاد محدود میلو</p><h2>@offer.Title</h2><p>یک انتخاب خوب، با یک دلیل بیشتر برای همین امروز.</p></div>
+            @if (offer.Kind == OfferKind.Product && offer.Product is not null)
+            {
+                var price = offer.OfferPrice ?? offer.Product.SalePrice ?? offer.Product.Price;
+                <div class="milo-offer__product">
+                    <img src="@(string.IsNullOrWhiteSpace(offer.Product.ImageUrl) ? Url.Content("~/images/hero/hero3.jpg") : offer.Product.ImageUrl)" alt="@offer.Product.Title" />
+                    <div><strong>@offer.Product.Title</strong><span>@price.ToString("N0") تومان</span></div>
+                    <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" asp-route-id="@offer.Product.Id" asp-route-returnUrl="@currentUrl">@Html.AntiForgeryToken()<button class="milo-button milo-button--light" type="submit">افزودن به سبد</button></form>
                 </div>
-
-                <div class="col-lg-3">
-                    <div class="banner">
-                        <img src="@Url.Content(o.BannerImageUrl ?? "~/images/home/milo-offer-banner.webp")" alt="offer" />
-                    </div>
-                </div>
-
-            </div>
-        </section>
+            }
+            else if (offer.Kind == OfferKind.Coupon && offer.Coupon is not null)
+            {
+                <div class="milo-coupon"><span>کد تخفیف</span><strong>@offer.Coupon.Code</strong><button class="milo-button milo-button--light copy-btn" type="button" data-code="@offer.Coupon.Code">کپی کد</button></div>
+            }
+            else { <a class="milo-button milo-button--light" asp-route="ShopIndex">مشاهده فروشگاه</a> }
+        </div></div></section>
+    }
+    else if (Model.ActiveCoupon is not null)
+    {
+        var coupon = Model.ActiveCoupon;
+        <section class="milo-offer" aria-label="کد تخفیف فعال"><div class="milo-shell"><div class="milo-offer__card">
+            <div class="milo-offer__intro"><p class="milo-kicker">هدیه میلو برای خرید بعدی</p><h2>یک تخفیف کوچک، برای یک شروع تازه.</h2><p>کد را کپی کنید و در مرحله پرداخت وارد کنید.</p></div>
+            <div class="milo-coupon"><span>کد تخفیف</span><strong>@coupon.Code</strong><button class="milo-button milo-button--light copy-btn" type="button" data-code="@coupon.Code">کپی کد</button></div>
+        </div></div></section>
     }
 
-
-    <!-- Promo Section: Best Brands and Support -->
-    <section class="promo-section" dir="rtl">
-        <div class="container">
-            <div class="promo-box">
-
-                <a class="promo-card" href="/brands">
-                    <img class="promo-img" src="@Url.Content("~/images/home/promo-brands.jpg")" alt="Best brands" />
-                    <span class="promo-overlay"></span>
-
-                    <div class="promo-text">
-                        <h3 class="promo-title">بهترین برندها در بازار</h3>
-                        <p class="promo-desc">محصولات با کیفیت بالا از برندهای معتبر.</p>
-                        <span class="promo-btn">بیشتر بدانید</span>
-                    </div>
-                </a>
-
-                <a class="promo-card" href="/support">
-                    <img class="promo-img" src="@Url.Content("~/images/home/promo-support.jpg")" alt="24/7 support" />
-                    <span class="promo-overlay"></span>
-
-                    <div class="promo-text">
-                        <h3 class="promo-title">پشتیبانی ۲۴ ساعته</h3>
-                        <p class="promo-desc">پشتیبانی همه‌جانبه برای هر ساعت از روز.</p>
-                        <span class="promo-btn">بیشتر بدانید</span>
-                    </div>
-                </a>
-
-            </div>
+    <section class="milo-section milo-section--products" aria-labelledby="new-title">
+        <div class="milo-shell">
+            <header class="milo-section__head"><div><p class="milo-kicker">تازه روی میز</p><h2 id="new-title">انتخاب‌های تازه میلو</h2></div><a class="milo-inline-link" asp-route="ShopIndex" asp-route-sort="new">مشاهده همه <i class="fa-solid fa-arrow-left"></i></a></header>
+            @if (products.Any())
+            {
+                <div class="milo-products">
+                    @foreach (var product in products)
+                    {
+                        var price = product.SalePrice ?? product.Price;
+                        var image = string.IsNullOrWhiteSpace(product.ImageUrl) ? Url.Content("~/images/hero/hero3.jpg") : product.ImageUrl;
+                        <article class="milo-product">
+                            <a class="milo-product__media" asp-route="ShopIndex" asp-route-q="@product.Title"><img src="@image" alt="@product.Title" loading="lazy" />@if (product.SalePrice.HasValue && product.SalePrice < product.Price) { <span>تخفیف</span> }</a>
+                            <div class="milo-product__body"><div><p>@(string.IsNullOrWhiteSpace(product.Brand) ? "Milo Select" : product.Brand)</p><h3>@product.Title</h3></div><strong>@price.ToString("N0") <small>تومان</small></strong></div>
+                            <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" asp-route-id="@product.Id" asp-route-returnUrl="@currentUrl">@Html.AntiForgeryToken()<button type="submit"><i class="fa-solid fa-plus"></i><span>افزودن به سبد</span></button></form>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="milo-empty-products"><div class="milo-empty-products__visual"><img src="~/images/hero/hero3.jpg" alt="مجموعه نوشت‌افزار رنگی" /></div><div><p class="milo-kicker">قفسه‌ها در حال چیده شدن‌اند</p><h3>به‌زودی انتخاب‌های تازه اینجا هستند.</h3><p>فعلاً می‌توانید مجموعه کامل فروشگاه را ببینید.</p><a class="milo-button milo-button--primary" asp-route="ShopIndex">رفتن به فروشگاه</a></div></div>
+            }
         </div>
     </section>
 
-    <!--feature products (poster rail)-->
-    <section class="poster-rail" dir="rtl" aria-label="Featured">
-        <div class="poster-rail__head">
-            <h2 class="poster-rail__title">پیشنهادهای ویژه</h2>
-            <div class="poster-rail__hint">برای دیدن بیشتر اسکرول کنید</div>
-        </div>
+    <section class="milo-story" aria-labelledby="story-title"><div class="milo-shell">
+        <div class="milo-story__intro"><p class="milo-kicker">خرید، بدون شلوغی</p><h2 id="story-title">ما انتخاب کردن را ساده نگه می‌داریم.</h2><p>به‌جای صدها انتخاب گیج‌کننده، محصولاتی کاربردی و خوش‌ساخت را کنار هم می‌گذاریم تا شما سریع‌تر به چیزی که می‌خواهید برسید.</p></div>
+        <ol class="milo-steps"><li><span>01</span><i class="fa-solid fa-magnifying-glass"></i><div><h3>پیدا کن</h3><p>با دسته‌بندی و جست‌وجوی ساده.</p></div></li><li><span>02</span><i class="fa-solid fa-basket-shopping"></i><div><h3>انتخاب کن</h3><p>قیمت و موجودی شفاف، بدون حدس.</p></div></li><li><span>03</span><i class="fa-solid fa-box-open"></i><div><h3>تحویل بگیر</h3><p>پرداخت امن و پیگیری سفارش.</p></div></li></ol>
+    </div></section>
 
-        <div class="poster-rail__wrap">
-            <button class="poster-nav is-prev" type="button" aria-label="Prev">‹</button>
-
-            <div class="poster-track" id="posterTrack">
-                @* Example items *@
-                <a class="poster-card" href="#">
-                    <img class="poster-img" src="~/images/home/trend-toys.jpg" alt="">
-                    <div class="poster-overlay"></div>
-
-                    <div class="poster-content">
-                        <div class="poster-kicker">محصولات جدید</div>
-                        <div class="poster-title">اسباب‌بازی‌های محبوب</div>
-                        <div class="poster-sub">تخفیف تا ۵۰٪</div>
-                        <span class="poster-cta">مشاهده</span>
-                    </div>
-                </a>
-
-                <a class="poster-card" href="#">
-                    <img class="poster-img" src="~/images/home/brain-game.jpg" alt="">
-                    <div class="poster-overlay"></div>
-                    <div class="poster-content">
-                        <div class="poster-kicker">پیشنهاد امروز</div>
-                        <div class="poster-title">بازی‌های فکری</div>
-                        <div class="poster-sub">ارسال رایگان</div>
-                        <span class="poster-cta">خرید</span>
-                    </div>
-                </a>
-
-                <a class="poster-card" href="#">
-                    <img class="poster-img" src="~/images/home/gift.jpg" alt="">
-                    <div class="poster-overlay"></div>
-                    <div class="poster-content">
-                        <div class="poster-kicker">ویژه هدیه</div>
-                        <div class="poster-title">ست‌های کادویی</div>
-                        <div class="poster-sub">بسته‌بندی رایگان</div>
-                        <span class="poster-cta">همین الان</span>
-                    </div>
-                </a>
-            </div>
-
-            <button class="poster-nav is-next" type="button" aria-label="Next">›</button>
-        </div>
-
-        <div class="poster-dots" id="posterDots" aria-hidden="true"></div>
-    </section>
-
-
-    <!--feature cards -->
-    <section class="feature-rail" dir="rtl">
-        <div class="feature-rail__head">
-            <h2 class="feature-rail__title">
-                <span class="accent">تفاوت میلو</span>
-                <span class="muted">راه‌های بیشتر برای خرید راحت‌تر</span>
-            </h2>
-        </div>
-
-        <div class="feature-rail__track" id="featureRail">
-            <!-- Card -->
-            <a class="feature-card" href="#">
-                <div class="feature-card__icon">
-                    <i class="fa-solid fa-fire" aria-hidden="true"></i>
-                </div>
-
-                <div class="feature-card__text">
-                    <div class="feature-card__headline">
-                        ترند ترین محصولات روز دنیارو اینجا بخر
-                    </div>
-                    <div class="feature-card__desc">
-                        با بهترین قیمت و تخفیف‌های ویژه.
-                    </div>
-                </div>
-            </a>
-
-            <a class="feature-card" href="#">
-                <div class="feature-card__icon">
-                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
-                </div>
-                <div class="feature-card__text">
-                    <div class="feature-card__headline">
-                        پرداخت کامل یا قسطی.
-                    </div>
-                    <div class="feature-card__desc">
-                        انتخاب با خودته.
-                    </div>
-                </div>
-            </a>
-
-            <a class="feature-card" href="#">
-                <div class="feature-card__icon">
-                    <i class="fa-solid fa-gift" aria-hidden="true"></i>
-                </div>
-                <div class="feature-card__text">
-                    <div class="feature-card__headline">
-                        هدیه‌ش کن.
-                    </div>
-                    <div class="feature-card__desc">
-                        بسته‌بندی هدیه + پیام اختصاصی رایگان.
-                    </div>
-                </div>
-            </a>
-
-            <a class="feature-card" href="#">
-                <div class="feature-card__icon">
-                    <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
-                </div>
-                <div class="feature-card__text">
-                    <div class="feature-card__headline">
-                        ارسال سریع.
-                    </div>
-                    <div class="feature-card__desc">
-                        تحویل فوری، رایگان یا حضوری.
-                    </div>
-                </div>
-            </a>
-        </div>
-    </section>
-
-    <!-- Social Media and Support Section -->
-    <section class="social-support-section" dir="rtl">
-        <div class="container">
-            <div class="social-support-wrap">
-                <div class="social-head">
-                    <h3 class="social-title">همین الان ما رو دنبال کن</h3>
-                    <p class="social-sub">در شبکه‌های اجتماعی زیر همراه‌مون باشید و از تخفیف‌ها و محصولات جدید باخبر شوید.</p>
-                </div>
-
-                <div class="social-icons">
-                    <a href="@(Model.WhatsappUrl ?? "https://www.whatsapp.com")" target="_blank" class="social-icon wa">
-                        <span class="icon-badge">
-                            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-                        </span>
-                        <span class="label">WhatsApp</span>
-                    </a>
-
-                    <a href="@(Model.InstagramUrl ?? "https://www.instagram.com")" target="_blank" class="social-icon ig">
-                        <span class="icon-badge">
-                            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-                        </span>
-                        <span class="label">Instagram</span>
-                    </a>
-
-                    <a href="@(Model.TwitterUrl ?? "https://www.twitter.com")" target="_blank" class="social-icon x">
-                        <span class="icon-badge">
-                            <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
-                        </span>
-                        <span class="label">X</span>
-                    </a>
-                </div>
-
-                <div class="support-info">
-                    <p class="support-text">پشتیبانی ۲۴/۷ — پاسخ‌گویی سریع</p>
-
-                    <div class="support-links">
-                        <a href="mailto:@(Model.SupportEmail ?? "support@yourdomain.com")" class="support-link">
-                            <span class="icon-badge">
-                                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-                            </span>
-                            <span class="label">@(Model.SupportEmail ?? "support@yourdomain.com")</span>
-                        </a>
-
-                        <a href="tel:@(Model.MainPhone ?? "+1234567890")" class="support-link">
-                            <span class="icon-badge">
-                                <i class="fa-solid fa-phone" aria-hidden="true"></i>
-                            </span>
-                            <span class="label">@(Model.MainPhone ?? "+123 456 7890")</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-</main>
+    <section class="milo-final" aria-labelledby="final-title"><div class="milo-shell"><div class="milo-final__card">
+        <span class="milo-final__shape milo-final__shape--one"></span><span class="milo-final__shape milo-final__shape--two"></span><p class="milo-kicker">یک صفحه سفید منتظر توست</p><h2 id="final-title">ایده بعدی‌ات را با چه چیزی شروع می‌کنی؟</h2><a class="milo-button milo-button--light" asp-route="ShopIndex">کشف محصولات <i class="fa-solid fa-arrow-left"></i></a>
+    </div></div></section>
+</div>
 
 @section Scripts {
-    <script src="~/js/home.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener("click", async (event) => {
+            const button = event.target.closest(".copy-btn");
+            if (!button) return;
+            try { await navigator.clipboard.writeText(button.dataset.code); button.textContent = "کپی شد"; }
+            catch { button.textContent = button.dataset.code; }
+        });
+    </script>
 }
-
-
-
-
