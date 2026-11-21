@@ -1,5 +1,5 @@
-using MiloShop.Web.Areas.Profile.Controllers;
-using MiloShop.Web.Areas.Profile.ViewModels;
+using MiloShop.Web.Controllers;
+using MiloShop.Web.ViewModels.Profile;
 using MiloShop.Domain.Entities;
 using MiloShop.Tests.Common;
 using FluentAssertions;
@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace MiloShop.Tests.Controllers;
 
-public class DashboardControllerTests
+public class ProfileControllerTests
 {
     [Fact]
     public async Task Index_WhenUserIsMissing_RedirectsToLogin()
@@ -19,7 +19,7 @@ public class DashboardControllerTests
         userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
             .ReturnsAsync((ApplicationUser?)null);
 
-        var sut = new DashboardController(userManager.Object, db);
+        var sut = new ProfileController(userManager.Object, db);
 
         var result = await sut.Index();
 
@@ -32,7 +32,7 @@ public class DashboardControllerTests
     {
         await using var db = TestDbContextFactory.Create();
         var userManager = UserManagerMockFactory.Create();
-        var sut = new DashboardController(userManager.Object, db);
+        var sut = new ProfileController(userManager.Object, db);
         sut.ModelState.AddModelError("UserName", "required");
 
         var vm = new UpdateProfileVM();

@@ -1,6 +1,7 @@
+using MiloShop.Infrastructure.Services;
 using System.Text.Json;
-using MiloShop.Web.Areas.Shop;
-using MiloShop.Web.Areas.Shop.ViewModels;
+using MiloShop.Web.Controllers;
+using MiloShop.Web.ViewModels.Shop;
 using MiloShop.Domain.Entities;
 using MiloShop.Tests.Common;
 using FluentAssertions;
@@ -27,7 +28,7 @@ public class ShopControllerTests
         );
         await db.SaveChangesAsync();
 
-        var sut = new ShopController(db);
+        var sut = new ShopController(db, new CatalogQueries(db));
 
         var result = await sut.Index(null, "cheap", 90, 130, categoryA.Id);
 
@@ -59,7 +60,7 @@ public class ShopControllerTests
         }
         await db.SaveChangesAsync();
 
-        var sut = new ShopController(db);
+        var sut = new ShopController(db, new CatalogQueries(db));
 
         var result = await sut.Search("toy");
         var json = result.Should().BeOfType<JsonResult>().Subject;
@@ -72,7 +73,7 @@ public class ShopControllerTests
     public async Task GetProduct_WhenNotFound_ReturnsNotFound()
     {
         await using var db = TestDbContextFactory.Create();
-        var sut = new ShopController(db);
+        var sut = new ShopController(db, new CatalogQueries(db));
 
         var result = await sut.GetProduct(999);
 
@@ -100,7 +101,7 @@ public class ShopControllerTests
         db.Products.Add(product);
         await db.SaveChangesAsync();
 
-        var sut = new ShopController(db);
+        var sut = new ShopController(db, new CatalogQueries(db));
         var url = new Mock<IUrlHelper>();
         url.Setup(x => x.Content(It.IsAny<string>())).Returns<string>(p => p.Replace("~", ""));
         sut.Url = url.Object;

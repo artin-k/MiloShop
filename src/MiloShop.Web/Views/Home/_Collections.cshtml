@@ -1,0 +1,79 @@
+@model MiloShop.Web.ViewModels.Home.HomePageViewModel
+@{
+    string CategoryIcon(string? name)
+    {
+        var value = (name ?? string.Empty).ToLowerInvariant();
+        if (value.Contains("کتاب") || value.Contains("book")) return "fa-book-open";
+        if (value.Contains("هنر") || value.Contains("art")) return "fa-palette";
+        if (value.Contains("بازی") || value.Contains("game")) return "fa-puzzle-piece";
+        if (value.Contains("هدیه") || value.Contains("gift")) return "fa-gift";
+        return "fa-pen-ruler";
+    }
+}
+    <section class="milo-section" id="collections" aria-labelledby="collections-title">
+        <div class="milo-shell">
+            <header class="milo-section__head">
+                <div>
+<p class="milo-kicker">از همین‌جا شروع کن</p>
+<h2 id="collections-title">هر چیزی، برای یک جور خلق کردن.</h2>
+</div>
+                <a class="milo-inline-link" asp-route="ShopIndex">همه محصولات <i class="fa-solid fa-arrow-left">
+</i>
+</a>
+            </header>
+
+            @if (Model.Categories.Any())
+            {
+                <div class="milo-category-grid">
+                    @foreach (var category in Model.Categories.Take(6))
+                    {
+                        <a class="milo-category" asp-route="ShopIndex" asp-route-categoryId="@category.Id">
+                            <span class="milo-category__number">@category.Id.ToString("00")</span>
+<i class="fa-solid @CategoryIcon(category.Name)" aria-hidden="true">
+</i>
+                            <span class="milo-category__copy">
+<strong>@category.Name</strong>
+<small>@(string.IsNullOrWhiteSpace(category.Description) ? "انتخاب‌های تازه و کاربردی" : category.Description)</small>
+</span>
+                            <span class="milo-category__arrow">←</span>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="milo-category-grid milo-category-grid--editorial">
+                    <a class="milo-category" asp-route="ShopIndex">
+<span class="milo-category__number">01</span>
+<i class="fa-solid fa-pen-ruler">
+</i>
+<span class="milo-category__copy">
+<strong>نوشتن و طراحی</strong>
+<small>برای فکرهایی که باید ثبت شوند</small>
+</span>
+<span class="milo-category__arrow">←</span>
+</a>
+                    <a class="milo-category" asp-route="ShopIndex">
+<span class="milo-category__number">02</span>
+<i class="fa-solid fa-book-open">
+</i>
+<span class="milo-category__copy">
+<strong>دفتر و کاغذ</strong>
+<small>صفحه‌های تازه برای شروع تازه</small>
+</span>
+<span class="milo-category__arrow">←</span>
+</a>
+                    <a class="milo-category" asp-route="ShopIndex">
+<span class="milo-category__number">03</span>
+<i class="fa-solid fa-gift">
+</i>
+<span class="milo-category__copy">
+<strong>هدیه‌های کوچک</strong>
+<small>برای آدم‌های مهم زندگی</small>
+</span>
+<span class="milo-category__arrow">←</span>
+</a>
+                </div>
+            }
+        </div>
+    </section>

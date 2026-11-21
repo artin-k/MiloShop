@@ -22,6 +22,7 @@
     }
 }
 
+@{ ViewData["CartItemsCount"] = cartItemsCount; }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -50,57 +51,7 @@
     @RenderSection("Head", required: false)
 </head>
 <body class="@ViewBag.BodyClass">
-    <header class="header">
-        <nav class="navbar">
-            <div class="nav-right">
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <a href="/Profile" class="nav-icon" title="پروفایل">
-                        <i class="fa-regular fa-user" aria-hidden="true"></i>
-                    </a>
-                    <form asp-area="Auth" asp-controller="Auth" asp-action="Logout" method="post" class="nav-logout-form">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="nav-icon nav-icon-btn" title="خروج">
-                            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <a href="/Auth/Login" class="nav-icon" title="ورود">
-                        <i class="fa-regular fa-user" aria-hidden="true"></i>
-                    </a>
-                }
-                <a href="/shop" class="nav-icon" title="دیدن محصولات">
-                    <i class="fa-solid fa-shop" aria-hidden="true"></i>
-                </a>
-                <a href="/Cart" class="nav-icon" title="سبد خرید">
-                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
-                    <span class="cart-badge">@cartItemsCount</span>
-                </a>
-                <a href="/Shop#searchBox" class="nav-icon" title="جستجو">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                </a>
-                @if (User.IsInRole("Admin"))
-                {
-                    <a class="nav-admin" asp-area="Admin" asp-controller="Products" asp-action="Index">مدیریت</a>
-                }
-            </div>
-
-            <div class="nav-center" aria-label="ناوبری اصلی">
-                <a href="/">خانه</a>
-                <a href="/Shop">فروشگاه</a>
-                <a href="/#collections">مجموعه‌ها</a>
-            </div>
-
-            <div class="nav-left">
-                <a href="/" class="logo-container">
-                    <span class="logo-mark">م</span>
-                    <span class="Logo-text">Milo Shop</span>
-                </a>
-            </div>
-        </nav>
-    </header>
+    <partial name="_Header" />
 
     <div class="content-wrapper">
         <div class="container">
@@ -110,39 +61,7 @@
         </div>
     </div>
 
-    <footer class="site-footer" dir="rtl">
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-column">
-                    <a href="/" class="footer-brand"><span>م</span> MiloShop</a>
-                    <p class="footer-text">لوازم‌التحریر و هدیه برای فکرهای تازه و لحظه‌های خلاقانه.</p>
-                </div>
-                <div class="footer-column">
-                    <h6 class="footer-title">دسترسی سریع</h6>
-                    <ul class="footer-list">
-                        <li><a href="/" class="footer-link">خانه</a></li>
-                        <li><a href="/shop" class="footer-link">فروشگاه</a></li>
-                        <li><a href="/#collections" class="footer-link">مجموعه‌ها</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h6 class="footer-title">پشتیبانی</h6>
-                    <ul class="footer-list">
-                        <li><a href="/Profile" class="footer-link">حساب کاربری</a></li>
-                        <li><a href="/Cart" class="footer-link">سبد خرید</a></li>
-                        <li><a asp-area="Home" asp-controller="Home" asp-action="Privacy" class="footer-link">حریم خصوصی</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h6 class="footer-title">برای شروع آماده‌ای؟</h6>
-                    <p class="footer-text">محصول مناسب ایده بعدی‌ات را پیدا کن.</p>
-                    <a class="footer-cta" href="/Shop">رفتن به فروشگاه <i class="fa-solid fa-arrow-left"></i></a>
-                </div>
-            </div>
-            <hr class="footer-divider">
-            <div class="footer-copyright"><span>© @DateTime.UtcNow.Year MiloShop</span><span>ساخته‌شده برای ایده‌های تازه.</span></div>
-        </div>
-    </footer>
+    <partial name="_Footer" />
 
     <partial name="_CookieConsentPartial" />
 

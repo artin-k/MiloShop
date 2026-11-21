@@ -19,6 +19,7 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
 
         services.AddScoped<ICouponService, CouponService>();
+        services.AddScoped<MiloShop.Application.Catalog.ICatalogQueries, CatalogQueries>();
         services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 
         return services;

@@ -1,0 +1,30 @@
+@model MiloShop.Web.ViewModels.Home.HomePageViewModel
+@using MiloShop.Domain.Entities
+@{
+    ViewData["Title"] = "لوازم‌التحریر برای ایده‌های تازه";
+    ViewData["Description"] = "خرید آنلاین لوازم‌التحریر، نوشت‌افزار و هدیه‌های خلاقانه از میلوشاپ؛ انتخاب ساده، پرداخت امن و ارسال سریع.";
+    ViewData["BodyClass"] = "milo-home";
+    ViewBag.BodyClass = "milo-home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home/milo-landing.css" asp-append-version="true" />
+}
+
+@section Head {
+    <script type="application/ld+json">
+        {"@@context":"https://schema.org","@@type":"WebSite","name":"MiloShop","url":"@($"{Context.Request.Scheme}://{Context.Request.Host}/")","potentialAction":{"@@type":"SearchAction","target":"@($"{Context.Request.Scheme}://{Context.Request.Host}/Shop?q={{search_term_string}}")","query-input":"required name=search_term_string"}}
+    </script>
+}
+
+<partial name="_Hero" model="Model" />
+<partial name="_Collections" model="Model" />
+<partial name="_Offer" model="Model" />
+<partial name="_NewProducts" model="Model" />
+<partial name="_ShoppingSteps" model="Model" />
+<partial name="_CallToAction" model="Model" />
+
+@section Scripts {
+    <script src="~/js/storefront.js" asp-append-version="true"></script>
+}

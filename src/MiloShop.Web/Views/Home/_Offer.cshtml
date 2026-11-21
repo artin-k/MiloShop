@@ -1,0 +1,59 @@
+@model MiloShop.Web.ViewModels.Home.HomePageViewModel
+@{ var currentUrl = $"{Context.Request.Path}{Context.Request.QueryString}"; }
+    @if (Model.ActiveOffer is not null)
+    {
+        var offer = Model.ActiveOffer;
+        <section class="milo-offer" aria-label="پیشنهاد امروز">
+<div class="milo-shell">
+<div class="milo-offer__card">
+            <div class="milo-offer__intro">
+<p class="milo-kicker">پیشنهاد محدود میلو</p>
+<h2>@offer.Title</h2>
+<p>یک انتخاب خوب، با یک دلیل بیشتر برای همین امروز.</p>
+</div>
+            @if (offer.Kind == OfferKind.Product && offer.Product is not null)
+            {
+                var price = offer.OfferPrice ?? offer.Product.SalePrice ?? offer.Product.Price;
+                <div class="milo-offer__product">
+                    <img src="@(string.IsNullOrWhiteSpace(offer.Product.ImageUrl) ? Url.Content("~/images/hero/hero3.jpg") : offer.Product.ImageUrl)" alt="@offer.Product.Title" />
+                    <div>
+<strong>@offer.Product.Title</strong>
+<span>@price.ToString("N0") تومان</span>
+</div>
+                    <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" asp-route-id="@offer.Product.Id" asp-route-returnUrl="@currentUrl">@Html.AntiForgeryToken()<button class="milo-button milo-button--light" type="submit">افزودن به سبد</button>
+</form>
+                </div>
+            }
+            else if (offer.Kind == OfferKind.Coupon && offer.Coupon is not null)
+            {
+                <div class="milo-coupon">
+<span>کد تخفیف</span>
+<strong>@offer.Coupon.Code</strong>
+<button class="milo-button milo-button--light copy-btn" type="button" data-code="@offer.Coupon.Code">کپی کد</button>
+</div>
+            }
+            else { <a class="milo-button milo-button--light" asp-route="ShopIndex">مشاهده فروشگاه</a> }
+        </div>
+</div>
+</section>
+    }
+    else if (Model.ActiveCoupon is not null)
+    {
+        var coupon = Model.ActiveCoupon;
+        <section class="milo-offer" aria-label="کد تخفیف فعال">
+<div class="milo-shell">
+<div class="milo-offer__card">
+            <div class="milo-offer__intro">
+<p class="milo-kicker">هدیه میلو برای خرید بعدی</p>
+<h2>یک تخفیف کوچک، برای یک شروع تازه.</h2>
+<p>کد را کپی کنید و در مرحله پرداخت وارد کنید.</p>
+</div>
+            <div class="milo-coupon">
+<span>کد تخفیف</span>
+<strong>@coupon.Code</strong>
+<button class="milo-button milo-button--light copy-btn" type="button" data-code="@coupon.Code">کپی کد</button>
+</div>
+        </div>
+</div>
+</section>
+    }

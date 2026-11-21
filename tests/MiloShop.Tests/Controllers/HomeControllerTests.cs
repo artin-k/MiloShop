@@ -1,12 +1,10 @@
-using MiloShop.Web.Areas.Home.Controllers;
+using MiloShop.Web.Controllers;
 using MiloShop.Domain.Entities;
-using MiloShop.Web.ViewModels;
-using MiloShop.Application.Common.Interfaces;
+using MiloShop.Web.ViewModels.Home;
 using MiloShop.Infrastructure.Services;
 using MiloShop.Tests.Common;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 
 namespace MiloShop.Tests.Controllers;
 
@@ -57,11 +55,7 @@ public class HomeControllerTests
             });
         await db.SaveChangesAsync();
 
-        var settings = new Mock<ISiteSettingsService>();
-        settings.Setup(x => x.GetManyAsync(It.IsAny<string[]>()))
-            .ReturnsAsync((string[] keys) => keys.ToDictionary(k => k, k => (string?)$"{k}-value"));
-
-        var sut = new HomeController(db, settings.Object);
+        var sut = new HomeController(new CatalogQueries(db));
 
         var result = await sut.Index();
 

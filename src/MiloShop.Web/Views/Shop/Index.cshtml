@@ -1,0 +1,38 @@
+@model MiloShop.Web.ViewModels.Shop.ShopViewModel
+@{
+    ViewData["Title"] = "فروشگاه لوازم‌التحریر و هدیه";
+    ViewData["Description"] = "محصولات میلوشاپ را با دسته‌بندی، قیمت و نام محصول پیدا کنید.";
+    ViewBag.BodyClass = "storefront-page";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/home/milo-landing.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/storefront.css" asp-append-version="true" />
+}
+<div class="storefront-shell">
+    <header class="storefront-heading">
+        <p class="milo-kicker">برای ایده‌های تازه</p>
+        <h1>چیزهای کوچک، برای خلق چیزهای بزرگ.</h1>
+        <p>انتخاب کن، جزئیات را ببین و میز خلاقیت خودت را بساز.</p>
+    </header>
+    <partial name="_Filters" model="Model" />
+    <section aria-labelledby="catalog-title">
+        <div class="catalog-heading"><h2 id="catalog-title">محصولات</h2><span>@Model.Products.Count() محصول</span></div>
+        @if (Model.Products.Any())
+        {
+            <div class="milo-products">
+                @foreach (var product in Model.Products)
+                {
+                    <partial name="_ProductCard" model="product" />
+                }
+            </div>
+        }
+        else
+        {
+            <div class="catalog-empty">
+                <h2>محصولی پیدا نشد.</h2>
+                <p>عبارت جست‌وجو یا فیلترها را تغییر دهید.</p>
+                <a class="milo-button milo-button--primary" asp-route="ShopIndex">پاک کردن فیلترها</a>
+            </div>
+        }
+    </section>
+</div>

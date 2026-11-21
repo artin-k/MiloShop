@@ -4,6 +4,8 @@ MiloShop is an ASP.NET Core 11 storefront organized as a clean, layered solution
 
 ## Projects
 
+For the page/component map and local design workflow, see [Editing the storefront](docs/storefront-editing.md).
+
 - `MiloShop.Domain` contains business entities.
 - `MiloShop.Application` contains use-case and service contracts.
 - `MiloShop.Infrastructure` contains EF Core, SQL Server, Identity, migrations, and persistence services.

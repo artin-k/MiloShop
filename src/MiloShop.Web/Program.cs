@@ -72,7 +72,7 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 else
 {
-    app.UseExceptionHandler("/Home/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
@@ -84,22 +84,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapAreaControllerRoute(
-    name: "AuthArea",
-    areaName: "Auth",
-    pattern: "Auth/{action=Login}/{id?}" // ✅ THIS IS THE FIX
-);
-
-//  THEN REGISTER REGULAR ROUTES
 app.MapControllers();
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
 );
-
-app.MapControllerRoute(
-    name: "Profile",
-    pattern: "{area:exists}/{controller=Profile}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MiloShop.Infrastructure.Persistence;
 using MiloShop.Domain.Entities;
-using MiloShop.Web.Areas.Auth.ViewModels;
+using MiloShop.Web.ViewModels.Auth;
 
 namespace MiloShop.Web.Services
 {

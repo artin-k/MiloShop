@@ -1,0 +1,28 @@
+@model MiloShop.Web.ViewModels.Shop.ShopViewModel
+<form class="catalog-filters" method="get" action="/Shop" role="search">
+    <div class="catalog-filters__search">
+        <label for="searchBox">جست‌وجوی محصول</label>
+        <input id="searchBox" name="q" value="@Model.Query" placeholder="دنبال چی می‌گردی؟" type="search" />
+    </div>
+    <div>
+        <label for="category">دسته‌بندی</label>
+        <select id="category" name="categoryId">
+            <option value="">همه مجموعه‌ها</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label for="sort">ترتیب نمایش</label>
+        <select id="sort" name="sort">
+            <option value="new" selected="@(Model.Sort == "new" || string.IsNullOrEmpty(Model.Sort))">جدیدترین</option>
+            <option value="cheap" selected="@(Model.Sort == "cheap")">ارزان‌ترین</option>
+            <option value="expensive" selected="@(Model.Sort == "expensive")">گران‌ترین</option>
+        </select>
+    </div>
+    <div><label for="minPrice">از قیمت (تومان)</label><input id="minPrice" type="number" min="0" name="minPrice" value="@Model.MinPrice" /></div>
+    <div><label for="maxPrice">تا قیمت (تومان)</label><input id="maxPrice" type="number" min="0" name="maxPrice" value="@Model.MaxPrice" /></div>
+    <button class="milo-button milo-button--primary" type="submit">اعمال</button>
+</form>

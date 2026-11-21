@@ -38,4 +38,8 @@ The shared layout supplies canonical URLs, page descriptions, Open Graph metadat
 
 ## UI plan
 
+Public controllers and views now use the standard `Controllers`, `ViewModels`, and `Views` folders. `Areas` is reserved for Admin. Homepage sections, navigation, footer, catalog filters, and product cards are separate Razor partials. See [Editing the storefront](../storefront-editing.md) for the component map and workflow.
+
+Homepage/catalog/search/product-detail reads go through `ICatalogQueries` in Application and its Infrastructure implementation. This is an incremental boundary: legacy cart, account, review, and admin write workflows still need their own Application use cases.
+
 The Razor redesign uses a small shared design system for typography, color, spacing, forms, buttons, product cards, empty states, and responsive layouts. Storefront pages will continue to be rebuilt around the customer journey from discovery through cart, delivery details, payment, and order confirmation.
