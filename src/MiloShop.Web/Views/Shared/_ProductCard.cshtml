@@ -4,25 +4,16 @@
     var image = string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/hero/hero3.jpg" : Model.ImageUrl;
     var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
 }
-<article class="milo-product">
-    <a class="milo-product__media" asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">
-        <img src="@image" alt="@Model.Title" loading="lazy" width="400" height="400" />
-        @if (Model.SalePrice.HasValue && Model.SalePrice < Model.Price)
-        {
-            <span>تخفیف</span>
-        }
+<article class="product-tile">
+    <a class="product-tile__image" asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">
+        <img src="@image" alt="@Model.Title" loading="lazy" width="500" height="500" />
     </a>
-    <div class="milo-product__body">
-        <div>
-            <p>@(Model.Brand ?? Model.Category?.Name ?? "Milo Select")</p>
-            <h3><a asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">@Model.Title</a></h3>
-        </div>
-        <strong>@price.ToString("N0") <small>تومان</small></strong>
+    <div class="product-tile__info">
+        <p class="eyebrow">@(Model.Brand ?? Model.Category?.Name ?? "MILO SELECT")</p>
+        <h3><a asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">@Model.Title</a></h3>
+        <p class="price">@price.ToString("N0") <small>تومان</small></p>
+        <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl">
+            <button class="button" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد ←" : "ناموجود")</button>
+        </form>
     </div>
-    <form method="post" asp-area="" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl">
-        <button type="submit" disabled="@(Model.StockQuantity <= 0)">
-            <i class="fa-solid fa-plus" aria-hidden="true"></i>
-            <span>@(Model.StockQuantity > 0 ? "افزودن به سبد" : "ناموجود")</span>
-        </button>
-    </form>
 </article>

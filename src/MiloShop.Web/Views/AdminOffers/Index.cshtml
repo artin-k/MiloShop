@@ -1,0 +1,59 @@
+@model IEnumerable<MiloShop.Domain.Entities.Offer>
+@{
+    ViewData["Title"] = "Offers";
+}
+
+<div class="admin-toolbar">
+    <a class="btn" asp-controller="AdminOffers" asp-action="Create">Create Offer</a>
+</div>
+
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Kind</th>
+                    <th>Title</th>
+                    <th>Active</th>
+                    <th>Window</th>
+                    <th>Target</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var offer in Model)
+                {
+                    <tr>
+                        <td>@offer.Id</td>
+                        <td>@offer.Kind</td>
+                        <td>@offer.Title</td>
+                        <td>@offer.IsActive</td>
+                        <td>
+                            @offer.StartsAt.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+                            -
+                            @(offer.EndsAt?.ToLocalTime().ToString("yyyy/MM/dd HH:mm") ?? "No end")
+                        </td>
+                        <td>
+                            @if (offer.Kind == OfferKind.Product)
+                            {
+                                <span>Product: @offer.ProductId</span>
+                            }
+                            else
+                            {
+                                <span>Coupon: @offer.Coupon?.Code</span>
+                            }
+                        </td>
+                        <td class="d-flex gap-2 flex-wrap">
+                            <a class="btn" asp-controller="AdminOffers" asp-action="Edit" asp-route-id="@offer.Id">Edit</a>
+                            <form asp-controller="AdminOffers" asp-action="Delete" asp-route-id="@offer.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button class="btn" type="submit" onclick="return confirm('Delete offer?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

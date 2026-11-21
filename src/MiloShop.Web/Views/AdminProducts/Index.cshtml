@@ -1,0 +1,74 @@
+﻿@model List<MiloShop.Domain.Entities.Product>
+@{
+    ViewData["Title"] = "محصولات";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="text-muted">مدیریت محصولات</div>
+    <a class="btn btn-primary" asp-controller="AdminProducts" asp-action="Create">+ افزودن محصول</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary border-0">هیچ محصولی ثبت نشده.</div>
+}
+else
+{
+    <div class="card bg-transparent border border-opacity-10">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:90px;">تصویر</th>
+                        <th>عنوان</th>
+                        <th>دسته‌بندی</th>
+                        <th style="width:140px;">قیمت</th>
+                        <th style="width:140px;">فعال</th>
+                        <th style="width:160px;">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(p.ImageUrl))
+                                {
+                                    <img src="@p.ImageUrl" class="rounded" style="width:64px;height:64px;object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td class="fw-bold">@p.Title</td>
+                            <td class="text-muted">@p.Category?.Name</td>
+                            <td>@p.Price</td>
+                            <td>
+                                @if (p.IsActive)
+                                {
+                                    <span class="badge text-bg-success">فعال</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-secondary">غیرفعال</span>
+                                }
+                            </td>
+                            <td class="d-flex gap-2 flex-wrap">
+                                <a class="btn btn-sm btn-outline-light"
+                                   asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@p.Id">ویرایش</a>
+
+                                <form method="post"
+                                      asp-controller="AdminProducts" asp-action="Delete" asp-route-id="@p.Id"
+                                      onsubmit="return confirm('حذف شود؟');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

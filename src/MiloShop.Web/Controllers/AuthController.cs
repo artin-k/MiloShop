@@ -122,7 +122,7 @@ namespace MiloShop.Web.Controllers
             // if admin → send to admin dashboard
             if (await _userManager.IsInRoleAsync(user, "Admin"))
             {
-                return RedirectToAction("Index", "Home", new { area = "Admin" });
+                return RedirectToAction("Index", "AdminHome");
             }
 
             return Redirect("/Profile");

@@ -9,10 +9,7 @@
     var productUrl = Url.RouteUrl("ProductDetails", new { id = Model.Id, slug = Model.Slug }, Context.Request.Scheme);
     var imageUrl = new Uri(new Uri($"{Context.Request.Scheme}://{Context.Request.Host}"), image).ToString();
 }
-@section Styles {
-    <link rel="stylesheet" href="~/css/home/milo-landing.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/storefront.css" asp-append-version="true" />
-}
+
 @section Head {
     <script type="application/ld+json">@Html.Raw(JsonSerializer.Serialize(new Dictionary<string, object> {
         ["@context"] = "https://schema.org", ["@type"] = "Product", ["name"] = Model.Title,
@@ -46,7 +43,7 @@
                 <strong>@price.ToString("N0")</strong><span>تومان</span>
             </div>
             <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
-                <button class="milo-button milo-button--primary" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد خرید" : "ناموجود")</button>
+                <button class="button button--primary" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد خرید" : "ناموجود")</button>
             </form>
         </div>
     </article>

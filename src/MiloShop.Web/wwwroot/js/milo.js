@@ -1,0 +1,32 @@
+// The landing page uses Kage's authored menu. Other pages use this small equivalent.
+const navigation = document.getElementById('nav');
+const burger = navigation?.querySelector('.nav-burger');
+const closeMenu = () => {
+    navigation?.classList.remove('menu-open');
+    burger?.classList.remove('active');
+    burger?.setAttribute('aria-expanded', 'false');
+    document.documentElement.classList.remove('nav-open');
+};
+if (!document.body.classList.contains('scene-page')) {
+    burger?.addEventListener('click', () => {
+        const open = burger.getAttribute('aria-expanded') !== 'true';
+        navigation.classList.toggle('menu-open', open);
+        burger.classList.toggle('active', open);
+        burger.setAttribute('aria-expanded', String(open));
+        document.documentElement.classList.toggle('nav-open', open);
+    });
+}
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { closeMenu(); burger?.focus(); }
+    if (event.key !== 'Tab' || !navigation?.classList.contains('menu-open')) return;
+    const nodes = [...navigation.querySelectorAll('a,button')].filter(el => el.getClientRects().length);
+    const first = nodes[0], last = nodes[nodes.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+});
+document.addEventListener('click', async event => {
+    const button = event.target.closest('[data-code]');
+    if (!button) return;
+    try { await navigator.clipboard.writeText(button.dataset.code); button.textContent = 'کپی شد'; }
+    catch { button.textContent = button.dataset.code; }
+});

@@ -1,45 +1,9 @@
 # Frontend direction
 
-## Decision
+MiloShop uses ASP.NET Core MVC/Razor and the authored ThreeUI Kage HTML/DOM/Three.js template. All public and management pages use standard Controllers, ViewModels and Views folders. There are no Areas.
 
-MiloShop will continue with ASP.NET Core MVC and Razor views while the commerce domain, checkout workflow, and visual system are rebuilt.
+Razor renders product content and forms on the server. The interactive scene enhances the homepage; shopping does not depend on WebGL. Moving to Next.js would not inherently improve SEO and is not required by this template's canonical implementation.
 
-Razor views fit the current application well because authentication, validation, admin screens, and the storefront already run in one server process. This keeps the redesign focused on customer experience and order correctness. ASP.NET Core MVC remains actively supported in .NET 11.
+The source scene, shaders, assets and fonts live under `wwwroot/vendor/threeui`. Everyday changes belong in small Razor partials and `wwwroot/css/milo.css`. The [editing guide](../storefront-editing.md) explains the structure, source provenance, import command and configuration.
 
-This is also the right SEO choice for the current product. Razor returns complete semantic HTML from the server, just as a server-rendered Next.js page does. Search performance will depend more on metadata, structured data, useful content, image performance, internal linking, and Core Web Vitals than on whether the templates use C# or React.
-
-Moving now would require a public commerce API, a second authentication integration, duplicated validation and caching decisions, and another deployment pipeline. That cost is not justified while the catalog, cart, checkout, and order lifecycle are still being completed.
-
-## When Next.js becomes valuable
-
-Reconsider Next.js after the application exposes a stable HTTP API and one of these product needs becomes concrete:
-
-- a mobile app or multiple independent storefront clients
-- extensive client-side product discovery and personalization
-- a frontend team that deploys independently from the backend
-- server-side React rendering shared across several commerce experiences
-
-At that point, the Application layer can serve both MVC controllers and API endpoints. The new project boundaries keep that migration possible without moving business rules into React.
-
-## Landing-page direction
-
-The November 2026 redesign uses the Agentix Dribbble presentation as mood and composition research, not as a template. The transferable principles are its calm narrative pacing, oversized typography, modular content, open space, and single-purpose closing call to action. MiloShop's result is intentionally distinct: an RTL editorial stationery identity, a warm paper palette, original product imagery, commerce components, and a customer journey from discovery to cart.
-
-The landing page tells this story:
-
-1. a clear promise and two useful actions
-2. dynamic product categories
-3. a real offer or coupon when one is active
-4. new products with working add-to-cart forms
-5. a short explanation of the purchase flow
-6. one focused final call to action
-
-The shared layout supplies canonical URLs, page descriptions, Open Graph metadata, and an optional head section. The home page adds `WebSite` and `SearchAction` structured data.
-
-## UI plan
-
-Public controllers and views now use the standard `Controllers`, `ViewModels`, and `Views` folders. `Areas` is reserved for Admin. Homepage sections, navigation, footer, catalog filters, and product cards are separate Razor partials. See [Editing the storefront](../storefront-editing.md) for the component map and workflow.
-
-Homepage/catalog/search/product-detail reads go through `ICatalogQueries` in Application and its Infrastructure implementation. This is an incremental boundary: legacy cart, account, review, and admin write workflows still need their own Application use cases.
-
-The Razor redesign uses a small shared design system for typography, color, spacing, forms, buttons, product cards, empty states, and responsive layouts. Storefront pages will continue to be rebuilt around the customer journey from discovery through cart, delivery details, payment, and order confirmation.
+Catalog reads go through Application's `ICatalogQueries` and its Infrastructure implementation. Cart, account, reviews and management writes still need incremental migration into Application use cases. This frontend rebuild does not claim those use cases are fully migrated.

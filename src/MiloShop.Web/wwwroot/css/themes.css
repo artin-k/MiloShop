@@ -1,0 +1,59 @@
+/* Semantic theme tokens: edit this file to tune both modes without touching ThreeUI. */
+:root {
+    color-scheme:dark;
+    --surface:#0a0e12; --field:#10161b; --field-border:#38423f;
+    --nav-surface:rgba(5,7,10,.95); --panel-shadow:none; --danger:#ff9e8f;
+}
+:root[data-theme="light"] {
+    color-scheme:light;
+    --ink:#f4f1ea; --ink-2:#fffdf8; --bone:#172b29; --bone-dim:#485b56;
+    --muted:#596b65; --line:rgba(23,43,41,.2); --line-soft:rgba(23,43,41,.12);
+    --vermilion:#b52b21; --ember:#a52c21; --surface:#fffdf8; --field:#fff;
+    --field-border:#a8b4ab; --nav-surface:rgba(250,248,242,.96);
+    --panel-shadow:0 16px 48px rgba(45,56,44,.05); --danger:#a2241b;
+}
+.theme-toggle { display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--line); border-radius:50%; flex-shrink:0; position:relative; z-index:3; transition:background .2s; }
+.theme-toggle:hover { background:var(--line-soft); }
+.theme-toggle svg { width:19px; height:19px; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; }
+.theme-moon { display:none; }
+[data-theme="light"] .theme-moon { display:block; }
+[data-theme="light"] .theme-sun { display:none; }
+.commerce-page .nav,.nav.stuck::before { background:var(--nav-surface); }
+.nav-burger i { background:var(--bone); }
+.brand svg path { stroke:var(--bone); }
+.nav-links .nav-link { color:var(--bone-dim); }
+.nav-links .nav-link:hover { color:var(--bone); }
+.panel,.form-panel,.catalog-filters,.notice,.product-tile { background:var(--surface); box-shadow:var(--panel-shadow); }
+.category-links a { background:var(--surface); }
+input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea { background:var(--field); border-color:var(--field-border); }
+.error,.text-danger,.field-validation-error,.validation-summary-errors { color:var(--danger); }
+.scene-page .hero-top { text-shadow:0 1px 20px rgba(3,6,8,.8); }
+[data-theme="light"] .scene-page .hero::before {
+    height:100%; background:linear-gradient(90deg,rgba(244,241,234,.98),rgba(244,241,234,.94) 38%,rgba(244,241,234,.68) 50%,transparent 72%);
+}
+[data-theme="light"] .scene-page .hero-top,[data-theme="light"] .scene-page .hero-top * { text-shadow:none; }
+[data-theme="light"] .hero-sub,[data-theme="light"] .body,[data-theme="light"] .body-lg,[data-theme="light"] .gate-copy .lead { color:var(--bone-dim); text-shadow:none; }
+[data-theme="light"] .eyebrow { text-shadow:none; }
+[data-theme="light"] .scene-page .hero-foot { padding:20px; margin-bottom:24px; border:1px solid var(--line); background:rgba(250,248,242,.94); backdrop-filter:blur(12px); }
+[data-theme="light"] .shop-cta { color:white; background:var(--vermilion); border-color:var(--vermilion); }
+[data-theme="light"] .scene-page .nav { background:var(--nav-surface); border-bottom:1px solid var(--line-soft); }
+[data-theme="light"] .sec { background:rgba(244,241,234,.97); }
+[data-theme="light"] .sec::before,[data-theme="light"] #pathways::before,[data-theme="light"] #eternity::before { background:none; }
+[data-theme="light"] .foot { background:var(--ink-2); }
+[data-theme="light"] .foot::before { background:none; }
+[data-theme="light"] .foot-brand p,[data-theme="light"] .foot li a { color:var(--bone-dim); }
+[data-theme="light"] .card-lab,[data-theme="light"] .card-lab .jp { color:#f1f1e6; }
+[data-theme="light"] .chip b,[data-theme="light"] .chip p { color:var(--bone-dim); text-shadow:none; }
+[data-theme="light"] .cur-dot { border-color:rgba(181,43,33,.55); }
+[data-theme="light"] #grain { opacity:.025; }
+[data-theme="light"] .scene-page #vignette { background:none; }
+[data-theme="light"] #pre { background:#f4f1ea; color:#172b29; }
+html[data-theme="light"].no-webgl body { background:#f4f1ea; }
+[data-theme="light"] .no-webgl .hero::after { display:none; }
+@media(max-width:820px) {
+    .nav-links { background:var(--nav-surface); }
+    .theme-toggle { margin-left:auto; }
+    [data-theme="light"] .scene-page .hero::before { background:linear-gradient(180deg,rgba(244,241,234,.97),rgba(244,241,234,.91) 50%,rgba(244,241,234,.25)); }
+    [data-theme="light"] .scene-page .hero-foot { margin-bottom:20px; }
+}
+@media(prefers-reduced-motion:reduce) { .theme-toggle { transition:none; } }

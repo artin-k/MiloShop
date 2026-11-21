@@ -1,33 +1,9 @@
-    <footer class="site-footer" dir="rtl">
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-column">
-                    <a href="/" class="footer-brand"><span>م</span> MiloShop</a>
-                    <p class="footer-text">لوازم‌التحریر و هدیه برای فکرهای تازه و لحظه‌های خلاقانه.</p>
-                </div>
-                <div class="footer-column">
-                    <h6 class="footer-title">دسترسی سریع</h6>
-                    <ul class="footer-list">
-                        <li><a href="/" class="footer-link">خانه</a></li>
-                        <li><a href="/shop" class="footer-link">فروشگاه</a></li>
-                        <li><a href="/#collections" class="footer-link">مجموعه‌ها</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h6 class="footer-title">پشتیبانی</h6>
-                    <ul class="footer-list">
-                        <li><a href="/Profile" class="footer-link">حساب کاربری</a></li>
-                        <li><a href="/Cart" class="footer-link">سبد خرید</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Privacy" class="footer-link">حریم خصوصی</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h6 class="footer-title">برای شروع آماده‌ای؟</h6>
-                    <p class="footer-text">محصول مناسب ایده بعدی‌ات را پیدا کن.</p>
-                    <a class="footer-cta" href="/Shop">رفتن به فروشگاه <i class="fa-solid fa-arrow-left"></i></a>
-                </div>
-            </div>
-            <hr class="footer-divider">
-            <div class="footer-copyright"><span>© @DateTime.UtcNow.Year MiloShop</span><span>ساخته‌شده برای ایده‌های تازه.</span></div>
-        </div>
-    </footer>
+<footer class="foot" data-cam="5">
+    <div class="foot-grid">
+        <div class="foot-brand"><span class="footer-word">MILOSHOP</span><p>برای فکرهایی که هنوز روی کاغذ نیامده‌اند. نوشت‌افزار و ابزار خلاقیت برای شروع‌های تازه.</p></div>
+        <div><h4>کشف کن</h4><ul><li><a href="/Shop">فروشگاه</a></li><li><a href="/Shop?sort=new">تازه‌ترین محصولات</a></li><li><a href="/#pathways">مجموعه‌ها</a></li></ul></div>
+        <div><h4>حساب شما</h4><ul><li><a href="/Profile">پروفایل</a></li><li><a href="/Cart">سبد خرید</a></li><li><a href="/Auth/SignUp">ساخت حساب</a></li></ul></div>
+        <div><h4>میلو</h4><ul><li><a href="/#gate">داستان ما</a></li><li><a href="/Shop">شروع یک ایده</a></li>@if (User.IsInRole("Admin")) { <li><a href="/Admin">مدیریت فروشگاه</a></li> }</ul></div>
+    </div>
+    <div class="foot-base"><span>© @DateTime.UtcNow.Year MILOSHOP</span><span>یک صفحه تازه، یک فکر تازه.</span></div>
+</footer>

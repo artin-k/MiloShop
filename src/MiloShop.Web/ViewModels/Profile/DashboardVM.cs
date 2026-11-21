@@ -12,6 +12,7 @@
         public string? Address { get; set; }
 
         public int OrdersCount { get; set; }
+        public List<MiloShop.Domain.Entities.Order> Orders { get; set; } = [];
         public List<CartItemVM> CartItems { get; set; } = new();
     }
 }

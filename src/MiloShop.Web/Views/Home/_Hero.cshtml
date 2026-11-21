@@ -1,35 +1,43 @@
 @model MiloShop.Web.ViewModels.Home.HomePageViewModel
-<section class="milo-hero" aria-labelledby="hero-title">
-    <div class="milo-shell milo-hero__grid">
-        <div class="milo-hero__copy">
-            <p class="milo-eyebrow">
-<span>
-</span> از فکر تا کاغذ، با میلو</p>
-            <h1 id="hero-title">برای ایده‌هایی که هنوز <em>روی کاغذ</em> نیامده‌اند.</h1>
-            <p class="milo-hero__lead">نوشت‌افزار، ابزار خلاقیت و هدیه‌هایی که با دقت انتخاب شده‌اند؛ برای مدرسه، کار و لحظه‌های شخصی شما.</p>
-            <div class="milo-actions">
-                <a class="milo-button milo-button--primary" asp-route="ShopIndex">ورود به فروشگاه <i class="fa-solid fa-arrow-left" aria-hidden="true">
-</i>
-</a>
-                <a class="milo-button milo-button--text" href="#collections">دیدن مجموعه‌ها</a>
-            </div>
-            <ul class="milo-trust" aria-label="مزایای خرید از میلوشاپ">
-                <li>
-<i class="fa-solid fa-check">
-</i> انتخاب‌های باکیفیت</li>
-                <li>
-<i class="fa-solid fa-check">
-</i> پرداخت امن</li>
-                <li>
-<i class="fa-solid fa-check">
-</i> ارسال سریع</li>
-            </ul>
-        </div>
+<section class="hero" id="hero" data-cam="0">
+  <div class="hero-top">
+    <div class="eyebrow" data-rv="fade"><span class="dot"></span> میلوشاپ — برای ایده‌های تازه</div>
+    <h1 class="display h-hero">
+      <span class="mask-line"><span>اینجا، هر ایده</span></span>
+      <span class="mask-line"><span>راه خودش را</span></span>
+      <span class="mask-line"><span>پیدا می‌کند.</span></span>
+    </h1>
+    <p class="hero-sub body" data-rv="up">نوشت‌افزار، ابزار خلاقیت و هدیه‌های خاص؛ انتخابی برای لحظه‌هایی که می‌خواهید چیزی تازه بسازید.</p>
+    <a class="cta shop-cta" href="/Shop"><i></i><span>کشف فروشگاه</span><span aria-hidden="true">←</span></a>
+  </div>
 
-        <div class="milo-hero__art" aria-label="مجموعه‌ای از لوازم‌التحریر رنگی">
-            <figure class="milo-photo milo-photo--main">
-<img src="~/images/hero/hero2.jpg" alt="دفترها و مدادهای رنگی" />
-</figure>
-        </div>
+  <div class="hero-spacer"></div>
+
+  <div class="hero-foot">
+    <div class="hero-cue" data-rv="fade"><span>برای کشف بیشتر حرکت کنید</span><span class="track"><i></i></span></div>
+    <div class="chapters" id="chips">
+      <div class="chip" data-chip="0" data-rv="up" data-cursor><span class="num">01</span>
+        <span class="tx"><b>نوشتن</b><p>از یک صفحه سفید شروع کن.</p></span></div>
+      <div class="chip" data-chip="1" data-rv="up" data-cursor><span class="num">02</span>
+        <span class="tx"><b>طراحی</b><p>به ایده‌هایت رنگ بده.</p></span></div>
+      <div class="chip" data-chip="2" data-rv="up" data-cursor><span class="num">03</span>
+        <span class="tx"><b>خلق کردن</b><p>ابزار مناسب خودت را پیدا کن.</p></span></div>
+      <div class="chip" data-chip="3" data-rv="up" data-cursor><span class="num">04</span>
+        <span class="tx"><b>هدیه دادن</b><p>برای آدم‌های مهم زندگی.</p></span></div>
     </div>
+  </div>
+
+  <a class="peek" href="#pathways" data-view="3" data-rv="fade" data-cursor aria-label="کشف مجموعه‌های میلو">
+    <!-- data-frame, or the live view is blitted over the whole anchor and
+         runs on down behind the caption instead of stopping at the frame -->
+    <span class="peek-fr" data-frame></span>
+    <span class="peek-play"><svg viewBox="0 0 22 22" fill="none"><path d="M8 5.6 16.4 11 8 16.4z" fill="#dfe7e0"/></svg></span>
+    <span class="peek-cap"><b class="jp">MILO</b><i>مجموعه‌های میلو</i></span>
+  </a>
+
+  <div class="word-fb" aria-hidden="true">MILOSHOP</div>
+
+  <div class="hero-side" data-rv="up">
+    <span class="v jp">MILO</span>
+  </div>
 </section>

@@ -1,64 +1,19 @@
-﻿@model MiloShop.Web.ViewModels.Auth.LoginVM
-@{
-    ViewData["Title"] = "Login";
-    ViewBag.BodyClass = "login-page";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var returnUrl = ViewData["ReturnUrl"] as string;
-}
-
-@section Styles {
-    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
-}
-
-<div class="auth-stage" dir="rtl">
-
-        <!-- Main content area -->
-        <div class="auth-body">
-            <div class="auth-art" aria-hidden="true">
-                <div class="blob">
-                    <img src="~/images/auth/login-illustration.png" alt="" />
-                </div>
-            </div>
-
-            <div class="auth-panel">
-                <h1 class="title">ورود</h1>
-
-                <form method="post" asp-area="" asp-controller="Auth" asp-action="Login">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="returnUrl" value="@returnUrl" />
-
-                    <div class="field">
-                        <input asp-for="Identifier" class="control"
-                               placeholder="ایمیل یا نام کاربری"
-                               autocomplete="username"
-                               name="Identifier" />
-                        <span asp-validation-for="Identifier" class="error"></span>
-                    </div>
-
-                    <div class="field">
-                        <input asp-for="Password" type="password" class="control"
-                               placeholder="رمز"
-                               autocomplete="current-password"
-                               name="Password" />
-                        <span asp-validation-for="Password" class="error"></span>
-                    </div>
-
-                    <label class="remember-me">
-                        <input asp-for="RememberMe" type="checkbox" />
-                        <span>مرا به خاطر بسپار</span>
-                    </label>
-
-                    <div class="links">
-                        <a href="/Auth/ForgotPassword">فراموشی رمز؟</a>
-                    </div>
-
-                    <button type="submit" class="btn-primary">ورود</button>
-
-                    <div class="hint">
-                        حساب ندارید؟
-                        <a asp-area="" asp-controller="Auth" asp-action="SignUp" asp-route-returnUrl="@returnUrl">ثبت نام</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-</div>
+@model MiloShop.Web.ViewModels.Auth.LoginVM
+@{ ViewData["Title"] = "ورود به میلوشاپ"; }
+<section class="form-panel">
+    <p class="eyebrow">WELCOME BACK / MILOSHOP</p>
+    <h1>دوباره خوش آمدی.</h1>
+    <form asp-controller="Auth" asp-action="Login" method="post">
+        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+        <div asp-validation-summary="ModelOnly" class="error" role="alert"></div>
+        <label asp-for="Identifier">ایمیل یا نام کاربری</label>
+        <input asp-for="Identifier" autocomplete="username" />
+        <span asp-validation-for="Identifier" class="error"></span>
+        <label asp-for="Password">رمز عبور</label>
+        <input asp-for="Password" type="password" autocomplete="current-password" />
+        <span asp-validation-for="Password" class="error"></span>
+        <label class="check-inline"><input asp-for="RememberMe" /> مرا به خاطر بسپار</label>
+        <button class="button button--primary" type="submit">ورود ←</button>
+    </form>
+    <p class="form-hint">حساب نداری؟ <a asp-controller="Auth" asp-action="SignUp" asp-route-returnUrl="@ViewData["ReturnUrl"]">ثبت نام</a></p>
+</section>

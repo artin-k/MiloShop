@@ -1,52 +1,26 @@
-@{ var cartItemsCount = (int)(ViewData["CartItemsCount"] ?? 0); }
-    <header class="header">
-        <nav class="navbar">
-            <div class="nav-right">
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <a href="/Profile" class="nav-icon" title="پروفایل">
-                        <i class="fa-regular fa-user" aria-hidden="true"></i>
-                    </a>
-                    <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="nav-logout-form">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="nav-icon nav-icon-btn" title="خروج">
-                            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <a href="/Auth/Login" class="nav-icon" title="ورود">
-                        <i class="fa-regular fa-user" aria-hidden="true"></i>
-                    </a>
-                }
-                <a href="/shop" class="nav-icon" title="دیدن محصولات">
-                    <i class="fa-solid fa-shop" aria-hidden="true"></i>
-                </a>
-                <a href="/Cart" class="nav-icon" title="سبد خرید">
-                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
-                    <span class="cart-badge">@cartItemsCount</span>
-                </a>
-                <a href="/Shop#searchBox" class="nav-icon" title="جستجو">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                </a>
-                @if (User.IsInRole("Admin"))
-                {
-                    <a class="nav-admin" asp-area="Admin" asp-controller="Products" asp-action="Index">مدیریت</a>
-                }
-            </div>
-
-            <div class="nav-center" aria-label="ناوبری اصلی">
-                <a href="/">خانه</a>
-                <a href="/Shop">فروشگاه</a>
-                <a href="/#collections">مجموعه‌ها</a>
-            </div>
-
-            <div class="nav-left">
-                <a href="/" class="logo-container">
-                    <span class="logo-mark">م</span>
-                    <span class="Logo-text">Milo Shop</span>
-                </a>
-            </div>
-        </nav>
-    </header>
+@{ var scene = ViewData["Scene"] is true; }
+<header class="nav" id="nav">
+    <a class="brand" href="/" aria-label="میلوشاپ، صفحه اصلی" data-cursor>
+        <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <circle cx="22" cy="25" r="9" fill="#e0231c" />
+            <path d="M8 13h28M12 19h20M22 8v28" stroke="#dfe7e0" stroke-width="1.5" />
+        </svg>
+        <span class="brand-tx"><b>MILOSHOP</b><i>TOOLS FOR YOUR NEXT IDEA</i></span>
+    </a>
+    <nav class="nav-links" id="navlinks" aria-label="ناوبری اصلی">
+        @if (scene)
+        {
+            <a class="nav-link" href="#gate" data-cursor><span>داستان میلو</span><span class="alt" aria-hidden="true">داستان میلو</span></a>
+            <a class="nav-link" href="#pathways" data-cursor><span>مجموعه‌ها</span><span class="alt" aria-hidden="true">مجموعه‌ها</span></a>
+            <a class="nav-link" href="#lessons" data-cursor><span>تازه‌ها</span><span class="alt" aria-hidden="true">تازه‌ها</span></a>
+        }
+        <a class="nav-link" href="/Shop"><span>فروشگاه</span><span class="alt" aria-hidden="true">فروشگاه</span></a>
+        <a class="nav-link" href="/Cart"><span>سبد خرید</span><span class="alt" aria-hidden="true">سبد خرید</span></a>
+        <a class="nav-link" href="@(User.Identity?.IsAuthenticated == true ? "/Profile" : "/Auth/Login")"><span>حساب من</span><span class="alt" aria-hidden="true">حساب من</span></a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="تغییر پوسته" aria-pressed="false">
+        <svg class="theme-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg>
+        <svg class="theme-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z" /></svg>
+    </button>
+    <button type="button" class="nav-burger" aria-label="فهرست" aria-controls="navlinks" aria-expanded="false" data-cursor><i></i><i></i></button>
+</header>

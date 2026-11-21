@@ -1,65 +1,14 @@
-﻿@model MiloShop.Web.ViewModels.Profile.UpdateProfileVM
-@{
-    ViewData["Title"] = "Edit Profile";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.BodyClass = "solid-header-page";
-}
-
-<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
-
-<h2>Edit Profile</h2>
-
-<form method="post" action="/Profile/Edit" class="profile-form">
-    @Html.AntiForgeryToken()
-
-    <div class="validation">
-        @Html.ValidationSummary(excludePropertyErrors: false)
-    </div>
-
-    <div class="form-grid">
-        <div class="field">
-            <label for="UserName">Username</label>
-            <input id="UserName" name="UserName" type="text" value="@Model.UserName" />
-            @Html.ValidationMessageFor(m => m.UserName)
-        </div>
-
-        <div class="field">
-            <label for="FullName">Full name</label>
-            <input id="FullName" name="FullName" type="text" value="@Model.FullName" />
-            @Html.ValidationMessageFor(m => m.FullName)
-        </div>
-
-        <div class="field">
-            <label for="PhoneNumber">Phone</label>
-            <input id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.PhoneNumber" />
-            @Html.ValidationMessageFor(m => m.PhoneNumber)
-        </div>
-
-        <div class="field">
-            <label for="Gender">Gender</label>
-            <select id="Gender" name="Gender">
-                <option value="" selected="@(string.IsNullOrWhiteSpace(Model.Gender) ? "selected" : null)">Select</option>
-                <option value="Male" selected="@(Model.Gender == "Male" ? "selected" : null)">Male</option>
-                <option value="Female" selected="@(Model.Gender == "Female" ? "selected" : null)">Female</option>
-                <option value="Other" selected="@(Model.Gender == "Other" ? "selected" : null)">Other</option>
-            </select>
-        </div>
-
-        <div class="field">
-            <label for="DateOfBirth">Date of birth</label>
-            <input id="DateOfBirth" name="DateOfBirth" type="date"
-                   value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")" />
-        </div>
-
-        <div class="field field-full">
-            <label for="Address">Address</label>
-            <textarea id="Address" name="Address" rows="3">@Model.Address</textarea>
-            @Html.ValidationMessageFor(m => m.Address)
-        </div>
-    </div>
-
-    <div class="actions">
-        <a class="btn-secondary" href="/Profile">Cancel</a>
-        <button type="submit" class="btn-success">Save changes</button>
-    </div>
-</form>
+@model MiloShop.Web.ViewModels.Profile.UpdateProfileVM
+@{ ViewData["Title"] = "ویرایش حساب | میلوشاپ"; }
+<section class="form-panel"><p class="eyebrow">YOUR DETAILS</p><h1>اطلاعات شما.</h1>
+    <form asp-controller="Profile" asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="error" role="alert"></div>
+        <label asp-for="UserName">نام کاربری</label><input asp-for="UserName" /><span asp-validation-for="UserName" class="error"></span>
+        <label asp-for="FullName">نام و نام خانوادگی</label><input asp-for="FullName" autocomplete="name" /><span asp-validation-for="FullName" class="error"></span>
+        <label asp-for="PhoneNumber">شماره تماس</label><input asp-for="PhoneNumber" autocomplete="tel" /><span asp-validation-for="PhoneNumber" class="error"></span>
+        <label asp-for="Address">آدرس</label><textarea asp-for="Address" autocomplete="street-address"></textarea><span asp-validation-for="Address" class="error"></span>
+        <label asp-for="DateOfBirth">تاریخ تولد</label><input asp-for="DateOfBirth" type="date" />
+        <label asp-for="Gender">جنسیت (اختیاری)</label><select asp-for="Gender"><option value="">انتخاب نشده</option><option value="Male">مرد</option><option value="Female">زن</option></select>
+        <button class="button button--primary" type="submit">ذخیره اطلاعات</button>
+    </form><p class="form-hint"><a href="/Profile">بازگشت به حساب</a></p>
+</section>

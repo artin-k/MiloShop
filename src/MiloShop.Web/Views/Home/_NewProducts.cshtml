@@ -1,38 +1,37 @@
 @model MiloShop.Web.ViewModels.Home.HomePageViewModel
-@{ var products = Model.NewProducts; }
-    <section class="milo-section milo-section--products" aria-labelledby="new-title">
-        <div class="milo-shell">
-            <header class="milo-section__head">
-<div>
-<p class="milo-kicker">تازه روی میز</p>
-<h2 id="new-title">انتخاب‌های تازه میلو</h2>
-</div>
-<a class="milo-inline-link" asp-route="ShopIndex" asp-route-sort="new">مشاهده همه <i class="fa-solid fa-arrow-left">
-</i>
-</a>
-</header>
-            @if (products.Any())
-            {
-                <div class="milo-products">
-                    @foreach (var product in products)
-                    {
-                        <partial name="_ProductCard" model="product" />
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="milo-empty-products">
-<div class="milo-empty-products__visual">
-<img src="~/images/hero/hero3.jpg" alt="مجموعه نوشت‌افزار رنگی" />
-</div>
-<div>
-<p class="milo-kicker">قفسه‌ها در حال چیده شدن‌اند</p>
-<h3>به‌زودی انتخاب‌های تازه اینجا هستند.</h3>
-<p>فعلاً می‌توانید مجموعه کامل فروشگاه را ببینید.</p>
-<a class="milo-button milo-button--primary" asp-route="ShopIndex">رفتن به فروشگاه</a>
-</div>
-</div>
-            }
-        </div>
-    </section>
+<section class="sec" id="lessons" data-cam="3">
+  <!-- foreground: a low periphery for the atlas — wall fragment, basalt, one stand of grass -->
+  <div class="fg" data-fg="lessons" aria-hidden="true">
+    <span class="fg-el fg-wall fg-el--flip" data-fg-in="right">
+      <img crossorigin="anonymous" src="/vendor/threeui/secret-pathways-assets/foreground/png/temple-wall.webp" alt="" width="1536" height="884" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-stones" data-fg-in="up">
+      <img crossorigin="anonymous" src="/vendor/threeui/secret-pathways-assets/foreground/png/basalt-stones.webp" alt="" width="1536" height="996" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-grass" data-fg-in="up">
+      <img crossorigin="anonymous" src="/vendor/threeui/secret-pathways-assets/foreground/png/tall-grass.webp" alt="" width="1717" height="916" loading="lazy" decoding="async">
+    </span>
+  </div>
+  <div class="sec-head" data-rv="fade">
+    <span class="k"><b>03</b> — تازه‌های فروشگاه</span><span class="rule"></span><span class="k jp">NEW ARRIVALS</span>
+  </div>
+  <div class="cur-head">
+    <h2 class="display h-sec" data-rv="up">انتخاب‌های تازه، برای میز شما.</h2>
+    <p class="body-lg" data-rv="up">جدیدترین محصولات موجود در میلو. جزئیات را ببینید و انتخاب کنید.</p>
+  </div>
+  @if (Model.ActiveCoupon is not null)
+  {
+      <div class="notice">کد تخفیف فعال: <strong>@Model.ActiveCoupon.Code</strong> <button class="button" type="button" data-code="@Model.ActiveCoupon.Code">کپی کد</button></div>
+  }
+  <div class="product-grid">
+    @foreach (var product in Model.NewProducts)
+    {
+        <partial name="_ProductCard" model="product" />
+    }
+    @if (!Model.NewProducts.Any())
+    {
+        <p class="body-lg">محصولات این مجموعه به‌زودی اضافه می‌شوند.</p>
+    }
+  </div>
+  <a class="arrowlink" href="/Shop">همه محصولات <span aria-hidden="true">←</span></a>
+</section>

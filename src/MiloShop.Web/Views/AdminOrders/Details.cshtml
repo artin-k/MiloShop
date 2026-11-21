@@ -1,0 +1,114 @@
+@model MiloShop.Domain.Entities.Order
+@{
+    ViewData["Title"] = $"جزئیات سفارش #{Model.Id}";
+    var itemsCount = Model.Items?.Sum(x => x.Quantity) ?? 0;
+    var final = Model.FinalAmount ?? (Model.TotalAmount - (Model.DiscountAmount ?? 0m));
+    var customer = ViewBag.OrderUser as MiloShop.Infrastructure.Identity.ApplicationUser;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <div class="h5 mb-1">سفارش #@Model.Id</div>
+        <div class="text-muted small">
+            @Model.OrderedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+        </div>
+    </div>
+
+    <a class="btn btn-outline-light"
+       asp-controller="AdminOrders" asp-action="Index">بازگشت</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-4">
+        <div class="card bg-transparent border border-opacity-10 p-3">
+            <div class="fw-bold mb-2">اطلاعات مشتری</div>
+            <div>@customer?.UserName</div>
+            <div class="text-muted">@customer?.Email</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card bg-transparent border border-opacity-10 p-3">
+            <div class="fw-bold mb-2">خلاصه سفارش</div>
+            <div class="d-flex justify-content-between">
+                <span class="text-muted">تعداد آیتم</span>
+                <span>@itemsCount</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span class="text-muted">مبلغ کل</span>
+                <span>@Model.TotalAmount.ToString("N0") تومان</span>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <span class="text-muted">تخفیف</span>
+                <span>@(Model.DiscountAmount ?? 0m).ToString("N0") تومان</span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+                <span class="fw-bold">مبلغ نهایی</span>
+                <span class="fw-bold">@final.ToString("N0") تومان</span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+                <span class="text-muted">وضعیت</span>
+                <span class="badge text-bg-info">@Model.Status</span>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.CouponCode))
+            {
+                <div class="mt-2">
+                    <span class="badge text-bg-primary">کوپن: @Model.CouponCode</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card bg-transparent border border-opacity-10 p-3">
+            <div class="fw-bold mb-2">اطلاعات ارسال</div>
+            <div class="mb-1"><span class="text-muted">تحویل گیرنده:</span> @Model.RecipientFullName</div>
+            <div class="mb-1"><span class="text-muted">تماس:</span> @Model.RecipientPhoneNumber</div>
+            @if (!string.IsNullOrWhiteSpace(Model.PostalCode))
+            {
+                <div class="mb-1"><span class="text-muted">کد پستی:</span> @Model.PostalCode</div>
+            }
+            <div class="mb-1"><span class="text-muted">آدرس:</span> @Model.ShippingAddress</div>
+            @if (!string.IsNullOrWhiteSpace(Model.CustomerNote))
+            {
+                <div class="mb-1"><span class="text-muted">توضیحات:</span> @Model.CustomerNote</div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card bg-transparent border border-opacity-10 mt-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>محصول</th>
+                    <th style="width:120px;">تعداد</th>
+                    <th style="width:160px;">قیمت واحد</th>
+                    <th style="width:160px;">جمع</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var it in Model.Items ?? Array.Empty<MiloShop.Domain.Entities.OrderItem>())
+            {
+                var unit = it.UnitPrice;
+                var lineTotal = unit * it.Quantity;
+
+                <tr>
+                    <td>
+                        <div class="fw-bold">@it.Product?.Title</div>
+                        <div class="text-muted small">@it.Product?.Sku</div>
+                    </td>
+                    <td>@it.Quantity</td>
+                    <td>@unit.ToString("N0") تومان</td>
+                    <td>@lineTotal.ToString("N0") تومان</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

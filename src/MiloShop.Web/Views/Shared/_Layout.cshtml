@@ -1,80 +1,56 @@
-﻿@using MiloShop.Infrastructure.Persistence
-@using MiloShop.Domain.Entities
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.EntityFrameworkCore
-@inject MiloDbContext _db
-@inject UserManager<ApplicationUser> _userManager
 @{
-    var cartItemsCount = 0;
-    var pageTitle = ViewData["Title"]?.ToString() ?? "فروشگاه آنلاین";
-    var pageDescription = ViewData["Description"]?.ToString() ?? "MiloShop؛ فروشگاه آنلاین لوازم‌التحریر، ابزار خلاقیت و هدیه.";
-    var canonicalUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
-
-    if (User.Identity?.IsAuthenticated == true)
-    {
-        var userId = _userManager.GetUserId(User);
-        if (!string.IsNullOrWhiteSpace(userId))
-        {
-            cartItemsCount = await _db.CartItems
-                .Where(c => c.UserId == userId)
-                .SumAsync(c => (int?)c.Quantity) ?? 0;
-        }
-    }
+    var scene = ViewData["Scene"] is true;
+    var title = ViewData["Title"]?.ToString() ?? "میلوشاپ";
+    var description = ViewData["Description"]?.ToString() ?? "نوشت‌افزار، ابزار خلاقیت و هدیه از میلوشاپ.";
+    var canonical = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
 }
-
-@{ ViewData["CartItemsCount"] = cartItemsCount; }
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!doctype html>
+<html lang="fa" dir="@(scene ? "ltr" : "rtl")">
 <head>
-
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f7f4ed"/>
-    <meta name="description" content="@pageDescription" />
-    <link rel="canonical" href="@canonicalUrl" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>@title</title>
+    <meta name="description" content="@description" />
+    <meta name="theme-color" content="#05070a" />
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:title" content="@title" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@canonical" />
     <meta property="og:locale" content="fa_IR" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="MiloShop" />
-    <meta property="og:title" content="@pageTitle | MiloShop" />
-    <meta property="og:description" content="@pageDescription" />
-    <meta property="og:url" content="@canonicalUrl" />
-    <title>@pageTitle | MiloShop</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/MiloShop.Web.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
-
-    @RenderSection("Styles", required: false)
-    @RenderSection("Head", required: false)
+    <link rel="stylesheet" href="~/vendor/threeui/secret-pathways-assets/fonts.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/vendor/threeui/kage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/milo.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/themes.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+    @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="@ViewBag.BodyClass">
+<body class="@(scene ? "scene-page" : "commerce-page")" data-layout-hero="b" data-layout-story="b" data-layout-gallery="b" data-layout-curriculum="b" data-layout-closing="b" data-layout-footer="b">
+    <a class="skip-link" href="#main">پرش به محتوا</a>
+    @if (scene) { <partial name="_Scene" /> }
     <partial name="_Header" />
-
-    <div class="content-wrapper">
-        <div class="container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
+    <div class="page" id="top">
+        <main id="main" class="@(scene ? "" : "shop-shell")">
+            @if (!scene && User.IsInRole("Admin") && Context.Request.Path.StartsWithSegments("/Admin"))
+            {
+                <partial name="_AdminNav" />
+            }
+            @if (TempData["OrderError"] is string orderError) { <p class="notice error" role="alert">@orderError</p> }
+            @if (TempData["OrderPlaced"] is string orderPlaced) { <p class="notice" role="status">@orderPlaced</p> }
+            @RenderBody()
+        </main>
+        <partial name="_Footer" />
     </div>
-
-    <partial name="_Footer" />
-
-    <partial name="_CookieConsentPartial" />
-
-    <!-- Scripts -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/header.js" asp-append-version="true"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    @RenderSection("Scripts", required: false)
+    @if (scene)
+    {
+        <div id="fg-sky" aria-hidden="true"></div>
+        <div class="rail" id="rail"></div>
+        <script src="~/js/scene-accessibility.js" asp-append-version="true"></script>
+        <script src="~/vendor/threeui/secret-pathways-assets/three.min.js"></script>
+        <script src="~/vendor/threeui/kage.js" asp-append-version="true"></script>
+    }
+    <script src="~/js/milo.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-
-

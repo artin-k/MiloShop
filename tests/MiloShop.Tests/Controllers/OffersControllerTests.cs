@@ -1,6 +1,6 @@
 using System.Text;
-using MiloShop.Web.Areas.Admin.Controllers;
-using MiloShop.Web.Areas.Admin.ViewModels;
+using MiloShop.Web.Controllers;
+using MiloShop.Web.ViewModels.Admin;
 using MiloShop.Domain.Entities;
 using MiloShop.Tests.Common;
 using FluentAssertions;
@@ -12,7 +12,7 @@ using Moq;
 
 namespace MiloShop.Tests.Controllers;
 
-public class OffersControllerTests
+public class AdminOffersControllerTests
 {
     [Fact]
     public async Task Edit_WithUploadedBanner_KeepsUploadedImageUrl()
@@ -51,7 +51,7 @@ public class OffersControllerTests
         try
         {
             var env = BuildEnvironmentMock(tempRoot);
-            var sut = new OffersController(db, env.Object);
+            var sut = new AdminOffersController(db, env.Object);
 
             var bytes = Encoding.UTF8.GetBytes("fake-image-content");
             using var ms = new MemoryStream(bytes);
@@ -77,7 +77,7 @@ public class OffersControllerTests
             var result = await sut.Edit(offer.Id, vm);
 
             result.Should().BeOfType<RedirectToActionResult>()
-                .Which.ActionName.Should().Be(nameof(OffersController.Index));
+                .Which.ActionName.Should().Be(nameof(AdminOffersController.Index));
 
             var updated = await db.Offers.FindAsync(offer.Id);
             updated.Should().NotBeNull();
@@ -102,7 +102,7 @@ public class OffersControllerTests
     {
         await using var db = TestDbContextFactory.Create();
         var env = BuildEnvironmentMock(Path.GetTempPath());
-        var sut = new OffersController(db, env.Object);
+        var sut = new AdminOffersController(db, env.Object);
 
         var vm = new OfferEditVm
         {

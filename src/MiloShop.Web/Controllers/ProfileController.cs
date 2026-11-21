@@ -50,6 +50,8 @@ namespace MiloShop.Web.Controllers
                 ProfileImageUrl = user.ProfileImageUrl,
 
                 OrdersCount = ordersCount,
+                Orders = await _db.Orders.AsNoTracking().Where(o => o.UserId == user.Id)
+                    .OrderByDescending(o => o.OrderedAt).Take(10).ToListAsync(),
                 CartItems = cartItems.Select(ci => new CartItemVM
                 {
                     Id = ci.Id,
@@ -81,14 +83,6 @@ namespace MiloShop.Web.Controllers
             };
 
             return View(vm);
-        }
-
-        // GET /Profile/Terms
-        [AllowAnonymous]
-        [HttpGet("Terms")]
-        public IActionResult Terms()
-        {
-            return View();
         }
 
         // POST /Profile/Edit

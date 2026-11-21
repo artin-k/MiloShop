@@ -1,154 +1,25 @@
 @model MiloShop.Web.ViewModels.CheckoutViewModel
-@{
-    ViewData["Title"] = "تسویه حساب";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.BodyClass = "solid-header-page";
-}
-
-<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
-
-<div class="profile-page">
-    <div class="page-head">
-        <div>
-            <h1 class="page-title">تسویه حساب</h1>
-            <p class="page-subtitle">اطلاعات تحویل سفارش را کامل کنید و سپس ثبت نهایی را انجام دهید.</p>
-        </div>
+@{ ViewData["Title"] = "ثبت سفارش | میلوشاپ"; }
+<header class="storefront-heading"><p class="eyebrow">ONE LAST STEP</p><h1>جزئیات آخر، برای شروع تازه.</h1><p>اطلاعات تحویل را وارد کنید. سفارش برای بررسی فروشگاه ثبت می‌شود.</p></header>
+<form asp-controller="Cart" asp-action="Checkout" method="post">
+    <input asp-for="CouponCode" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="error" role="alert"></div>
+    <div class="two-columns">
+        <section class="panel"><h2>اطلاعات تحویل</h2><div class="form-grid">
+            <div><label asp-for="FullName">نام و نام خانوادگی</label><input asp-for="FullName" autocomplete="name" /><span asp-validation-for="FullName" class="error"></span></div>
+            <div><label asp-for="PhoneNumber">شماره تماس</label><input asp-for="PhoneNumber" autocomplete="tel" /><span asp-validation-for="PhoneNumber" class="error"></span></div>
+            <div><label asp-for="PostalCode">کد پستی (اختیاری)</label><input asp-for="PostalCode" autocomplete="postal-code" /><span asp-validation-for="PostalCode" class="error"></span></div>
+            <div class="wide"><label asp-for="Address">آدرس تحویل</label><textarea asp-for="Address" rows="3" autocomplete="street-address"></textarea><span asp-validation-for="Address" class="error"></span></div>
+            <div class="wide"><label asp-for="Note">توضیحات سفارش</label><textarea asp-for="Note" rows="2"></textarea><span asp-validation-for="Note" class="error"></span></div>
+        </div></section>
+        <aside class="panel"><h2>سفارش شما</h2>
+            @foreach (var item in Model.Items) { <p>@item.ProductName × @item.Quantity <span class="price">@((item.UnitPrice * item.Quantity).ToString("N0")) تومان</span></p> }
+            <dl class="totals"><dt>جمع</dt><dd>@Model.Subtotal.ToString("N0") تومان</dd><dt>تخفیف</dt><dd>@Model.DiscountAmount.ToString("N0") تومان</dd><dt>نهایی</dt><dd>@Model.FinalTotal.ToString("N0") تومان</dd></dl>
+            @if (!string.IsNullOrWhiteSpace(Model.CouponMessage)) { <p class="notice">@Model.CouponMessage</p> }
+            <span asp-validation-for="CouponCode" class="error"></span>
+            <label class="check-inline"><input asp-for="ConfirmPurchase" /> اطلاعات سفارش را بررسی و تأیید می‌کنم.</label>
+            <span asp-validation-for="ConfirmPurchase" class="error"></span>
+            <div class="actions"><button class="button button--primary" type="submit">ثبت سفارش ←</button><a href="/Cart">بازگشت به سبد</a></div>
+        </aside>
     </div>
-
-    @if (!string.IsNullOrWhiteSpace(Model.CouponMessage))
-    {
-        <div class="toast @(Model.CouponOk ? "success" : "")">
-            <span class="dot"></span>
-            <span>@Model.CouponMessage</span>
-        </div>
-    }
-
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-    <form method="post" action="/Cart/Checkout">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="CouponCode" />
-
-        <section class="card cart-card">
-            <div class="card-head">
-                <h2 class="section-title">اطلاعات تحویل</h2>
-                <div class="muted">این اطلاعات برای ارسال سفارش استفاده می‌شود.</div>
-            </div>
-
-            <div class="table-wrap checkout-form-wrap">
-                <div class="checkout-grid">
-                    <div class="checkout-field">
-                        <label asp-for="FullName">نام و نام خانوادگی</label>
-                        <input class="checkout-input" asp-for="FullName" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
-                    </div>
-
-                    <div class="checkout-field">
-                        <label asp-for="PhoneNumber">شماره تماس</label>
-                        <input class="checkout-input" asp-for="PhoneNumber" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-
-                    <div class="checkout-field">
-                        <label asp-for="PostalCode">کد پستی (اختیاری)</label>
-                        <input class="checkout-input" asp-for="PostalCode" />
-                        <span asp-validation-for="PostalCode" class="text-danger"></span>
-                    </div>
-
-                    <div class="checkout-field checkout-span-2">
-                        <label asp-for="Address">آدرس کامل تحویل</label>
-                        <textarea class="checkout-input" asp-for="Address" rows="3"></textarea>
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
-
-                    <div class="checkout-field checkout-span-2">
-                        <label asp-for="Note">توضیحات سفارش (اختیاری)</label>
-                        <textarea class="checkout-input" asp-for="Note" rows="3"></textarea>
-                        <span asp-validation-for="Note" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="card cart-card">
-            <div class="card-head">
-                <h2 class="section-title">خلاصه سفارش</h2>
-                <div class="muted">قبل از ثبت نهایی، اقلام و مبلغ را بررسی کنید.</div>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table modern">
-                    <thead>
-                        <tr>
-                            <th>محصول</th>
-                            <th class="num">تعداد</th>
-                            <th class="num">قیمت واحد</th>
-                            <th class="num">جمع</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Items)
-                        {
-                            <tr>
-                                <td>
-                                    <div class="cart-product">
-                                        @if (!string.IsNullOrWhiteSpace(item.ProductImageUrl))
-                                        {
-                                            <img class="cart-thumb" src="@item.ProductImageUrl" alt="" />
-                                        }
-                                        else
-                                        {
-                                            <div class="cart-thumb placeholder" aria-hidden="true"></div>
-                                        }
-                                        <div class="cart-meta">
-                                            <div class="cart-name">@item.ProductName</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="num">@item.Quantity</td>
-                                <td class="num">@item.UnitPrice.ToString("N0") تومان</td>
-                                <td class="num">@((item.UnitPrice * item.Quantity).ToString("N0")) تومان</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table modern">
-                    <tbody>
-                        <tr>
-                            <td>مبلغ کل</td>
-                            <td class="num">@Model.Subtotal.ToString("N0") تومان</td>
-                        </tr>
-                        <tr>
-                            <td>تخفیف</td>
-                            <td class="num">@Model.DiscountAmount.ToString("N0") تومان</td>
-                        </tr>
-                        <tr>
-                            <td>مبلغ نهایی</td>
-                            <td class="num">@Model.FinalTotal.ToString("N0") تومان</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-wrap checkout-confirm">
-                <label class="check-inline">
-                    <input asp-for="ConfirmPurchase" type="checkbox" />
-                    <span>اطلاعات سفارش را بررسی کردم و ثبت نهایی را تایید می‌کنم.</span>
-                </label>
-                <span asp-validation-for="ConfirmPurchase" class="text-danger d-block"></span>
-            </div>
-
-            <div class="table-wrap cart-actions">
-                <a class="btn" href="/Cart">بازگشت به سبد خرید</a>
-                <button class="btn btn-primary" type="submit">ثبت نهایی سفارش</button>
-            </div>
-        </section>
-    </form>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</form>
