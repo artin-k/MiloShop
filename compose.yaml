@@ -10,6 +10,12 @@ services:
       - "14333:1433"
     volumes:
       - miloshop-sql-data:/var/opt/mssql
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 2G
     healthcheck:
       test:
         - CMD-SHELL

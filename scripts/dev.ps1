@@ -22,37 +22,15 @@ try {
         throw "Install the .NET 11 SDK. This repository requires SDK 11.0.100 or a compatible patch."
     }
 
-    docker info *> $null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Start Docker Desktop and wait until its Linux container engine reports that it is running."
+    # Check if SQL Server is running on localhost
+    $sqlConnection = New-Object System.Data.SqlClient.SqlConnection
+    $sqlConnection.ConnectionString = "Server=localhost;Integrated Security=true;Connection Timeout=3;"
+    try {
+        $sqlConnection.Open()
+        $sqlConnection.Close()
+    } catch {
+        throw "SQL Server is not running on localhost. Please start SQL Server and try again."
     }
-
-    if ([string]::IsNullOrWhiteSpace($env:MSSQL_SA_PASSWORD)) {
-        throw 'Set $env:MSSQL_SA_PASSWORD to a strong local development password before running this script.'
-    }
-
-    docker compose up -d sqlserver
-    if ($LASTEXITCODE -ne 0) {
-        throw "Docker Compose could not start the MiloShop SQL Server container."
-    }
-
-    $databaseReady = $false
-    for ($attempt = 0; $attempt -lt 40; $attempt++) {
-        $health = docker inspect --format "{{.State.Health.Status}}" miloshop-sql 2>$null
-        if ($health -eq "healthy") {
-            $databaseReady = $true
-            break
-        }
-
-        Start-Sleep -Seconds 2
-    }
-
-    if (-not $databaseReady) {
-        docker compose logs --tail 50 sqlserver
-        throw "SQL Server did not become healthy within the expected time."
-    }
-
-    $env:ConnectionStrings__DefaultConnection = "Server=localhost,14333;Database=MiloShopLocal;User ID=sa;Password=$env:MSSQL_SA_PASSWORD;Encrypt=True;TrustServerCertificate=True"
 
     dotnet tool restore
     Assert-LastExitCode "Restoring local .NET tools"
