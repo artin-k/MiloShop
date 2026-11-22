@@ -9,6 +9,7 @@ Controllers/                 Public and Admin HTTP endpoints (no Areas)
 ViewModels/                  Form and page data, grouped by feature
 Views/
   Home/Index.cshtml           Paper studio homepage, use cases and desk editorial
+  Home/_ImaginationOrb.cshtml Animated hero markup, labels and static fallback
   Studio/Index.cshtml         Optional ThreeUI experience and section order
   Studio/_*.cshtml            Original scene sections, product list and CTA
   Shop/                      Catalog and search filters
@@ -27,13 +28,17 @@ Views/
 wwwroot/
   css/base.css               Core layout, local fonts and navigation
   css/stationery.css         Homepage only: hero, use cases and desk editorial
+  css/imagination-orb.css    Homepage particle hero, captions and controls
   css/milo.css               Typography, RTL, cards, forms and commerce styles
   css/themes.css             Light/dark tokens and scene presentation
   js/theme.js                Before-paint theme preference and toggle
   js/milo.js                 Commerce menu, keyboard support and coupon copy
   js/comparison.js           Loaded on first comparison selection; up to 3 items
+  js/imagination-orb.js      Hero animation, controls, theme and browser lifecycle
+  js/imagination-shapes.js   Notebook, pen nib, paper plane and star geometry
   js/scene-accessibility.js  Scene failure recovery
   vendor/threeui/            Authored scene CSS, JS, fonts and verified images
+  vendor/thinking-orbs/      Original web projection/painter, source credit, MIT license
 ```
 
 The `Views/Admin*` folders use ordinary MVC view discovery. Controllers are named `AdminProductsController`, `AdminOrdersController`, etc.; their URL prefixes remain `/Admin/Products`, `/Admin/Orders`, etc. Every admin controller retains its Admin role authorization. `/Admin` opens the dashboard.
@@ -51,6 +56,8 @@ Edit `.cshtml` text and HTML, save, and refresh the browser. Change styling in `
 Light/dark colors live in `wwwroot/css/themes.css`. Light uses warm ivory and botanical ink; dark uses green-black surfaces and pale text. The header switch saves `miloshop-theme` in local storage. Without an explicit choice the site follows the operating system, including changes while a tab is open. Theme controls also work on catalog, account and Admin pages. The optional ThreeUI world retains its authored night lighting. Reduced-motion preferences are respected.
 
 Add a homepage section as a Razor partial under `Views/Home` and insert `<partial name="_MySection" model="Model" />` in `Views/Home/Index.cshtml`. Use `.studio-shell`, `.studio-section`, `.studio-heading`, `.button` and semantic color variables. No camera attributes are required. For the separate `/Studio` experience, adapt its existing sections and retain `id`, `data-cam`, `.fg` and reveal attributes. Its partial references use explicit paths because the action belongs to HomeController.
+
+The hero uses a custom browser adaptation of Thinking Orbs, with an open notebook → pen nib → paper plane → star sequence. There are no hero photos or WebGL dependencies. See the [hero guide](imagination-hero.md) to change its words, shapes or timing. Shape labels live in one `CHAPTERS` array; the initial fallback caption also lives in the Razor partial so it works without JavaScript.
 
 Brand/material filters use actual stored attributes, and catalog queries return at most 24 products per page. Pagination preserves all filters. Comparison stays within the current page and displays up to three products using title, price, brand, material and SKU; absent values say “ثبت نشده”. It loads on the first selection. GSM, nib, ruling and binding require structured catalog fields before they can be advertised or filtered accurately. “Complete the Desk” links separate products; it does not promise bundle discounts or bundle checkout.
 

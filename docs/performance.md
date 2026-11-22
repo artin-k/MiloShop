@@ -1,5 +1,7 @@
 # Stationery theme and performance
 
+The photo-hero measurements below were recorded for commit `be928d2`. The homepage now uses the [animated imagination hero](imagination-hero.md); the old hero image/preload is removed. The older timings and payload table are historical, not measurements of the new animation.
+
 ## Audit and implementation
 
 Previously the homepage presented the Kage temple world before shopping. Every page loaded its 52,269-byte stylesheet and seven font declarations. The homepage loaded Three.js (608,081 bytes) and Kage (173,714 bytes), then scene textures and foregrounds. Those are source sizes before HTTP compression, not measured transfer sizes.
