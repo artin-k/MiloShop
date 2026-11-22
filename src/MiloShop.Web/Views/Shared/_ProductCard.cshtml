@@ -6,14 +6,17 @@
 }
 <article class="product-tile">
     <a class="product-tile__image" asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">
-        <img src="@image" alt="@Model.Title" loading="lazy" width="500" height="500" />
+        <img src="@image" alt="@Model.Title" loading="lazy" decoding="async" width="500" height="500" />
     </a>
     <div class="product-tile__info">
         <p class="eyebrow">@(Model.Brand ?? Model.Category?.Name ?? "MILO SELECT")</p>
         <h3><a asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">@Model.Title</a></h3>
+        @if (!string.IsNullOrWhiteSpace(Model.Material)) { <span class="spec-tag">@Model.Material</span> }
+        <span class="sku">کد: @Model.Sku</span>
         <p class="price">@price.ToString("N0") <small>تومان</small></p>
         <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl">
             <button class="button" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد ←" : "ناموجود")</button>
         </form>
+        <label class="compare-choice"><input type="checkbox" data-compare="@Model.Id" data-title="@Model.Title" data-brand="@Model.Brand" data-material="@Model.Material" data-sku="@Model.Sku" data-price="@price.ToString("N0")" /> مقایسه مشخصات</label>
     </div>
 </article>

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using MiloShop.Web.Services;
 using MiloShop.Infrastructure;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +65,14 @@ builder.Services.AddAntiforgery(options =>
 builder.Services.AddScoped<IProductImageStorage, ProductImageStorage>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+builder.Services.Configure<GzipCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
 
 var app = builder.Build();
 
@@ -77,7 +87,20 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+// Compress public assets only; account/cart HTML is never compressed or publicly cached here.
+app.UseWhen(context => context.Request.Path.StartsWithSegments("/css")
+    || context.Request.Path.StartsWithSegments("/js") || context.Request.Path.StartsWithSegments("/fonts")
+    || context.Request.Path.StartsWithSegments("/images") || context.Request.Path.StartsWithSegments("/vendor"),
+    branch => branch.UseResponseCompression());
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        var versioned = context.Context.Request.Query.ContainsKey("v");
+        context.Context.Response.Headers.CacheControl = versioned
+            ? "public,max-age=31536000,immutable" : "public,max-age=3600";
+    }
+});
 app.UseCookiePolicy();
 
 app.UseRouting();

@@ -1,4 +1,4 @@
-// The landing page uses Kage's authored menu. Other pages use this small equivalent.
+// The /Studio scene uses Kage's authored menu. Shopping pages use this small equivalent.
 const navigation = document.getElementById('nav');
 const burger = navigation?.querySelector('.nav-burger');
 const closeMenu = () => {
@@ -29,4 +29,16 @@ document.addEventListener('click', async event => {
     if (!button) return;
     try { await navigator.clipboard.writeText(button.dataset.code); button.textContent = 'کپی شد'; }
     catch { button.textContent = button.dataset.code; }
+});
+let comparison;
+document.addEventListener('change', event => {
+    if (!event.target.matches('[data-compare]')) return;
+    const input = event.target;
+    comparison ??= import('./comparison.js');
+    comparison.then(module => module.update(input)).catch(() => {
+        input.checked = false;
+        document.getElementById('compare-count').textContent = 'بارگذاری مقایسه انجام نشد؛ دوباره تلاش کنید.';
+        document.getElementById('compare-bar').hidden = false;
+        comparison = undefined;
+    });
 });

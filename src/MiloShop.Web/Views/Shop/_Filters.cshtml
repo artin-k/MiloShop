@@ -22,6 +22,14 @@
             <option value="expensive" selected="@(Model.Sort == "expensive")">گران‌ترین</option>
         </select>
     </div>
+    @if (Model.Brands.Any())
+    {
+        <div><label for="brand">برند</label><select id="brand" name="brand"><option value="">همه برندها</option>@foreach (var brand in Model.Brands) { <option value="@brand" selected="@(Model.SelectedBrand == brand)">@brand</option> }</select></div>
+    }
+    @if (Model.Materials.Any())
+    {
+        <div><label for="material">جنس / ویژگی ثبت‌شده</label><select id="material" name="material"><option value="">همه موارد</option>@foreach (var material in Model.Materials) { <option value="@material" selected="@(Model.SelectedMaterial == material)">@material</option> }</select></div>
+    }
     <div><label for="minPrice">از قیمت (تومان)</label><input id="minPrice" type="number" min="0" name="minPrice" value="@Model.MinPrice" /></div>
     <div><label for="maxPrice">تا قیمت (تومان)</label><input id="maxPrice" type="number" min="0" name="maxPrice" value="@Model.MaxPrice" /></div>
     <button class="milo-button milo-button--primary" type="submit">اعمال</button>

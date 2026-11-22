@@ -15,6 +15,13 @@ namespace MiloShop.Web.ViewModels.Shop
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
         public int? CategoryId { get; set; }
+        public List<string> Brands { get; set; } = [];
+        public List<string> Materials { get; set; } = [];
+        public string? SelectedBrand { get; set; }
+        public string? SelectedMaterial { get; set; }
+        public int TotalCount { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 24;
 
 
         //

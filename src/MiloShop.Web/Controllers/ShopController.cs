@@ -25,15 +25,18 @@ namespace MiloShop.Web.Controllers
             string? sort,
             decimal? minPrice,
             decimal? maxPrice,
-            int? categoryId)
+            int? categoryId, string? brand = null, string? material = null, int page = 1)
         {
-            var page = await _catalog.GetCatalogAsync(new CatalogFilter(q, sort, minPrice, maxPrice, categoryId));
+            var result = await _catalog.GetCatalogAsync(new CatalogFilter(q, sort, minPrice, maxPrice, categoryId, brand, material, page));
             var model = new ShopViewModel
             {
                 ShopName = "MiloShop",
                 ShopDescription = "لوازم‌التحریر و هدیه برای لحظه‌های خلاقانه",
-                Products = page.Products,
-                Categories = page.Categories,
+                Products = result.Products,
+                Categories = result.Categories,
+                Brands = result.Brands, Materials = result.Materials,
+                SelectedBrand = brand, SelectedMaterial = material,
+                TotalCount = result.TotalCount, Page = result.Page, PageSize = result.PageSize,
                 Query = q,
                 Sort = sort,
                 MinPrice = minPrice,

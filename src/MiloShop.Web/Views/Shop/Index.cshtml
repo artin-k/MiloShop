@@ -3,17 +3,18 @@
     ViewData["Title"] = "فروشگاه لوازم‌التحریر و هدیه";
     ViewData["Description"] = "محصولات میلوشاپ را با دسته‌بندی، قیمت و نام محصول پیدا کنید.";
     ViewBag.BodyClass = "storefront-page";
+    ViewData["ProductList"] = true;
 }
 
 <div class="storefront-shell">
     <header class="storefront-heading">
         <p class="milo-kicker">برای ایده‌های تازه</p>
-        <h1>چیزهای کوچک، برای خلق چیزهای بزرگ.</h1>
-        <p>انتخاب کن، جزئیات را ببین و میز خلاقیت خودت را بساز.</p>
+        <h1>ابزار مناسبِ شیوه کار شما.</h1>
+        <p>نوشت‌افزار را با دسته‌بندی، برند، جنس و بودجه پیدا کنید. برای جزئیات بیشتر، مشخصات محصولات را کنار هم مقایسه کنید.</p>
     </header>
     <partial name="_Filters" model="Model" />
     <section aria-labelledby="catalog-title">
-        <div class="catalog-heading"><h2 id="catalog-title">محصولات</h2><span>@Model.Products.Count() محصول</span></div>
+        <div class="catalog-heading"><h2 id="catalog-title">نوشت‌افزار و ابزار میز کار</h2><span>@Model.TotalCount محصول · صفحه @Model.Page</span></div>
         @if (Model.Products.Any())
         {
             <div class="product-grid">
@@ -32,4 +33,5 @@
             </div>
         }
     </section>
+    <partial name="_Pagination" model="Model" />
 </div>

@@ -1,15 +1,15 @@
 /* Semantic theme tokens: edit this file to tune both modes without touching ThreeUI. */
 :root {
     color-scheme:dark;
-    --surface:#0a0e12; --field:#10161b; --field-border:#38423f;
-    --nav-surface:rgba(5,7,10,.95); --panel-shadow:none; --danger:#ff9e8f;
+    --surface:#182420; --field:#15211e; --field-border:#64786c;
+    --nav-surface:rgba(16,27,25,.97); --panel-shadow:none; --danger:#ffb3a4;
 }
 :root[data-theme="light"] {
     color-scheme:light;
-    --ink:#f4f1ea; --ink-2:#fffdf8; --bone:#172b29; --bone-dim:#485b56;
+    --ink:#f5f2e9; --ink-2:#fffdf8; --bone:#23352e; --bone-dim:#485b50;
     --muted:#596b65; --line:rgba(23,43,41,.2); --line-soft:rgba(23,43,41,.12);
-    --vermilion:#b52b21; --ember:#a52c21; --surface:#fffdf8; --field:#fff;
-    --field-border:#a8b4ab; --nav-surface:rgba(250,248,242,.96);
+    --vermilion:#285449; --ember:#35624d; --surface:#fffdf8; --field:#fff;
+    --field-border:#788c7e; --nav-surface:rgba(250,248,242,.96);
     --panel-shadow:0 16px 48px rgba(45,56,44,.05); --danger:#a2241b;
 }
 .theme-toggle { display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--line); border-radius:50%; flex-shrink:0; position:relative; z-index:3; transition:background .2s; }
@@ -20,7 +20,6 @@
 [data-theme="light"] .theme-sun { display:none; }
 .commerce-page .nav,.nav.stuck::before { background:var(--nav-surface); }
 .nav-burger i { background:var(--bone); }
-.brand svg path { stroke:var(--bone); }
 .nav-links .nav-link { color:var(--bone-dim); }
 .nav-links .nav-link:hover { color:var(--bone); }
 .panel,.form-panel,.catalog-filters,.notice,.product-tile { background:var(--surface); box-shadow:var(--panel-shadow); }

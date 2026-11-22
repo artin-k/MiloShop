@@ -1,6 +1,6 @@
-# MiloShop / ThreeUI Kage
+# MiloShop stationery storefront
 
-The frontend is Razor + the actual Kage HTML/DOM/Three.js source. There is no React or Next.js build. ThreeUI's `KageLandingPage` React component frames the same HTML document; this project renders the adapted document directly so product text and forms are server-rendered and editable in `.cshtml`.
+The storefront uses server-rendered Razor, small JavaScript enhancements and paper/ink theme tokens. The original ThreeUI Kage experience is preserved at `/Studio`; ordinary shopping pages do not load its scene runtime. There is no React or Next.js build.
 
 ## Where to edit
 
@@ -8,12 +8,9 @@ The frontend is Razor + the actual Kage HTML/DOM/Three.js source. There is no Re
 Controllers/                 Public and Admin HTTP endpoints (no Areas)
 ViewModels/                  Form and page data, grouped by feature
 Views/
-  Home/Index.cshtml           Homepage section order
-  Home/_Hero.cshtml           Opening headline, shop CTA, chapter index
-  Home/_Story.cshtml          MiloShop story
-  Home/_Collections.cshtml    Authored scene windows + actual category links
-  Home/_NewProducts.cshtml    Database products + active coupon
-  Home/_CallToAction.cshtml   Closing section
+  Home/Index.cshtml           Paper studio homepage, use cases and desk editorial
+  Studio/Index.cshtml         Optional ThreeUI experience and section order
+  Studio/_*.cshtml            Original scene sections, product list and CTA
   Shop/                      Catalog and search filters
   Products/Details.cshtml     Crawlable product details and structured data
   Cart/                      Cart and checkout
@@ -24,13 +21,17 @@ Views/
   Shared/_Header.cshtml      Navigation
   Shared/_Footer.cshtml      Footer
   Shared/_ProductCard.cshtml  Card shared by home and catalog
+  Shared/_Comparison.cshtml   Progressive product comparison dialog
   Shared/_Scene.cshtml       Original environmental layers and preloader
   Shared/_AdminNav.cshtml    Management navigation
 wwwroot/
-  css/milo.css               Your typography, colors, RTL and commerce styles
+  css/base.css               Core layout, local fonts and navigation
+  css/stationery.css         Homepage only: hero, use cases and desk editorial
+  css/milo.css               Typography, RTL, cards, forms and commerce styles
   css/themes.css             Light/dark tokens and scene presentation
   js/theme.js                Before-paint theme preference and toggle
   js/milo.js                 Commerce menu, keyboard support and coupon copy
+  js/comparison.js           Loaded on first comparison selection; up to 3 items
   js/scene-accessibility.js  Scene failure recovery
   vendor/threeui/            Authored scene CSS, JS, fonts and verified images
 ```
@@ -47,9 +48,11 @@ dotnet watch --project src/MiloShop.Web/MiloShop.Web.csproj
 
 Edit `.cshtml` text and HTML, save, and refresh the browser. Change styling in `wwwroot/css/milo.css`. Keep the large vendor scene files separate from your everyday component work.
 
-Light/dark colors live in `wwwroot/css/themes.css`. The header switch saves the preference under `miloshop-theme` in local storage. Without an explicit choice the site follows the operating system, including changes while a tab is open. The light landing page uses paper-colored reading surfaces around the authored night scene; the ThreeUI world itself retains its intended night lighting. Theme controls also work on catalog, account and Admin pages. Reduced-motion preferences are respected by the authored scene and the extra UI.
+Light/dark colors live in `wwwroot/css/themes.css`. Light uses warm ivory and botanical ink; dark uses green-black surfaces and pale text. The header switch saves `miloshop-theme` in local storage. Without an explicit choice the site follows the operating system, including changes while a tab is open. Theme controls also work on catalog, account and Admin pages. The optional ThreeUI world retains its authored night lighting. Reduced-motion preferences are respected.
 
-Add your own section as a Razor partial and insert `<partial name="_MySection" model="Model" />` in `Views/Home/Index.cshtml`. If it should participate in Kage's camera path, adapt an existing section and retain its `id`, `data-cam`, `.fg` and reveal attributes. The camera currently has six authored stops: hero, story, collections, products, closing and footer. Additional ordinary content can live inside one of those stops without changing the camera engine.
+Add a homepage section as a Razor partial under `Views/Home` and insert `<partial name="_MySection" model="Model" />` in `Views/Home/Index.cshtml`. Use `.studio-shell`, `.studio-section`, `.studio-heading`, `.button` and semantic color variables. No camera attributes are required. For the separate `/Studio` experience, adapt its existing sections and retain `id`, `data-cam`, `.fg` and reveal attributes. Its partial references use explicit paths because the action belongs to HomeController.
+
+Brand/material filters use actual stored attributes, and catalog queries return at most 24 products per page. Pagination preserves all filters. Comparison stays within the current page and displays up to three products using title, price, brand, material and SKU; absent values say “ثبت نشده”. It loads on the first selection. GSM, nib, ruling and binding require structured catalog fields before they can be advertised or filtered accurately. “Complete the Desk” links separate products; it does not promise bundle discounts or bundle checkout.
 
 Product cards come from the real catalog. Preserve the cart form tag helpers so ASP.NET generates URLs and antiforgery tokens. Forms and product navigation work without WebGL or JavaScript. If rendering fails, the page reveals its content and uses the authored static fallback.
 
@@ -77,4 +80,4 @@ Catalog reads use Application contracts implemented in Infrastructure. Cart, acc
 
 ## Verification of this integration
 
-The .NET test suite passes all 19 tests. Browser checks cover desktop (1440px) and mobile (390px) in both themes, saved/system preferences, mobile menu and Escape, catalog/product/account/Admin routes, antiforgery tokens and the no-JavaScript homepage. A local SQL test completed sign-up, add-to-cart and checkout and verified the order in the account page. The live Three.js renderer was also verified with eight wordmark glyphs and a changing camera rig on scroll; GPU-heavy checks used the source's low-quality query controls for the software-rendered cloud browser.
+See [performance notes](performance.md) for the current measurements and verification. Catalog tests cover attribute filtering, stable pagination and page clamping. Shopping content, links and forms are server rendered; comparison and theme switching are optional JavaScript enhancements.

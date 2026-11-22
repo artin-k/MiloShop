@@ -1,0 +1,13 @@
+/* Keep navigation available when optional JavaScript enhancements are disabled. */
+.theme-toggle, .nav-burger, .compare-choice { display: none !important; }
+@media (max-width: 820px) {
+    .nav { position: relative; height: auto; flex-wrap: wrap; padding-block: 18px; }
+    .nav-links {
+        position: static; width: 100%; padding: 0; flex-direction: row;
+        flex-wrap: wrap; transform: none; visibility: visible; pointer-events: auto;
+        border: 0; background: transparent;
+    }
+    .nav-links .nav-link { padding: 12px; font-size: 14px; }
+    .shop-shell { padding-top: 32px; }
+    .stationery-home .shop-shell { padding-top: 0; }
+}

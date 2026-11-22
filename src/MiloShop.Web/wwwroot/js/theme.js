@@ -9,7 +9,7 @@
     function apply(theme) {
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#05070a');
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f5f2e9' : '#101b19');
         const button = document.querySelector('.theme-toggle');
         button?.setAttribute('aria-pressed', String(theme === 'light'));
         button?.setAttribute('aria-label', theme === 'light' ? 'تغییر به حالت تاریک' : 'تغییر به حالت روشن');

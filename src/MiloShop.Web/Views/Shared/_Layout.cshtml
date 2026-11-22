@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>@title</title>
     <meta name="description" content="@description" />
-    <meta name="theme-color" content="#05070a" />
+    <meta name="theme-color" content="#f5f2e9" />
     <script src="~/js/theme.js" asp-append-version="true"></script>
     <link rel="canonical" href="@canonical" />
     <meta property="og:title" content="@title" />
@@ -19,14 +19,20 @@
     <meta property="og:url" content="@canonical" />
     <meta property="og:locale" content="fa_IR" />
     <meta property="og:type" content="website" />
-    <link rel="stylesheet" href="~/vendor/threeui/secret-pathways-assets/fonts.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/vendor/threeui/kage.css" asp-append-version="true" />
+    <link rel="preload" href="~/fonts/milo-persian.woff2" as="font" type="font/woff2" crossorigin />
+    @if (scene)
+    {
+        <link rel="stylesheet" href="~/vendor/threeui/secret-pathways-assets/fonts.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/vendor/threeui/kage.css" asp-append-version="true" />
+    }
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/milo.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/themes.css" asp-append-version="true" />
+    <noscript><link rel="stylesheet" href="~/css/no-script.css" asp-append-version="true" /></noscript>
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="@(scene ? "scene-page" : "commerce-page")" data-layout-hero="b" data-layout-story="b" data-layout-gallery="b" data-layout-curriculum="b" data-layout-closing="b" data-layout-footer="b">
+<body class="@(scene ? "scene-page" : "commerce-page") @(ViewData["Home"] is true ? "stationery-home" : "")" data-layout-hero="b" data-layout-story="b" data-layout-gallery="b" data-layout-curriculum="b" data-layout-closing="b" data-layout-footer="b">
     <a class="skip-link" href="#main">پرش به محتوا</a>
     @if (scene) { <partial name="_Scene" /> }
     <partial name="_Header" />
@@ -42,15 +48,16 @@
         </main>
         <partial name="_Footer" />
     </div>
+    @if (scene || ViewData["ProductList"] is true || ViewData["Home"] is true) { <partial name="_Comparison" /> }
     @if (scene)
     {
         <div id="fg-sky" aria-hidden="true"></div>
         <div class="rail" id="rail"></div>
-        <script src="~/js/scene-accessibility.js" asp-append-version="true"></script>
-        <script src="~/vendor/threeui/secret-pathways-assets/three.min.js"></script>
-        <script src="~/vendor/threeui/kage.js" asp-append-version="true"></script>
+        <script defer src="~/js/scene-accessibility.js" asp-append-version="true"></script>
+        <script defer src="~/vendor/threeui/secret-pathways-assets/three.min.js" asp-append-version="true"></script>
+        <script defer src="~/vendor/threeui/kage.js" asp-append-version="true"></script>
     }
-    <script src="~/js/milo.js" asp-append-version="true"></script>
+    <script defer src="~/js/milo.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

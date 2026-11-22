@@ -1,6 +1,6 @@
 /* MiloShop's editable layer. The authored Kage scene lives in vendor/threeui. */
-@font-face { font-family: MiloPersian; src: url('/fonts/iran.ttf'); font-display: swap; }
-:root { --vermilion:#e0231c; --ember:#ff5a3c; }
+@font-face { font-family: MiloPersian; src: url('/fonts/milo-persian.woff2') format('woff2'); font-display: swap; }
+:root { --vermilion:#285449; --ember:#8cbfa9; }
 body { font-family: Onest, MiloPersian, sans-serif; font-weight:300; font-size:17px; }
 h1,h2,h3,.display { font-weight:400; font-family:Onest,MiloPersian,sans-serif; }
 .display { letter-spacing:-.012em; }
@@ -43,6 +43,16 @@ body[data-layout-footer="b"] .foot-brand > * { min-width:0; max-width:100%; }
 .product-tile:hover img { transform:scale(1.035); }
 .product-tile__info { padding:22px; }
 .product-tile h3 { font-size:18px; line-height:1.8; margin:12px 0; }
+.spec-tag { display:inline-block; padding:3px 9px; border:1px solid var(--line); border-radius:4px; font-size:12px; color:var(--bone-dim); }
+.sku { display:block; color:var(--muted); font-size:12px; margin-top:10px; }
+.compare-choice { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--bone-dim); }
+.pagination { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:24px; margin-top:40px; }
+.compare-bar { position:fixed; inset:auto 16px 16px; z-index:65; display:flex; align-items:center; justify-content:center; gap:16px; padding:16px; background:var(--surface); border:1px solid var(--line); box-shadow:0 12px 40px #0002; font-size:14px; }
+.compare-bar[hidden] { display:none; }
+#compare-dialog { width:min(1000px,calc(100% - 32px)); max-height:85vh; border:1px solid var(--line); background:var(--surface); color:var(--bone); padding:28px; }
+#compare-dialog::backdrop { background:#101b19b3; backdrop-filter:blur(4px); }
+#compare-dialog table { min-width:540px; }
+@media(max-width:600px) { .compare-bar { flex-wrap:wrap; gap:10px; padding:12px; } .compare-bar>span { width:100%; text-align:center; } }
 .price { font-variant-numeric:tabular-nums; font-size:20px; }
 .price small { font-size:12px; color:var(--muted); }
 .button,.btn,.milo-button { display:inline-flex; justify-content:center; align-items:center; gap:10px; min-height:46px; padding:10px 22px; border:1px solid var(--line); border-radius:40px; background:transparent; color:var(--bone); font-size:14px; cursor:pointer; text-decoration:none; }
@@ -55,7 +65,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .skip-link:focus { top:12px; }
 html:not(.scene-enhanced) .scene-page #pre { display:none; }
 html:not(.scene-enhanced) .scene-page [data-rv],html:not(.scene-enhanced) .scene-page .mask-line > span { opacity:1; transform:none; }
-.commerce-page .nav { background:rgba(5,7,10,.95); border-bottom:1px solid var(--line); }
+.commerce-page .nav { background:var(--nav-surface); border-bottom:1px solid var(--line); }
 .shop-shell { width:min(1320px,calc(100% - 48px)); margin:auto; padding:140px 0 90px; min-height:70vh; }
 .storefront-shell { padding:0; width:100%; }
 .storefront-heading { max-width:850px; margin-bottom:48px; }

@@ -1,0 +1,11 @@
+@model MiloShop.Web.ViewModels.Home.HomePageViewModel
+@{
+    ViewData["Title"] = "فضای تعاملی میلو";
+    ViewData["Description"] = "تجربه تعاملی سه‌بعدی میلو با ThreeUI؛ برای خرید محصولات به فروشگاه برگردید.";
+    ViewData["Scene"] = true;
+}
+<partial name="~/Views/Studio/_Hero.cshtml" model="Model" />
+<partial name="~/Views/Studio/_Story.cshtml" model="Model" />
+<partial name="~/Views/Studio/_Collections.cshtml" model="Model" />
+<partial name="~/Views/Studio/_NewProducts.cshtml" model="Model" />
+<partial name="~/Views/Studio/_CallToAction.cshtml" model="Model" />

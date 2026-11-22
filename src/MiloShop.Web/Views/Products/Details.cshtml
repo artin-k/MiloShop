@@ -27,7 +27,7 @@
         <a href="/">خانه</a><span>/</span><a asp-route="ShopIndex">فروشگاه</a><span>/</span><span>@Model.Title</span>
     </nav>
     <article class="product-detail">
-        <div class="product-detail__image"><img src="@image" alt="@Model.Title" width="700" height="700" /></div>
+        <div class="product-detail__image"><img src="@image" alt="@Model.Title" width="700" height="700" loading="eager" fetchpriority="high" decoding="async" /></div>
         <div class="product-detail__info">
             <p class="milo-kicker">@(Model.Category?.Name ?? "انتخاب میلو")</p>
             <h1>@Model.Title</h1>

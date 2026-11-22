@@ -17,15 +17,22 @@ namespace MiloShop.Web.Controllers
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
+            => View(await BuildPageAsync());
+
+        [HttpGet("Studio")]
+        public async Task<IActionResult> Studio()
+            => View("~/Views/Studio/Index.cshtml", await BuildPageAsync());
+
+        private async Task<HomePageViewModel> BuildPageAsync()
         {
             var page = await _catalog.GetHomeAsync();
-            return View(new HomePageViewModel
+            return new HomePageViewModel
             {
                 Categories = page.Categories,
                 NewProducts = page.Products,
                 ActiveOffer = page.Offer,
                 ActiveCoupon = page.Coupon
-            });
+            };
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

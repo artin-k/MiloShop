@@ -41,7 +41,7 @@ for (const asset of bundle.assets) {
   const name = path.basename(relative);
   html = html.replaceAll(new RegExp('https://[^\\s\'"()]+/' + name.replaceAll('.', '\\.'), 'g'), '/vendor/threeui/' + relative);
 }
-let fonts = texts['public/landing-pages/secret-pathways-assets/fonts.css'];
+let fonts = texts['public/landing-pages/secret-pathways-assets/fonts.css'].replaceAll('font-display:block', 'font-display:swap');
 for (const url of new Set(fonts.match(/https:[^)]+/g))) {
   const name = path.basename(url);
   const data = await get(url);
