@@ -1,0 +1,44 @@
+{
+  "component": "BookshelfScene",
+  "sourceUrl": "https://threeui.com/source-code/bookshelf.json",
+  "revision": "6ef16625e670b0285bb689bdebffc1d728c6deb1",
+  "runtime": "Three.js r165",
+  "files": [
+    {
+      "path": "src/shaders/bookshelf/BookshelfScene.tsx",
+      "sha256": "919856487ff38d66aa49548e70e5461e587a502b1642cf9f0d819f3b70acb516",
+      "bytes": 3645
+    },
+    {
+      "path": "src/shaders/bookshelf/bookshelfRenderer.js",
+      "sha256": "94c5141ecf3aa154dcb3208262dff2da20f1f85f9f3987eaa811d0d5512016a8",
+      "bytes": 863153
+    },
+    {
+      "path": "src/shaders/bookshelf/three165/OrbitControls.js",
+      "sha256": "d55c9c1593dd2f89722065b00bbb8a510895a6afc8f68517b9ea88452571be16",
+      "bytes": 32586
+    },
+    {
+      "path": "src/shaders/bookshelf/three165/RoomEnvironment.js",
+      "sha256": "ac34881abcacd5f728aea3c4abbcab13da3dbc9a95dc03c32432a05f87799b30",
+      "bytes": 3965
+    },
+    {
+      "path": "src/shaders/bookshelf/three165/RoundedBoxGeometry.js",
+      "sha256": "453681bf9c792a83d527c78a66025f7188accdac3a36e26d74b4382a7e41e933",
+      "bytes": 4983
+    },
+    {
+      "path": "src/shaders/bookshelf/three165/RectAreaLightUniformsLib.js",
+      "sha256": "a6728b0e9f5b5adae258cc0596106cd7e1a96ae8b2ec6450e80db6eb12586c59",
+      "bytes": 314232
+    },
+    {
+      "path": "src/shaders/threeui.css",
+      "sha256": "efe4447139f1358dd8e9be68edf6fa46cbefbd1de423a4d6c439ca61d2c8eccf",
+      "bytes": 40715
+    }
+  ],
+  "assets": "Cover atlas and walnut texture are embedded in the exact renderer; no separate binary assets."
+}

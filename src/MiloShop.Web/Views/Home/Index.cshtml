@@ -7,9 +7,11 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/stationery.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/imagination-orb.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/bookshelf.css" asp-append-version="true" />
 }
 @section Scripts {
     <script type="module" src="~/js/imagination-orb.js" asp-append-version="true"></script>
+    <script type="module" src="~/vendor/bookshelf/bookshelf-loader.js" asp-append-version="true"></script>
 }
 <section class="paper-hero" id="hero" aria-labelledby="hero-title">
     <div class="studio-shell paper-hero__grid">
@@ -22,6 +24,7 @@
         <partial name="_ImaginationOrb" />
     </div>
 </section>
+<partial name="_Bookshelf" />
 <section class="studio-section" id="pathways" aria-labelledby="collections-title"><div class="studio-shell">
     <header class="studio-heading"><div><p class="eyebrow">برای شیوه کار شما</p><h2 id="collections-title">هر میز، یک دنیای متفاوت.</h2></div><a class="text-link" href="/Shop">همه محصولات ←</a></header>
     <div class="use-cases">
@@ -52,7 +55,7 @@
         <p class="eyebrow">میلو / ابزار ایده‌های تازه</p>
         <h2>صفحه بعدی را، خودت بنویس.</h2><div class="actions">
             <a class="button button--primary" href="/Shop">رفتن به فروشگاه ←</a>
-            <a class="text-link" href="/Studio">تجربه تعاملی ThreeUI</a>
+            <a class="text-link" href="#bookshelf">کشف کتابخانه تعاملی</a>
             </div>
     </div>
 </section>

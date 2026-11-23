@@ -1,6 +1,6 @@
 # MiloShop stationery storefront
 
-The storefront uses server-rendered Razor, small JavaScript enhancements and paper/ink theme tokens. The original ThreeUI Kage experience is preserved at `/Studio`; ordinary shopping pages do not load its scene runtime. There is no React or Next.js build.
+The storefront uses server-rendered Razor, small JavaScript enhancements and paper/ink theme tokens. The homepage adds the exact ThreeUI Bookshelf as an isolated React component after the hero. The rest of the site stays in Razor. Its generated assets are committed, so ordinary .NET builds need no Node step. The older Kage scene remains at `/Studio`, with links now directing users to the bookshelf. There is no Next.js migration.
 
 ## Where to edit
 
@@ -10,6 +10,7 @@ ViewModels/                  Form and page data, grouped by feature
 Views/
   Home/Index.cshtml           Paper studio homepage, use cases and desk editorial
   Home/_ImaginationOrb.cshtml Animated hero markup, labels and static fallback
+  Home/_Bookshelf.cshtml      Exact seven-volume ThreeUI collection and visible controls
   Studio/Index.cshtml         Optional ThreeUI experience and section order
   Studio/_*.cshtml            Original scene sections, product list and CTA
   Shop/                      Catalog and search filters
@@ -29,6 +30,7 @@ wwwroot/
   css/base.css               Core layout, local fonts and navigation
   css/stationery.css         Homepage only: hero, use cases and desk editorial
   css/imagination-orb.css    Homepage particle hero, captions and controls
+  css/bookshelf.css          Surrounding bookshelf section, themes and responsive controls
   css/milo.css               Typography, RTL, cards, forms and commerce styles
   css/themes.css             Light/dark tokens and scene presentation
   js/theme.js                Before-paint theme preference and toggle
@@ -58,6 +60,8 @@ Light/dark colors live in `wwwroot/css/themes.css`. Light uses warm ivory and bo
 Add a homepage section as a Razor partial under `Views/Home` and insert `<partial name="_MySection" model="Model" />` in `Views/Home/Index.cshtml`. Use `.studio-shell`, `.studio-section`, `.studio-heading`, `.button` and semantic color variables. No camera attributes are required. For the separate `/Studio` experience, adapt its existing sections and retain `id`, `data-cam`, `.fg` and reveal attributes. Its partial references use explicit paths because the action belongs to HomeController.
 
 The hero uses a custom browser adaptation of Thinking Orbs, with an open notebook → pen nib → paper plane → star sequence. There are no hero photos or WebGL dependencies. See the [hero guide](imagination-hero.md) to change its words, shapes or timing. Shape labels live in one `CHAPTERS` array; the initial fallback caption also lives in the Razor partial so it works without JavaScript.
+
+The [Bookshelf guide](bookshelf.md) describes the exact source, isolated build, visible controls and performance boundaries. Edit the section's `.cshtml`, its surrounding CSS or the loader, then rebuild if JavaScript changes. Keep the registered vendor files unchanged so their source hashes remain verifiable.
 
 Brand/material filters use actual stored attributes, and catalog queries return at most 24 products per page. Pagination preserves all filters. Comparison stays within the current page and displays up to three products using title, price, brand, material and SKU; absent values say “ثبت نشده”. It loads on the first selection. GSM, nib, ruling and binding require structured catalog fields before they can be advertised or filtered accurately. “Complete the Desk” links separate products; it does not promise bundle discounts or bundle checkout.
 

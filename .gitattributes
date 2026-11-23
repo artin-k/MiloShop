@@ -3,6 +3,11 @@
 ###############################################################################
 * text=auto
 
+# Exact registered source and hashed output must keep their original bytes,
+# including when this repository is checked out with Windows autocrlf enabled.
+/frontend/bookshelf/vendor/** -text
+/src/MiloShop.Web/wwwroot/vendor/bookshelf/** -text
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
