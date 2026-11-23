@@ -1,11 +1,15 @@
-// Site adapter only. The registered React component and renderer stay unchanged.
-const section = document.querySelector('[data-bookshelf-section]');
+// Progressive category navigation around Milo's adapted Bookshelf renderer.
+const section = document.querySelector('[data-bookshelf-section="categories"]');
 if (section) {
   const mount = section.querySelector('[data-bookshelf-mount]');
   const status = section.querySelector('[data-bookshelf-status]');
   const start = section.querySelector('[data-bookshelf-start]');
   const actions = [...section.querySelectorAll('[data-bookshelf-action]')];
   const volumes = [...section.querySelectorAll('[data-bookshelf-volume]')];
+  const categories = JSON.parse(
+    section.querySelector('[data-bookshelf-categories]').textContent,
+  );
+  const shop = section.querySelector('[data-bookshelf-shop]');
   let task, unmount, observer;
   let lastDetail = false;
 
@@ -21,7 +25,8 @@ if (section) {
       start.disabled = false;
       start.textContent = 'تلاش دوباره';
     } else if (ready) {
-      status.textContent = 'یک جلد انتخاب کن، آن را از نزدیک ببین و ورق بزن.';
+      status.textContent =
+        'دسته دلخواهت را انتخاب کن؛ با «دیدن محصولات» وارد همان مجموعه در فروشگاه شو.';
       start.hidden = true;
     }
     const detail = host?.classList.contains('mode-detail');
@@ -33,10 +38,14 @@ if (section) {
       const id = button.dataset.bookshelfAction;
       const inBrowse = ['previous', 'next', 'inspect'].includes(id);
       button.hidden = detail ? inBrowse : !inBrowse;
-      button.disabled = !ready || busy || source(id)?.disabled;
+      button.disabled =
+        !ready ||
+        busy ||
+        source(id)?.disabled ||
+        (categories.length < 2 && ['previous', 'next'].includes(id));
       if (id === 'toggle-book') {
         const open = source(id)?.getAttribute('aria-pressed') === 'true';
-        button.textContent = open ? 'بستن کتاب' : 'باز کردن کتاب';
+        button.textContent = open ? 'بستن دفتر' : 'باز کردن دفتر';
         button.setAttribute('aria-pressed', String(open));
       }
     });
@@ -50,10 +59,30 @@ if (section) {
         ),
       );
     });
+    const selected = [...(source('markers')?.children || [])].findIndex(
+      (marker) => marker.getAttribute('aria-selected') === 'true',
+    );
+    const category = categories[Math.max(0, selected)];
     section.querySelector('[data-bookshelf-title]').textContent =
-      source('selection-title')?.textContent || 'Working Volumes';
+      category.title;
     section.querySelector('[data-bookshelf-counter]').textContent =
-      source('counter')?.textContent || '01 / 07';
+      source('counter')?.textContent ||
+      `01 / ${String(categories.length).padStart(2, '0')}`;
+    shop.href = category.url;
+    shop.textContent = `دیدن محصولات ${category.title} ←`;
+    section.querySelector('[data-bookshelf-summary]').textContent =
+      category.description ||
+      'ابزار مناسب ایده بعدی‌ات را در این مجموعه پیدا کن.';
+    section.querySelector('[data-bookshelf-product-count]').textContent =
+      category.productCount > 0
+        ? `${new Intl.NumberFormat('fa-IR').format(category.productCount)} محصول موجود`
+        : 'این مجموعه در حال تکمیل است';
+    host
+      ?.querySelector('canvas')
+      ?.setAttribute(
+        'aria-label',
+        `دسته‌بندی ${category.title}؛ قفسه تعاملی نوشت‌افزار میلو`,
+      );
     section.querySelector('[data-bookshelf-page]').textContent = detail
       ? source('page-counter')?.textContent || ''
       : '';
@@ -87,12 +116,12 @@ if (section) {
   async function load() {
     if (task) return task;
     start.disabled = true;
-    status.textContent = 'کتابخانه در حال آماده شدن است…';
+    status.textContent = 'مجموعه‌های میلو در حال آماده شدن‌اند…';
     section.dataset.bookshelfState = 'loading';
     task = (async () => {
       await loadStyles();
       const module = await import(
-        new URL('bookshelf-6XFMMR2C.js', import.meta.url)
+        new URL('bookshelf-POEYGDCG.js', import.meta.url)
       );
       unmount = module.mountBookshelf(mount);
       observer = new MutationObserver(sync);
@@ -112,7 +141,7 @@ if (section) {
       });
     })().catch(() => {
       status.textContent =
-        'بارگذاری کتابخانه انجام نشد. دوباره تلاش کن یا به فروشگاه برو.';
+        'نمای سه‌بعدی بارگذاری نشد؛ از «دیدن محصولات» یا منوی دسته‌بندی‌ها استفاده کن.';
       section.dataset.bookshelfState = 'unavailable';
       start.disabled = false;
       start.hidden = false;

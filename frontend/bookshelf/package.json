@@ -12,6 +12,7 @@
     "three165": "npm:three@0.165.0"
   },
   "devDependencies": {
+    "acorn": "8.15.0",
     "esbuild": "0.25.12"
   }
 }

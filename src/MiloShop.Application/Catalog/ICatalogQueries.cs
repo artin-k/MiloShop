@@ -14,7 +14,12 @@ public record CatalogPage(List<Product> Products, List<Category> Categories)
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 24;
 }
-public record HomePage(List<Product> Products, List<Category> Categories, Offer? Offer, Coupon? Coupon);
+public record CategoryCollection(int Id, string Name, string Description, int AvailableProductCount);
+
+public record HomePage(List<Product> Products, List<Category> Categories, Offer? Offer, Coupon? Coupon)
+{
+    public List<CategoryCollection> Collections { get; init; } = [];
+}
 
 /// <summary>Read operations used by the storefront. Persistence belongs in Infrastructure.</summary>
 public interface ICatalogQueries

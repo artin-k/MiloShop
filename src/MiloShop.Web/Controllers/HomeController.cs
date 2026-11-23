@@ -29,6 +29,7 @@ namespace MiloShop.Web.Controllers
             return new HomePageViewModel
             {
                 Categories = page.Categories,
+                Collections = page.Collections,
                 NewProducts = page.Products,
                 ActiveOffer = page.Offer,
                 ActiveCoupon = page.Coupon

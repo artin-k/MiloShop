@@ -24,16 +24,13 @@
         <partial name="_ImaginationOrb" />
     </div>
 </section>
-<partial name="_Bookshelf" />
+<partial name="_Bookshelf" model="Model.Collections" />
 <section class="studio-section" id="pathways" aria-labelledby="collections-title"><div class="studio-shell">
     <header class="studio-heading"><div><p class="eyebrow">برای شیوه کار شما</p><h2 id="collections-title">هر میز، یک دنیای متفاوت.</h2></div><a class="text-link" href="/Shop">همه محصولات ←</a></header>
     <div class="use-cases">
         <article class="use-case"><span>01 / JOURNAL</span><h3>نوشتن و یادداشت</h3><p>دفترها و ابزار ثبت فکر؛ برای برنامه روزانه، کلاس و ژورنال شخصی.</p><a class="text-link" href="/Shop?q=دفتر">دفترها را ببین ←</a></article>
         <article class="use-case"><span>02 / SKETCH</span><h3>طراحی و ایده‌پردازی</h3><p>از اولین خط تا طرح نهایی؛ ابزارها را بر اساس مشخصات محصول انتخاب کن.</p><a class="text-link" href="/Shop?q=طراحی">ابزار طراحی ←</a></article>
         <article class="use-case"><span>03 / DESK</span><h3>میز منظم، فکر آزاد</h3><p>برای جمع‌وجور کردن ابزار روزانه و ساختن یک فضای کار دلخواه.</p><a class="text-link" href="/Shop?q=جامدادی">نظم‌دهنده‌های میز ←</a></article>
-    </div>
-    <div class="category-links" aria-label="دسته‌بندی‌های فروشگاه">
-        @foreach (var category in Model.Categories) { <a asp-route="ShopIndex" asp-route-categoryId="@category.Id">@category.Name</a> }
     </div>
 </div></section>
 <section class="studio-section" id="lessons" aria-labelledby="arrivals-title"><div class="studio-shell">
@@ -55,7 +52,7 @@
         <p class="eyebrow">میلو / ابزار ایده‌های تازه</p>
         <h2>صفحه بعدی را، خودت بنویس.</h2><div class="actions">
             <a class="button button--primary" href="/Shop">رفتن به فروشگاه ←</a>
-            <a class="text-link" href="#bookshelf">کشف کتابخانه تعاملی</a>
+            <a class="text-link" href="#bookshelf">کشف مجموعه‌های میلو</a>
             </div>
     </div>
 </section>

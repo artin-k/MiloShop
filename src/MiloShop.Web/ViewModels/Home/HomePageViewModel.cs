@@ -6,6 +6,7 @@ namespace MiloShop.Web.ViewModels.Home
     {
         public List<Product> NewProducts { get; set; } = [];
         public List<Category> Categories { get; set; } = [];
+        public List<MiloShop.Application.Catalog.CategoryCollection> Collections { get; set; } = [];
         public Coupon? ActiveCoupon { get; set; }
         public Offer? ActiveOffer { get; set; }
 

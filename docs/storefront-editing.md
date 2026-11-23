@@ -1,6 +1,6 @@
 # MiloShop stationery storefront
 
-The storefront uses server-rendered Razor, small JavaScript enhancements and paper/ink theme tokens. The homepage adds the exact ThreeUI Bookshelf as an isolated React component after the hero. The rest of the site stays in Razor. Its generated assets are committed, so ordinary .NET builds need no Node step. The older Kage scene remains at `/Studio`, with links now directing users to the bookshelf. There is no Next.js migration.
+The storefront uses server-rendered Razor, small JavaScript enhancements and paper/ink theme tokens. The homepage adds a stationery category carousel adapted from ThreeUI Bookshelf as an isolated React component after the hero. Its data and shopping links come from the real catalog. The rest of the site stays in Razor. Generated assets are committed, so ordinary .NET builds need no Node step. The older Kage scene remains at `/Studio`, with links now directing users to the category shelf. There is no Next.js migration.
 
 ## Where to edit
 
@@ -10,7 +10,7 @@ ViewModels/                  Form and page data, grouped by feature
 Views/
   Home/Index.cshtml           Paper studio homepage, use cases and desk editorial
   Home/_ImaginationOrb.cshtml Animated hero markup, labels and static fallback
-  Home/_Bookshelf.cshtml      Exact seven-volume ThreeUI collection and visible controls
+  Home/_Bookshelf.cshtml      Dynamic stationery category shelf, links and controls
   Studio/Index.cshtml         Optional ThreeUI experience and section order
   Studio/_*.cshtml            Original scene sections, product list and CTA
   Shop/                      Catalog and search filters
@@ -61,7 +61,7 @@ Add a homepage section as a Razor partial under `Views/Home` and insert `<partia
 
 The hero uses a custom browser adaptation of Thinking Orbs, with an open notebook → pen nib → paper plane → star sequence. There are no hero photos or WebGL dependencies. See the [hero guide](imagination-hero.md) to change its words, shapes or timing. Shape labels live in one `CHAPTERS` array; the initial fallback caption also lives in the Razor partial so it works without JavaScript.
 
-The [Bookshelf guide](bookshelf.md) describes the exact source, isolated build, visible controls and performance boundaries. Edit the section's `.cshtml`, its surrounding CSS or the loader, then rebuild if JavaScript changes. Keep the registered vendor files unchanged so their source hashes remain verifiable.
+The [category shelf guide](bookshelf.md) describes catalog binding, stationery artwork, the isolated build and controls. Categories added/renamed in Admin appear on refresh without rebuilding. Edit `category-data.js` or `category-art.js` for cover design and copy, then rebuild. The registered vendor snapshot remains unchanged; the build adapter intentionally replaces its demo content with Milo's category experience.
 
 Brand/material filters use actual stored attributes, and catalog queries return at most 24 products per page. Pagination preserves all filters. Comparison stays within the current page and displays up to three products using title, price, brand, material and SKU; absent values say “ثبت نشده”. It loads on the first selection. GSM, nib, ruling and binding require structured catalog fields before they can be advertised or filtered accurately. “Complete the Desk” links separate products; it does not promise bundle discounts or bundle checkout.
 

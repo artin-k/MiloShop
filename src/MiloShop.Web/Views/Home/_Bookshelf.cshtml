@@ -1,33 +1,51 @@
-<section class="studio-section bookshelf-section" id="bookshelf" data-bookshelf-section data-bookshelf-state="idle" aria-labelledby="bookshelf-title">
+@model IReadOnlyList<MiloShop.Application.Catalog.CategoryCollection>
+<section class="studio-section bookshelf-section" id="bookshelf" data-bookshelf-section="@(Model.Count > 0 ? "categories" : "empty")" data-bookshelf-state="idle" aria-labelledby="bookshelf-title">
     <div class="studio-shell">
         <header class="studio-heading">
-            <div><p class="eyebrow">THE LIBRARY OF POSSIBILITIES</p><h2 id="bookshelf-title">هر جلد، یک دنیای تازه.</h2></div>
-            <a class="text-link" href="#pathways">ادامه کشف فروشگاه ↓</a>
+            <div><p class="eyebrow">MILO / THE STATIONERY COLLECTION</p><h2 id="bookshelf-title">دسته‌بندی‌ها، به سبک میلو.</h2></div>
+            <a class="text-link" href="/Shop">همه نوشت‌افزارها ←</a>
         </header>
-        <p class="bookshelf-intro" id="bookshelf-instructions">کاغذ، جزئیات و خیال؛ در این مجموعه تعاملی هفت‌جلدی قدم بزن. یک کتاب انتخاب کن، جلدش را باز کن و صفحه‌ها را ورق بزن.</p>
-        <div class="bookshelf-stage">
-            <div class="bookshelf-frame" data-bookshelf-mount dir="ltr" aria-describedby="bookshelf-instructions"></div>
-            <div class="bookshelf-placeholder" aria-hidden="true"><span dir="ltr">WORKING VOLUMES / 01—07</span><p>کتابخانه خیال</p><small>نمایش سه‌بعدی در حال آماده شدن است…</small></div>
-        </div>
-        <div class="bookshelf-toolbar">
-            <div class="bookshelf-selection"><strong data-bookshelf-title dir="ltr">Working Volumes</strong><span data-bookshelf-counter dir="ltr">01 / 07</span><span data-bookshelf-page dir="ltr"></span></div>
-            <div class="bookshelf-actions" aria-label="کنترل کتابخانه">
-                <button class="button" type="button" data-bookshelf-start>نمایش کتابخانه</button>
-                <button class="button" type="button" data-bookshelf-action="previous" disabled>جلد قبل</button>
-                <button class="button" type="button" data-bookshelf-action="next" disabled>جلد بعد</button>
-                <button class="button button--primary" type="button" data-bookshelf-action="inspect" disabled>نگاه نزدیک‌تر</button>
-                <button class="button" type="button" data-bookshelf-action="toggle-book" aria-pressed="false" hidden>باز کردن کتاب</button>
-                <button class="button" type="button" data-bookshelf-action="previous-page" hidden>صفحه قبل</button>
-                <button class="button" type="button" data-bookshelf-action="next-page" hidden>صفحه بعد</button>
-                <button class="button" type="button" data-bookshelf-action="reset-view" hidden>بازنشانی زاویه</button>
-                <button class="button" type="button" data-bookshelf-action="close-detail" hidden>بازگشت به قفسه</button>
+        @if (Model.Count > 0)
+        {
+            var first = Model[0];
+            <p class="bookshelf-intro" id="bookshelf-instructions">برای هر ایده، ابزار خودش را پیدا کن. قفسه را بگرد، مجموعه‌ها را از نزدیک ببین و از همین‌جا وارد دنیای دفتر، قلم و ابزار خلاقیت میلو شو.</p>
+            <script type="application/json" data-bookshelf-categories>@Json.Serialize(Model.Select(category => new {
+                id = category.Id, title = category.Name, description = category.Description,
+                productCount = category.AvailableProductCount,
+                url = Url.RouteUrl("ShopIndex", new { categoryId = category.Id })
+            }))</script>
+            <div class="bookshelf-stage">
+                <div class="bookshelf-frame" data-bookshelf-mount dir="ltr" aria-describedby="bookshelf-instructions"></div>
+                <div class="bookshelf-placeholder" aria-hidden="true"><span dir="ltr">MILO / STATIONERY & POSSIBILITIES</span><p>قفسه ایده‌های تازه</p><small>مجموعه‌های میلو در حال آماده شدن‌اند…</small></div>
             </div>
-        </div>
-        <div class="bookshelf-volumes" role="group" aria-label="انتخاب جلد">
-            @{ var titles = new[] { "Codex", "Claude Code", "Cursor", "Antigravity", "Figma", "Framer", "Xcode" }; }
-            @for (var i = 0; i < titles.Length; i++) { <button type="button" data-bookshelf-volume="@i" aria-pressed="@(i == 0 ? "true" : "false")" disabled dir="ltr">@titles[i]</button> }
-        </div>
-        <p class="bookshelf-status" data-bookshelf-status role="status">نمایش سه‌بعدی هنگام رسیدن به این بخش آماده می‌شود. برای دیدن جزئیات، روی کتاب بزن؛ برای جابه‌جایی از دکمه‌ها یا کلیدهای جهت استفاده کن.</p>
-        <noscript><p class="notice">برای تجربه کتابخانه، جاوااسکریپت را فعال کنید. <a href="/Shop">مشاهده محصولات فروشگاه ←</a></p></noscript>
+            <div class="bookshelf-toolbar">
+                <div class="bookshelf-selection"><strong data-bookshelf-title>@first.Name</strong><span data-bookshelf-counter dir="ltr">01 / @Model.Count.ToString("D2")</span><span data-bookshelf-page dir="ltr"></span></div>
+                <div class="bookshelf-actions" aria-label="کنترل مجموعه‌ها">
+                    <button class="button" type="button" data-bookshelf-start>نمایش مجموعه‌ها</button>
+                    <button class="button" type="button" data-bookshelf-action="previous" disabled>دسته قبل</button>
+                    <button class="button" type="button" data-bookshelf-action="next" disabled>دسته بعد</button>
+                    <button class="button" type="button" data-bookshelf-action="inspect" disabled>کشف مجموعه</button>
+                    <button class="button" type="button" data-bookshelf-action="toggle-book" aria-pressed="false" hidden>باز کردن دفتر</button>
+                    <button class="button" type="button" data-bookshelf-action="previous-page" hidden>صفحه قبل</button>
+                    <button class="button" type="button" data-bookshelf-action="next-page" hidden>صفحه بعد</button>
+                    <button class="button" type="button" data-bookshelf-action="reset-view" hidden>بازنشانی زاویه</button>
+                    <button class="button" type="button" data-bookshelf-action="close-detail" hidden>بازگشت به مجموعه‌ها</button>
+                </div>
+            </div>
+            <div class="bookshelf-shopping">
+                <div><p data-bookshelf-summary>@first.Description</p><span data-bookshelf-product-count>@(first.AvailableProductCount > 0 ? $"{first.AvailableProductCount} محصول موجود" : "این مجموعه در حال تکمیل است")</span></div>
+                <a class="button button--primary" data-bookshelf-shop asp-route="ShopIndex" asp-route-categoryId="@first.Id">دیدن محصولات @first.Name ←</a>
+            </div>
+            <div class="bookshelf-volumes" role="group" aria-label="انتخاب دسته‌بندی">
+                @for (var i = 0; i < Model.Count; i++) { <button type="button" data-bookshelf-volume="@i" aria-pressed="@(i == 0 ? "true" : "false")" disabled>@Model[i].Name</button> }
+            </div>
+            <details class="bookshelf-directory"><summary>همه دسته‌بندی‌ها</summary><nav class="category-links" aria-label="دسته‌بندی‌های فروشگاه">@foreach (var category in Model) { <a asp-route="ShopIndex" asp-route-categoryId="@category.Id">@category.Name</a> }</nav></details>
+            <p class="bookshelf-status" data-bookshelf-status role="status">با دکمه‌ها یا کلیدهای جهت، دسته موردنظرت را انتخاب کن؛ با «دیدن محصولات» وارد فروشگاه شو.</p>
+            <noscript><p class="notice">دسته‌بندی‌ها از منوی بالا قابل دسترسی‌اند. برای نمای سه‌بعدی، جاوااسکریپت را فعال کنید.</p></noscript>
+        }
+        else
+        {
+            <p class="notice">مجموعه‌های میلو به‌زودی اینجا قرار می‌گیرند. تا آن زمان <a href="/Shop">محصولات فروشگاه را ببینید.</a></p>
+        }
     </div>
 </section>

@@ -9,6 +9,45 @@ namespace MiloShop.Tests.Services;
 public class CatalogQueriesTests
 {
     [Fact]
+    public async Task Home_WithNoCategories_ReturnsAnEmptyCollectionWithoutInventingCategories()
+    {
+        await using var db = TestDbContextFactory.Create();
+        var home = await new CatalogQueries(db).GetHomeAsync();
+        home.Collections.Should().BeEmpty();
+        home.Categories.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Home_CollectionsUseStoredCategoriesAndCountsFromTheSameAvailableCatalog()
+    {
+        await using var db = TestDbContextFactory.Create();
+        var notebook = new Category { Name = "دفتر و کاغذ", Description = "برای فکرهای تازه" };
+        var empty = new Category { Name = "ابزار طراحی", Description = "دسته تازه" };
+        db.Categories.AddRange(notebook, empty);
+        for (var i = 0; i < 13; i++) db.Products.Add(new Product
+        {
+            Title = $"Notebook {i}", Slug = $"note-{i}", Sku = $"note-{i}",
+            Category = notebook, IsActive = true, StockQuantity = 2
+        });
+        db.Products.Add(new Product { Title = "Hidden", Slug = "hidden", Sku = "hidden", Category = notebook, IsActive = false, StockQuantity = 2 });
+        db.Products.Add(new Product { Title = "Sold out", Slug = "sold", Sku = "sold", Category = notebook, IsActive = true, StockQuantity = 0 });
+        await db.SaveChangesAsync();
+        var service = new CatalogQueries(db);
+        var home = await service.GetHomeAsync();
+        home.Products.Should().HaveCount(8);
+        home.Collections.Should().HaveCount(2);
+        var collection = home.Collections.Single(c => c.Id == notebook.Id);
+        collection.Name.Should().Be(notebook.Name);
+        collection.Description.Should().Be(notebook.Description);
+        collection.AvailableProductCount.Should().Be(13);
+        home.Collections.Single(c => c.Id == empty.Id).AvailableProductCount.Should().Be(0);
+        (await service.GetCatalogAsync(new CatalogFilter(CategoryId: notebook.Id))).TotalCount.Should().Be(collection.AvailableProductCount);
+        notebook.Name = "دفترهای تازه";
+        await db.SaveChangesAsync();
+        (await service.GetHomeAsync()).Collections.Single(c => c.Id == notebook.Id).Name.Should().Be("دفترهای تازه");
+    }
+
+    [Fact]
     public async Task Catalog_PaginatesAndKeepsBrandMaterialFilters_WithStablePriceOrder()
     {
         await using var db = TestDbContextFactory.Create();

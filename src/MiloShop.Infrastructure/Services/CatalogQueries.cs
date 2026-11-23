@@ -15,6 +15,11 @@ public class CatalogQueries(MiloDbContext db) : ICatalogQueries
             .Where(p => p.IsActive && p.StockQuantity > 0)
             .OrderByDescending(p => p.CreatedAt).ThenByDescending(p => p.Id).Take(8).ToListAsync();
         var categories = await db.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
+        var categoryCounts = await db.Products.AsNoTracking()
+            .Where(p => p.IsActive && p.StockQuantity > 0)
+            .GroupBy(p => p.CategoryId)
+            .Select(group => new { Id = group.Key, Count = group.Count() })
+            .ToDictionaryAsync(group => group.Id, group => group.Count);
         var coupon = await db.Coupons.AsNoTracking()
             .Where(c => c.IsActive && (!c.ExpireAt.HasValue || c.ExpireAt >= now)
                 && (!c.UsageLimit.HasValue || c.UsedCount < c.UsageLimit))
@@ -22,7 +27,11 @@ public class CatalogQueries(MiloDbContext db) : ICatalogQueries
         var offer = await db.Offers.AsNoTracking().Include(o => o.Product).Include(o => o.Coupon)
             .Where(o => o.IsActive && o.StartsAt <= now && (!o.EndsAt.HasValue || o.EndsAt > now))
             .OrderByDescending(o => o.CreatedAt).FirstOrDefaultAsync();
-        return new HomePage(products, categories, offer, coupon);
+        return new HomePage(products, categories, offer, coupon)
+        {
+            Collections = categories.Select(category => new CategoryCollection(category.Id,
+                category.Name, category.Description, categoryCounts.GetValueOrDefault(category.Id))).ToList()
+        };
     }
 
     public async Task<CatalogPage> GetCatalogAsync(CatalogFilter filter)

@@ -1,32 +1,32 @@
-# Exact ThreeUI Bookshelf integration
+# Milo stationery category shelf
 
-The current Razor homepage and imagination hero remain in place. `Views/Home/_Bookshelf.cshtml` adds the registered seven-volume Bookshelf immediately after the hero, before the stationery use cases. The homepage/footer now link to this section instead of promoting the older `/Studio` scene; that legacy URL is retained.
+The carousel after the hero is now a storefront category selector, adapted from the ThreeUI Bookshelf engine. The demo's AI-tool volumes and cover atlas are replaced with Milo stationery artwork, Persian category names and useful collection copy. The original room, materials, foil, carousel, inspection, opening, orbit and flexible page-turn mechanics remain.
 
-## Exact source
+## Real catalog data
 
-Source bundle: https://threeui.com/source-code/bookshelf.json
+`ICatalogQueries.GetHomeAsync` returns `CategoryCollection` records from the stored categories. An aggregate query counts active products with stock greater than zero, matching the default Shop availability filter. Counts are independent of the homepage's eight-product limit. Categories with no available products remain visible and say the collection is being completed.
 
-Requested revision: `6ef16625e670b0285bb689bdebffc1d728c6deb1`
+The Razor partial serializes IDs, names, descriptions, counts and generated `/Shop?categoryId=...` URLs using ASP.NET's HTML-safe JSON helper. It also renders native links for every category. Selection updates the main “دیدن محصولات” link, description and count. Following the link opens the actual filtered Shop page; the books themselves are collection artwork, not new catalog products.
 
-All seven registered files are stored byte for byte at their original relative paths under `frontend/bookshelf/vendor/`. Their SHA-256 values are recorded in `vendor/provenance.json`, checked before every build, and covered by source-integrity tests. `.gitattributes` preserves these bytes on Windows checkouts as well. This includes `BookshelfScene.tsx`, the complete renderer, four r165 adapters and the complete shared stylesheet. The covers and walnut texture remain embedded exactly as delivered. No preview recreation, substitute collection or documentation iframe is used.
+Manage category names/descriptions in `/Admin/Categories` and assign products through `/Admin/Products`. The next homepage request reflects those changes. There are no hardcoded category IDs, fixed seven-category limit, database seeds or schema changes in this feature. With one category the carousel arrows are disabled. With no categories the section shows a simple store link without initializing WebGL. The category directory and shopping links work without JavaScript or WebGL.
 
-`frontend/bookshelf/entry.tsx` uses the requested `<div className="shader-frame"><BookshelfScene /></div>` with default props and the shared style import. Build aliases resolve `@designcodeio/threeui` to these verified files. React 18.3.1 renders only this component, with a private `three165` alias pinned to Three.js 0.165.0. It does not replace Razor, introduce Next.js or change shopping routes. The seven authored titles, cover art, foil, cloth, lighting, geometry, room, camera, opening and flexible page-turn systems are preserved.
-
-The complete shared CSS also references Fragment Mono for another ThreeUI component. To keep that path resolvable during bundling without editing the registered CSS, its regular WOFF2 is included from the font publisher, with its OFL license. The supplemental source font hash is `fab90641dca81e9be14be5b047d7892d29ea51e4e2d31355d79a9574a5b74d9a`. Bookshelf itself uses the supplied renderer's system-font fallback. React, Three.js and ThreeUI license notices are retained with the built assets.
-
-## Editing and building
+## Editing guide
 
 | File | Purpose |
 | --- | --- |
-| `src/MiloShop.Web/Views/Home/_Bookshelf.cshtml` | Persian heading, instructions, visible controls and section placement markup |
-| `src/MiloShop.Web/wwwroot/css/bookshelf.css` | Surrounding section, reserved scene height and responsive control layout |
-| `frontend/bookshelf/entry.tsx` | Exact default component usage inside the Razor page |
-| `frontend/bookshelf/loader.js` | Lazy loading, accessible control bridge, readiness, retry and focus handling |
-| `frontend/bookshelf/vendor/` | Complete verified source; do not hand-edit |
-| `frontend/bookshelf/build.mjs` | Source validation, local build, CSS/font bundling and license copying |
-| `src/MiloShop.Web/wwwroot/vendor/bookshelf/` | Committed generated browser assets |
+| `src/MiloShop.Web/Views/Home/_Bookshelf.cshtml` | Heading, safely serialized category data, shopping links, controls and empty state |
+| `src/MiloShop.Web/wwwroot/css/bookshelf.css` | Section layout, responsive frame, category summary and directory |
+| `frontend/bookshelf/category-data.js` | Stationery profiles, stable cover colors, dimensions, copy and light/dark room palettes |
+| `frontend/bookshelf/category-art.js` | Original Canvas stationery symbols, Persian covers, spine/foil and interior pages |
+| `frontend/bookshelf/adapt-renderer.mjs` | Build-time adaptation of the verified engine's demo data and texture painters |
+| `frontend/bookshelf/loader.js` | Lazy loading, selected-category shopping link, visible controls, readiness and retry |
+| `frontend/bookshelf/entry.tsx` | Isolated React component inside the Razor page |
+| `frontend/bookshelf/vendor/` | Unmodified, licensed ThreeUI reference snapshot |
+| `src/MiloShop.Web/wwwroot/vendor/bookshelf/` | Generated browser assets committed for ordinary .NET builds |
 
-Normal `dotnet run`, build and publish use the committed assets and need no Node installation. After changing the frontend integration, run:
+Profiles infer only the illustration style from category names: notebook, nib, palette/brush, planner, ruler, gift or school paper. The actual category identity/name always comes from the database. Unknown names receive notebook artwork. Cover colors use stable category IDs so a rename or sort change does not randomly recolor the collection. Category-specific details are editable without digging into the renderer. Persian lettering uses the existing local `MiloPersian` font; no external image or font request is needed.
+
+Normal `dotnet run`, build and publish use committed browser assets. After changing frontend JavaScript/artwork, run:
 
 ```sh
 npm ci --prefix frontend/bookshelf
@@ -34,20 +34,28 @@ npm run build --prefix frontend/bookshelf
 node --test tests/frontend/*.test.mjs
 ```
 
-Use Node 22.7+ for the combined frontend tests. To reimport this registered revision, run `node scripts/import-bookshelf.mjs`; an optional JSON bundle path supports an offline import. The importer rejects missing files, changed hashes or a different bundle. A future ThreeUI revision needs an intentional source/hash update.
+Use Node 22.7+ for the combined frontend tests. Changes to Admin categories require no frontend rebuild.
 
-## Behavior and boundaries
+## Engine provenance and adaptation
 
-The small loader watches the scene container and loads the hashed Three.js/React bundle and authored CSS when it comes within 100 pixels of the viewport. The fixed container height reserves space before download and GPU initialization. A visible start/retry button covers manual loading and failures. No runtime third-party network request is needed.
+Original source: https://threeui.com/source-code/bookshelf.json
 
-The source component hides its original DOM controls. The surrounding Persian buttons forward to those exact controls for volume selection, inspection, cover opening/closing, page navigation, reset and return. State is mirrored from the source DOM without changing the renderer. The bridge lets Tab reach visible controls instead of the component's hidden focus loop, and moves focus to the visible return/inspect buttons after mode changes. Canvas pointer/drag/wheel/orbit interactions remain authored behavior. The skip link above the scene provides a way past its wheel carousel.
+Reference revision: `6ef16625e670b0285bb689bdebffc1d728c6deb1`
 
-The surrounding section follows Milo's light/dark tokens. Inside the canvas, the selected book drives the authored room palette; site theme changes do not recolor the original artwork or lighting. The source renderer retains its own reduced-motion, tab-visibility and disposal behavior. It is lazily initialized, but once mounted its original animation loop is preserved; no unsupported offscreen pause API is invented.
+All seven registered source files remain byte-exact under `frontend/bookshelf/vendor/`, with hashes checked before every build. `.gitattributes` preserves them on Windows as well. They are now a reference snapshot: the browser renderer is intentionally adapted in response to the stationery/category requirement, rather than being an unchanged demo.
 
-Without JavaScript or WebGL, the rest of the store stays usable and the section provides a notice and shop navigation. These are the template's imagined editorial volumes, not new purchasable catalog products. Cart, account, inventory and checkout are unchanged.
+The esbuild plugin uses Acorn's syntax tree to replace the demo's `BOOKS` data, atlas and texture painters with category data and original Milo artwork. It removes the embedded demo atlas from the browser bundle and supplies local-font loading and live theme updates. Geometry, shaders/material construction, carousel, camera, cover/page physics and disposal come from the source. The adapter fails if the expected source structure changes. Reimporting a newer upstream version requires deliberate hash and adapter review.
+
+The complete shared stylesheet is retained. Its unrelated Fragment Mono reference resolves to a local publisher font with its OFL license. React, Three.js r165, ThreeUI and font licenses remain included. The application continues to use Razor for its pages and forms; React is isolated to this component, with no Next.js migration or documentation iframe.
+
+## Loading, accessibility and themes
+
+The large renderer loads only as the section approaches the viewport, with reserved space and a loading placeholder. Native Persian buttons proxy the original hidden controls, and selected category details use normal text/links outside the canvas. Tab can reach those visible controls, and mode changes move focus to the visible return/inspect button. The category directory remains accessible in fallback states. The original pointer, drag, wheel, keyboard, reduced-motion and tab-visibility behavior is retained.
+
+Both the surrounding section and the scene's room palette now follow the site's light/dark preference. Physical stationery covers keep their own stable colors. The preference listener is removed when the renderer is disposed. The renderer still uses the source's continuous animation once mounted; lazy initialization is not a claim of automatic offscreen suspension.
 
 ## Verification
 
-All 20 .NET tests and 6 frontend tests passed. The latter include the hero's geometry tests and Bookshelf's exact-source, pinned runtime and generated asset-graph checks. Browser verification used the real WebGL renderer, including all seven volumes, carousel, inspection, cover opening, next/previous pages, cover closing and return. Further checks covered desktop/mobile layouts, both site themes, reduced motion, keyboard arrows, Tab/Escape and visible focus transfer, deferred loading, JavaScript/WebGL fallback and the absence of bookshelf code on `/Shop`.
+Frontend tests cover source provenance, generated assets, variable category counts, stable IDs/colors, category text/counts, light/dark palettes and the build adaptation. .NET tests verify empty catalogs and that the category counts match the actual Shop filter, including hidden/out-of-stock exclusions and inventories larger than the home product preview.
 
-One local Resource Timing capture recorded approximately 916 KB encoded for the complete runtime/embedded-art bundle and 8 KB for the authored CSS. The small initial loader and surrounding section CSS were approximately 2.4 KB and 1 KB. The large bundle was absent from initial viewport requests and loaded near the section; there were no external runtime asset requests. Cloud Chromium used software rendering, so these checks establish functional behavior rather than a production frame-rate guarantee.
+Browser checks use the real WebGL renderer and an isolated local SQL database: one and multiple categories, selected-category URLs and counts, actual filtered results, opening/turning/returning, keyboard, both themes, mobile framing, lazy loading and JavaScript/WebGL fallback. Software-rendered cloud browser results establish functionality; they do not guarantee production frame rates.
