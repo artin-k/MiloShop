@@ -4,7 +4,7 @@ MiloShop uses ASP.NET Core MVC/Razor for the storefront and management pages, wi
 
 Razor renders product content and forms on the server. The default homepage is a lightweight stationery studio; the interactive scene is available at `/Studio`. Shopping pages load neither the scene stylesheet nor its runtime. Moving to Next.js would not inherently improve SEO and is not required.
 
-The homepage includes a stationery category shelf after the existing hero. It adapts the verified ThreeUI Bookshelf engine with real catalog categories, Persian artwork and actual Shop links. This is an isolated React component with its own pinned Three.js r165 bundle, lazily loaded near the viewport. The rest of the application remains Razor, and .NET builds serve committed assets without requiring Node. See [category shelf integration](../bookshelf.md) for the data flow, source provenance, building and controls.
+The homepage shows Razor category cards after the hero. The optional ThreeUI Bookshelf uses the same catalog and loads its Three.js r165 bundle when the viewer opens. The public header uses native links. React runs in the 3D viewer and the desktop admin menu. .NET builds serve committed assets. [Category shelf integration](../bookshelf.md)
 
 The source scene, shaders, assets and fonts live under `wwwroot/vendor/threeui`. Everyday changes belong in Razor views, `css/base.css`, `css/stationery.css`, `css/milo.css` and `css/themes.css`. The [editing guide](../storefront-editing.md) explains the structure, source provenance, import command and configuration. [Performance notes](../performance.md) explain asset delivery and measurement limits.
 

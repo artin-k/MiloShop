@@ -2,6 +2,7 @@
 const section = document.querySelector('[data-bookshelf-section="categories"]');
 if (section) {
   const mount = section.querySelector('[data-bookshelf-mount]');
+  const experience = section.querySelector('[data-bookshelf-experience]');
   const status = section.querySelector('[data-bookshelf-status]');
   const start = section.querySelector('[data-bookshelf-start]');
   const actions = [...section.querySelectorAll('[data-bookshelf-action]')];
@@ -114,7 +115,7 @@ if (section) {
   }
 
   async function load() {
-    if (task) return task;
+    if (task || unmount || !experience.open) return;
     start.disabled = true;
     status.textContent = 'مجموعه‌های میلو در حال آماده شدن‌اند…';
     section.dataset.bookshelfState = 'loading';
@@ -123,6 +124,7 @@ if (section) {
       const module = await import(
         new URL('__BOOKSHELF_ENTRY__', import.meta.url)
       );
+      if (!experience.open) return;
       unmount = module.mountBookshelf(mount);
       observer = new MutationObserver(sync);
       observer.observe(mount, {
@@ -140,12 +142,14 @@ if (section) {
         ],
       });
     })().catch(() => {
+      if (!experience.open) return;
       status.textContent =
         'نمای سه‌بعدی بارگذاری نشد؛ از «دیدن محصولات» یا منوی دسته‌بندی‌ها استفاده کن.';
       section.dataset.bookshelfState = 'unavailable';
       start.disabled = false;
       start.hidden = false;
       start.textContent = 'تلاش دوباره';
+    }).finally(() => {
       task = undefined;
     });
     return task;
@@ -192,16 +196,21 @@ if (section) {
       event.stopPropagation();
     }
   });
-  if ('IntersectionObserver' in window) {
-    const visibility = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          visibility.disconnect();
-          load();
-        }
-      },
-      { rootMargin: '100px 0px' },
-    );
-    visibility.observe(mount);
-  }
+  experience.hidden = false;
+  experience.addEventListener('toggle', () => {
+    if (experience.open) {
+      load();
+      return;
+    }
+    observer?.disconnect();
+    unmount?.();
+    unmount = undefined;
+    lastDetail = false;
+    section.dataset.bookshelfState = 'idle';
+    start.hidden = false;
+    start.disabled = false;
+    status.textContent = '';
+    actions.forEach((button) => { button.disabled = true; });
+    volumes.forEach((button) => { button.disabled = true; });
+  });
 }

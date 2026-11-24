@@ -34,6 +34,7 @@
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="@(scene ? "scene-page" : "commerce-page") @(ViewData["Home"] is true ? "stationery-home" : "")" data-layout-hero="b" data-layout-story="b" data-layout-gallery="b" data-layout-curriculum="b" data-layout-closing="b" data-layout-footer="b">
+    <partial name="_StationeryIcons" />
     <a class="skip-link" href="#main">پرش به محتوا</a>
     @if (scene) { <partial name="_Scene" /> }
     <partial name="_Header" />
@@ -59,7 +60,7 @@
         <script defer src="~/vendor/threeui/kage.js" asp-append-version="true"></script>
     }
     <script defer src="~/js/milo.js" asp-append-version="true"></script>
-    @if (!scene)
+    @if (!scene && User.IsInRole("Admin") && Context.Request.Path.StartsWithSegments("/Admin"))
     {
         <script type="module" src="~/vendor/liquid-glass/navigation.js" asp-append-version="true"></script>
     }

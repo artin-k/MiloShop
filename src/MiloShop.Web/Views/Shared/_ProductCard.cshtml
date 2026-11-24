@@ -1,16 +1,26 @@
 @model MiloShop.Domain.Entities.Product
 @{
     var price = Model.SalePrice ?? Model.Price;
-    var image = string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/hero/hero3.jpg" : Model.ImageUrl;
+    var hasImage = !string.IsNullOrWhiteSpace(Model.ImageUrl);
+    var cover = StationeryIcon.ForCategory(Model.Category?.Name);
     var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
 }
 <article class="product-tile">
-    <a class="product-tile__image" asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">
-        <img src="@image" alt="@Model.Title" loading="lazy" decoding="async" width="500" height="500" />
+    <a class="product-tile__image @(!hasImage ? "product-tile__image--cover" : "")" aria-label="@Model.Title"
+       asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug" data-cover="@cover">
+        @if (hasImage)
+        {
+            <img src="@Model.ImageUrl" alt="" loading="lazy" decoding="async" width="500" height="500" />
+        }
+        else
+        {
+            <partial name="_NotebookCover" model="cover" />
+        }
     </a>
     <div class="product-tile__info">
         <p class="eyebrow">@(Model.Brand ?? Model.Category?.Name ?? "MILO SELECT")</p>
         <h3><a asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">@Model.Title</a></h3>
+        @if (!string.IsNullOrWhiteSpace(Model.ShortDescription)) { <p class="product-card-spec">@Model.ShortDescription</p> }
         @if (!string.IsNullOrWhiteSpace(Model.Material)) { <span class="spec-tag">@Model.Material</span> }
         <span class="sku">کد: @Model.Sku</span>
         <p class="price">@price.ToString("N0") <small>تومان</small></p>

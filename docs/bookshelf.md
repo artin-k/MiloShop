@@ -1,6 +1,6 @@
 # Milo stationery category shelf
 
-The carousel after the hero is now a storefront category selector, adapted from the ThreeUI Bookshelf engine. The demo's AI-tool volumes and cover atlas are replaced with Milo stationery artwork, Persian category names and useful collection copy. The original room, materials, foil, carousel, inspection, opening, orbit and flexible page-turn mechanics remain.
+The homepage shows native category cards after the hero. Shoppers can open **قفسه سه‌بعدی** to browse the same collections in the interactive ThreeUI bookshelf, inspect a book, or turn its pages.
 
 ## Real catalog data
 
@@ -46,11 +46,11 @@ All seven registered source files remain byte-exact under `frontend/bookshelf/ve
 
 The esbuild plugin uses Acorn's syntax tree to replace the demo's `BOOKS` data, atlas and texture painters with category data and original Milo artwork. It removes the embedded demo atlas from the browser bundle and supplies local-font loading and live theme updates. Geometry, shaders/material construction, carousel, camera, cover/page physics and disposal come from the source. The adapter fails if the expected source structure changes. Reimporting a newer upstream version requires deliberate hash and adapter review.
 
-The complete shared stylesheet is retained. Its unrelated Fragment Mono reference resolves to a local publisher font with its OFL license. React, Three.js r165, ThreeUI and font licenses remain included. The application continues to use Razor for its pages and forms; React is isolated to this component, with no Next.js migration or documentation iframe.
+The reference snapshot retains the complete registered stylesheet. The build ships the Bookshelf selectors from `frontend/bookshelf/scene.css`. It uses the storefront's local fonts and excludes styles for unrelated ThreeUI scenes. React, Three.js r165 and ThreeUI license notices ship with the optional viewer.
 
 ## Loading, accessibility and themes
 
-The large renderer loads only as the section approaches the viewport, with reserved space and a loading placeholder. Native Persian buttons proxy the original hidden controls, and selected category details use normal text/links outside the canvas. Tab can reach those visible controls, and mode changes move focus to the visible return/inspect button. The category directory remains accessible in fallback states. The original pointer, drag, wheel, keyboard, reduced-motion and tab-visibility behavior is retained.
+Opening the 3D disclosure loads the renderer and its scene stylesheet. A compact frame reserves the canvas space during loading. The renderer pauses offscreen, and closing the disclosure unmounts it. The cards remain ordinary category links, including when JavaScript or WebGL is unavailable. Persian controls drive selection, inspection, and page turns. Selected category details and the shop link are outside the canvas.
 
 Both the surrounding section and the scene's room palette now follow the site's light/dark preference. Physical stationery covers keep their own stable colors. The preference listener is removed when the renderer is disposed. The renderer still uses the source's continuous animation once mounted; lazy initialization is not a claim of automatic offscreen suspension.
 

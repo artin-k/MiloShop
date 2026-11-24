@@ -11,15 +11,17 @@
 }
 @section Scripts {
     <script type="module" src="~/js/imagination-orb.js" asp-append-version="true"></script>
-    <script type="module" src="~/vendor/bookshelf/bookshelf-loader.js" asp-append-version="true"></script>
+    @if (Model.Collections.Count > 0)
+    {
+        <script type="module" src="~/vendor/bookshelf/bookshelf-loader.js" asp-append-version="true"></script>
+    }
 }
 <section class="paper-hero" id="hero" aria-labelledby="hero-title">
     <div class="studio-shell paper-hero__grid">
         <div class="paper-hero__copy">
-            <p class="eyebrow">MILO — PAPER, PENS & POSSIBILITIES</p>
-            <h1 id="hero-title">ایده‌هایت را بنویس.<br />رویاهایت را<br /><em>شکل بده.</em></h1>
-            <p>هر رویای بزرگ از یک خط کوچک شروع می‌شود. با دفتر، قلم و ابزار خلاقیت میلو، به خیال‌هایت شکل بده؛ از اولین یادداشت تا چیزی که همیشه می‌خواستی بسازی.</p>
-            <div class="actions"><a class="button button--primary" href="/Shop">کشف نوشت‌افزار ←</a><a class="text-link" href="#pathways">برای چه کاری می‌خواهی؟</a></div>
+            <h1 id="hero-title">ایده‌هایت را بنویس.<br /><em>رویاهایت را شکل بده.</em></h1>
+            <p>دفتر، قلم و ابزار خلاقیت برای یادداشت‌های امروز و ایده‌های فردا.</p>
+            <div class="actions"><a class="button button--primary" href="/Shop">کشف نوشت‌افزار ←</a><a class="button" href="#bookshelf">دیدن مجموعه‌ها</a></div>
         </div>
         <partial name="_ImaginationOrb" />
     </div>

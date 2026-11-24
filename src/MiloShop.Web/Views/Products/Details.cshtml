@@ -5,29 +5,40 @@
     ViewData["Description"] = Model.ShortDescription ?? Model.Title;
     ViewBag.BodyClass = "storefront-page";
     var price = Model.SalePrice ?? Model.Price;
-    var image = string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/hero/hero3.jpg" : Model.ImageUrl;
+    var hasImage = !string.IsNullOrWhiteSpace(Model.ImageUrl);
+    var cover = StationeryIcon.ForCategory(Model.Category?.Name);
     var productUrl = Url.RouteUrl("ProductDetails", new { id = Model.Id, slug = Model.Slug }, Context.Request.Scheme);
-    var imageUrl = new Uri(new Uri($"{Context.Request.Scheme}://{Context.Request.Host}"), image).ToString();
-}
-
-@section Head {
-    <script type="application/ld+json">@Html.Raw(JsonSerializer.Serialize(new Dictionary<string, object> {
+    var imageUrl = hasImage ? new Uri(new Uri($"{Context.Request.Scheme}://{Context.Request.Host}"), Model.ImageUrl).ToString() : null;
+    var structuredData = new Dictionary<string, object> {
         ["@context"] = "https://schema.org", ["@type"] = "Product", ["name"] = Model.Title,
-        ["description"] = Model.ShortDescription ?? Model.Title, ["sku"] = Model.Sku,
-        ["image"] = imageUrl, ["url"] = productUrl!,
+        ["description"] = Model.ShortDescription ?? Model.Title, ["sku"] = Model.Sku, ["url"] = productUrl!,
         ["offers"] = new Dictionary<string, object> {
             ["@type"] = "Offer", ["priceCurrency"] = "IRR", ["price"] = price * 10,
             ["availability"] = Model.StockQuantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
             ["url"] = productUrl!
         }
-    }))</script>
+    };
+    if (imageUrl is not null) { structuredData["image"] = imageUrl; }
+}
+
+@section Head {
+    <script type="application/ld+json">@Html.Raw(JsonSerializer.Serialize(structuredData))</script>
 }
 <div class="storefront-shell">
     <nav class="storefront-breadcrumb" aria-label="مسیر صفحه">
         <a href="/">خانه</a><span>/</span><a asp-route="ShopIndex">فروشگاه</a><span>/</span><span>@Model.Title</span>
     </nav>
     <article class="product-detail">
-        <div class="product-detail__image"><img src="@image" alt="@Model.Title" width="700" height="700" loading="eager" fetchpriority="high" decoding="async" /></div>
+        <div class="product-detail__image @(!hasImage ? "product-detail__image--cover" : "")" data-cover="@cover">
+            @if (hasImage)
+            {
+                <img src="@Model.ImageUrl" alt="@Model.Title" width="700" height="700" loading="eager" fetchpriority="high" decoding="async" />
+            }
+            else
+            {
+                <partial name="_NotebookCover" model="cover" />
+            }
+        </div>
         <div class="product-detail__info">
             <p class="milo-kicker">@(Model.Category?.Name ?? "انتخاب میلو")</p>
             <h1>@Model.Title</h1>

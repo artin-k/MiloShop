@@ -2,6 +2,7 @@
 const section = document.querySelector('[data-bookshelf-section="categories"]');
 if (section) {
   const mount = section.querySelector('[data-bookshelf-mount]');
+  const experience = section.querySelector('[data-bookshelf-experience]');
   const status = section.querySelector('[data-bookshelf-status]');
   const start = section.querySelector('[data-bookshelf-start]');
   const actions = [...section.querySelectorAll('[data-bookshelf-action]')];
@@ -97,7 +98,7 @@ if (section) {
   }
 
   function loadStyles() {
-    const href = new URL('bookshelf-INFP3QEQ.css', import.meta.url).href;
+    const href = new URL('bookshelf-AWOHSPZU.css', import.meta.url).href;
     if ([...document.styleSheets].some((sheet) => sheet.href === href))
       return Promise.resolve();
     return new Promise((resolve, reject) => {
@@ -114,15 +115,16 @@ if (section) {
   }
 
   async function load() {
-    if (task) return task;
+    if (task || unmount || !experience.open) return;
     start.disabled = true;
     status.textContent = 'مجموعه‌های میلو در حال آماده شدن‌اند…';
     section.dataset.bookshelfState = 'loading';
     task = (async () => {
       await loadStyles();
       const module = await import(
-        new URL('bookshelf-POEYGDCG.js', import.meta.url)
+        new URL('bookshelf-7S334JI2.js', import.meta.url)
       );
+      if (!experience.open) return;
       unmount = module.mountBookshelf(mount);
       observer = new MutationObserver(sync);
       observer.observe(mount, {
@@ -140,12 +142,14 @@ if (section) {
         ],
       });
     })().catch(() => {
+      if (!experience.open) return;
       status.textContent =
         'نمای سه‌بعدی بارگذاری نشد؛ از «دیدن محصولات» یا منوی دسته‌بندی‌ها استفاده کن.';
       section.dataset.bookshelfState = 'unavailable';
       start.disabled = false;
       start.hidden = false;
       start.textContent = 'تلاش دوباره';
+    }).finally(() => {
       task = undefined;
     });
     return task;
@@ -192,16 +196,21 @@ if (section) {
       event.stopPropagation();
     }
   });
-  if ('IntersectionObserver' in window) {
-    const visibility = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          visibility.disconnect();
-          load();
-        }
-      },
-      { rootMargin: '100px 0px' },
-    );
-    visibility.observe(mount);
-  }
+  experience.hidden = false;
+  experience.addEventListener('toggle', () => {
+    if (experience.open) {
+      load();
+      return;
+    }
+    observer?.disconnect();
+    unmount?.();
+    unmount = undefined;
+    lastDetail = false;
+    section.dataset.bookshelfState = 'idle';
+    start.hidden = false;
+    start.disabled = false;
+    status.textContent = '';
+    actions.forEach((button) => { button.disabled = true; });
+    volumes.forEach((button) => { button.disabled = true; });
+  });
 }

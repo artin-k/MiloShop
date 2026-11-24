@@ -1,6 +1,8 @@
 # MiloShop stationery storefront
 
-Milo uses the supplied Nimbus UI Liquid Navbar by Guglielmo Giannattasio for desktop storefront and admin navigation. Mobile menus and shared controls use the glass tokens in `wwwroot/css/liquid-glass.css`. Edit the component under `frontend/components/ui/liquid-glass-navbar.tsx` or its Razor navigation adapter in `frontend/liquid-glass/navigation.tsx`. After JavaScript changes, run `npm ci --prefix frontend/bookshelf` and `npm run build:glass --prefix frontend/bookshelf`.
+The storefront header uses native Razor links and glass tokens in `wwwroot/css/liquid-glass.css`. Admin desktop navigation uses Nimbus UI Liquid Navbar by Guglielmo Giannattasio. Edit the Nimbus component under `frontend/components/ui/liquid-glass-navbar.tsx` or its adapter in `frontend/liquid-glass/navigation.tsx`. After JavaScript changes, run `npm ci --prefix frontend/bookshelf` and `npm run build:glass --prefix frontend/bookshelf`.
+
+The shared SVG symbols live in `Views/Shared/_StationeryIcons.cshtml`. Render a symbol with the `_Icon` partial and set `--icon-size`, `--icon-stroke`, or `--icon-color` on its parent. The `_NotebookCover` partial uses `--cover-color` and `--cover-foil` for stationery cards and missing product photos. In Admin, use **توضیحات** on a category for its card copy and **مشخصات کوتاه برای کارت محصول** on a product for details such as GSM, ruling, or available colors. Rename catalog entries such as `cat1` under **دسته‌بندی‌ها** and the card updates on refresh.
 
 Administrators can open `/Admin` from **مدیریت** in the header. For local setup, register an account, set `Admin:Email` in the web project's user secrets or `Admin__Email` in the environment to that account's email, then restart the app and sign in again. The startup seeder assigns the role to the existing account.
 

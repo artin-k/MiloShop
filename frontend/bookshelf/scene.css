@@ -1,0 +1,22 @@
+/* Bookshelf selectors from the registered ThreeUI stylesheet. */
+.bookshelf, .bookshelf__canvas { display: block; width: 100%; height: 100%; }
+.bookshelf {
+  position: relative;
+  container-type: inline-size;
+  overflow: hidden;
+  background: #171a24;
+  outline: none;
+}
+.bookshelf__canvas { position: absolute; inset: 0; opacity: 0; touch-action: none; }
+.bookshelf__canvas.is-ready { opacity: 1; }
+.bookshelf__source-controls { display: none; }
+.bookshelf__unavailable {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  color: #f4eee6;
+  text-align: center;
+}

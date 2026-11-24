@@ -13,7 +13,17 @@ else
             @foreach (var item in Model.Items)
             {
                 <tr>
-                    <td><a class="cart-product" asp-route="ProductDetails" asp-route-id="@item.ProductId"><img src="@(item.ProductImageUrl ?? "/images/hero/hero3.jpg")" alt="" /><span>@item.ProductName</span></a></td>
+                    <td><a class="cart-product" asp-route="ProductDetails" asp-route-id="@item.ProductId">
+                        @if (!string.IsNullOrWhiteSpace(item.ProductImageUrl))
+                        {
+                            <img src="@item.ProductImageUrl" alt="" loading="lazy" decoding="async" width="64" height="64" />
+                        }
+                        else
+                        {
+                            <partial name="_NotebookCover" model="@("notebook")" />
+                        }
+                        <span>@item.ProductName</span>
+                    </a></td>
                     <td>@item.Quantity</td><td>@((item.UnitPrice * item.Quantity).ToString("N0")) تومان</td>
                     <td><form asp-controller="Cart" asp-action="Remove" method="post"><input type="hidden" name="cartItemId" value="@item.Id" /><button class="button" type="submit" aria-label="حذف @item.ProductName">حذف</button></form></td>
                 </tr>

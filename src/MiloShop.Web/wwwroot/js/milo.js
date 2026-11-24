@@ -21,6 +21,19 @@ if (!document.body.classList.contains('scene-page')) {
         if (event.target.closest('a') && navigation.classList.contains('menu-open')) closeMenu();
     });
     matchMedia('(max-width: 820px)').addEventListener('change', closeMenu);
+    const home = menu?.querySelector('[data-home-link][aria-current="page"]');
+    const collections = menu?.querySelector('[data-collections-link]');
+    if (home && collections) {
+        const setCurrentSection = () => {
+            const onCollections = location.hash === '#bookshelf';
+            if (onCollections) home.removeAttribute('aria-current');
+            else home.setAttribute('aria-current', 'page');
+            if (onCollections) collections.setAttribute('aria-current', 'location');
+            else collections.removeAttribute('aria-current');
+        };
+        setCurrentSection();
+        addEventListener('hashchange', setCurrentSection);
+    }
 }
 document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && navigation?.classList.contains('menu-open')) {

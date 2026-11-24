@@ -1,31 +1,30 @@
 /* Homepage only: a paper studio, with real catalog links and no WebGL dependency. */
 .stationery-home .shop-shell {
   width: 100%;
-  padding: 84px 0 0;
+  padding: var(--nav-h) 0 0;
 }
 .studio-shell {
   width: min(1320px, calc(100% - 48px));
   margin: auto;
 }
 .paper-hero {
-  padding: 25px 0 72px;
+  padding: clamp(18px, 3.5svh, 32px) 0;
   background-image: linear-gradient(var(--line-soft) 1px, transparent 1px);
   background-size: 100% 36px;
 }
 .paper-hero__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  gap: 64px;
+  gap: clamp(24px, 5vw, 68px);
 }
 .paper-hero__copy {
-  padding: 30px 0;
   background: var(--ink);
 }
 .paper-hero h1 {
-  font-size: clamp(36px, 4.7vw, 68px);
-  line-height: 1.55;
-  margin: 20px 0;
+  font-size: clamp(32px, 4vw, 58px);
+  line-height: 1.42;
+  margin: 0 0 14px;
   font-weight: 400;
 }
 .paper-hero h1 em {
@@ -34,31 +33,32 @@
   border-bottom: 2px solid currentColor;
 }
 .paper-hero__copy > p {
-  max-width: 25ch;
+  max-width: 42ch;
   color: var(--bone-dim);
   line-height: 2;
 }
 .paper-hero .actions {
-  gap: 24px;
+  gap: 10px;
+  margin-block: 18px 0;
 }
 .text-link {
   text-decoration: underline;
   text-underline-offset: 6px;
 }
 .studio-section {
-  padding: 25px 0;
-  scroll-margin-top: 60px;
+  padding: clamp(22px, 4svh, 42px) 0;
+  scroll-margin-top: calc(var(--nav-h) + 8px);
 }
 .studio-heading {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 36px;
+  margin-bottom: 18px;
 }
 .studio-heading h2 {
-  font-size: clamp(28px, 3vw, 42px);
-  line-height: 1.6;
+  font-size: clamp(24px, 2.6vw, 38px);
+  line-height: 1.4;
   margin: 0;
 }
 .studio-heading .eyebrow {
@@ -159,22 +159,23 @@
     width: calc(100% - 32px);
   }
   .paper-hero {
-    padding: 30px 0 48px;
+    padding: 20px 0;
   }
   .paper-hero__grid,
   .desk-spread {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 18px;
   }
-  .paper-hero__copy {
-    padding: 12px 0;
-  }
+  .paper-hero h1 { font-size: clamp(25px, 7vw, 38px); }
+  .paper-hero__copy > p { font-size: 14px; margin-block-end: 0; }
+  .paper-hero .button { font-size: 13px; padding-inline: 14px; }
   .studio-section {
-    padding: 52px 0;
+    padding: 24px 0;
   }
   .studio-heading {
-    align-items: start;
-    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
   }
   .use-cases {
     grid-template-columns: 1fr;

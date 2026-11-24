@@ -39,8 +39,21 @@ export function adaptRenderer(source, dataModule, artModule) {
     const palette = categoryRoomPalette(document.documentElement.dataset.theme === 'dark');
     BOOKS.forEach(book => Object.assign(book.palette, palette));
     applyBookTheme(BOOKS[selectedIndex]); requestFrame();
-  }`,
+  }
+  let categoryVisible = true;
+  const categoryVisibility = new IntersectionObserver(([entry]) => {
+    categoryVisible = entry.isIntersecting;
+    if (categoryVisible) {
+      lastTime = performance.now();
+      requestFrame();
+    }
+  });`,
   );
+  const requestFrame = fn('requestFrame');
+  const originalRequest = source.slice(requestFrame.start, requestFrame.end);
+  const visibleRequest = originalRequest.replace('!rafId && !suspended', '!rafId && !suspended && categoryVisible');
+  if (visibleRequest === originalRequest) throw new Error('Registered frame guard was not found.');
+  replace(requestFrame, visibleRequest);
   // Remove the demo atlas entirely, not just its labels. The authored walnut map stays.
   for (const name of [
     'COVER_ATLAS_DATA',
@@ -94,13 +107,15 @@ export function adaptRenderer(source, dataModule, artModule) {
   edits.push({
     start: ready.start,
     end: ready.start,
-    value: `document.addEventListener('milo:theme', refreshCategoryTheme); refreshCategoryTheme();\n`,
+    value: `document.addEventListener('milo:theme', refreshCategoryTheme); refreshCategoryTheme();
+      categoryVisibility.observe(host);\n`,
   });
   const dispose = fn('disposeExperience');
   edits.push({
     start: dispose.body.start + 1,
     end: dispose.body.start + 1,
-    value: `\n document.removeEventListener('milo:theme', refreshCategoryTheme);\n`,
+    value: `\n categoryVisibility.disconnect();
+      document.removeEventListener('milo:theme', refreshCategoryTheme);\n`,
   });
   for (const edit of edits.sort((a, b) => b.start - a.start))
     source = source.slice(0, edit.start) + edit.value + source.slice(edit.end);

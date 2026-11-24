@@ -25,8 +25,6 @@ const result = await build({
   target: 'es2020',
   jsx: 'automatic',
   metafile: true,
-  loader: { '.woff2': 'file' },
-  assetNames: 'fonts/[name]-[hash]',
   define: { 'process.env.NODE_ENV': '"production"' },
   plugins: [
     {
@@ -48,10 +46,6 @@ const result = await build({
     },
   ],
   alias: {
-    '@designcodeio/threeui/style.css': path.join(
-      vendor,
-      'src/shaders/threeui.css',
-    ),
     '@designcodeio/threeui': path.join(
       vendor,
       'src/shaders/bookshelf/BookshelfScene.tsx',
@@ -92,10 +86,6 @@ for (const name of ['react', 'react-dom', 'three165']) {
 await fs.copyFile(
   path.join(vendor, 'LICENSE'),
   path.join(outdir, 'licenses/threeui.txt'),
-);
-await fs.copyFile(
-  path.join(vendor, 'src/shaders/fonts/OFL.txt'),
-  path.join(outdir, 'licenses/fragment-mono.txt'),
 );
 console.log(
   'Milo category shelf built from the verified Bookshelf engine; assets are committed for dotnet builds.',

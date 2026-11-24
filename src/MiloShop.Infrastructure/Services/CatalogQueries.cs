@@ -14,12 +14,13 @@ public class CatalogQueries(MiloDbContext db) : ICatalogQueries
             .Include(p => p.Category)
             .Where(p => p.IsActive && p.StockQuantity > 0)
             .OrderByDescending(p => p.CreatedAt).ThenByDescending(p => p.Id).Take(8).ToListAsync();
-        var categories = await db.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
-        var categoryCounts = await db.Products.AsNoTracking()
-            .Where(p => p.IsActive && p.StockQuantity > 0)
-            .GroupBy(p => p.CategoryId)
-            .Select(group => new { Id = group.Key, Count = group.Count() })
-            .ToDictionaryAsync(group => group.Id, group => group.Count);
+        var categoryRows = await db.Categories.AsNoTracking()
+            .OrderBy(c => c.Name).ThenBy(c => c.Id)
+            .Select(c => new
+            {
+                Category = c,
+                AvailableProductCount = c.Products.Count(p => p.IsActive && p.StockQuantity > 0)
+            }).ToListAsync();
         var coupon = await db.Coupons.AsNoTracking()
             .Where(c => c.IsActive && (!c.ExpireAt.HasValue || c.ExpireAt >= now)
                 && (!c.UsageLimit.HasValue || c.UsedCount < c.UsageLimit))
@@ -27,10 +28,10 @@ public class CatalogQueries(MiloDbContext db) : ICatalogQueries
         var offer = await db.Offers.AsNoTracking().Include(o => o.Product).Include(o => o.Coupon)
             .Where(o => o.IsActive && o.StartsAt <= now && (!o.EndsAt.HasValue || o.EndsAt > now))
             .OrderByDescending(o => o.CreatedAt).FirstOrDefaultAsync();
-        return new HomePage(products, categories, offer, coupon)
+        return new HomePage(products, categoryRows.Select(row => row.Category).ToList(), offer, coupon)
         {
-            Collections = categories.Select(category => new CategoryCollection(category.Id,
-                category.Name, category.Description, categoryCounts.GetValueOrDefault(category.Id))).ToList()
+            Collections = categoryRows.Select(row => new CategoryCollection(row.Category.Id,
+                row.Category.Name, row.Category.Description, row.AvailableProductCount)).ToList()
         };
     }
 

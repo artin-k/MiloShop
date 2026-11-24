@@ -1,132 +1,42 @@
-/* Homepage component. Color comes from the site's light/dark semantic tokens. */
+/* The canvas and its fallback share fixed layout space before scripts run. */
 .imagination-orb {
   min-width: 0;
   margin: 0;
-  padding: 22px 26px;
-  position: relative;
+  padding: 12px 20px 14px;
   border: 1px solid var(--line);
-  border-radius: 4px 48px 4px 4px;
+  border-radius: 8px 32px 8px 8px;
   background: var(--surface);
-  overflow: hidden;
-}
-.orb-topline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 9px;
-  direction: ltr;
-}
-.orb-topline > :last-child {
-  margin-left: auto;
-  direction: rtl;
-}
-.orb-live-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ember);
-  flex-shrink: 0;
 }
 .orb-stage {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1.1;
+  height: clamp(200px, 32svh, 296px);
   isolation: isolate;
+  background: radial-gradient(ellipse at center, var(--line-soft), transparent 68%);
 }
-.orb-stage::before {
-  content: "";
-  position: absolute;
-  inset: 16% 12%;
-  border: 1px solid var(--line-soft);
-  border-radius: 50%;
-  transform: rotate(-24deg);
-}
-.orb-stage canvas,
-.orb-fallback {
+.orb-stage canvas, .orb-fallback {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-.orb-stage canvas {
-  visibility: hidden;
-}
-.orb-fallback {
-  color: var(--bone);
-}
-.imagination-orb.is-ready canvas {
-  visibility: visible;
-}
-.imagination-orb.is-ready .orb-fallback {
-  visibility: hidden;
-}
-.orb-coordinate {
-  position: absolute;
-  font:
-    9px Onest,
-    sans-serif;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  direction: ltr;
-}
-.orb-coordinate--top {
-  top: 28px;
-  left: 0;
-}
-.orb-coordinate--bottom {
-  bottom: 20px;
-  right: 0;
-}
+.orb-stage canvas { visibility: hidden; }
+.orb-fallback { color: var(--bone); }
+.imagination-orb.is-ready canvas { visibility: visible; }
+.imagination-orb.is-ready .orb-fallback { visibility: hidden; }
 .orb-caption {
-  border-top: 1px solid var(--line);
-  padding-top: 22px;
-  display: flex;
-  align-items: start;
-  gap: 20px;
-}
-.orb-eyebrow {
-  color: var(--ember);
-  font-size: 11px;
-}
-.orb-caption strong {
-  display: block;
-  font-weight: 400;
-  font-size: clamp(22px, 2.2vw, 30px);
-  margin: 6px 0;
-}
-.orb-caption p {
+  padding-block: 6px;
+  text-align: center;
   color: var(--bone-dim);
-  font-size: 13px;
-  line-height: 1.9;
-  min-height: 3.8em;
-  max-width: 38ch;
-  margin-bottom: 0;
+  font-size: 14px;
 }
-.orb-count {
-  margin-right: auto;
-  white-space: nowrap;
-  color: var(--muted);
-  font-size: 11px;
-  padding-top: 8px;
-}
-.orb-count > span {
-  font-size: 24px;
-  color: var(--bone);
-}
+.orb-caption strong { font-weight: 400; }
 .orb-controls {
-  margin-top: 24px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
-.orb-controls[hidden] {
-  display: flex;
-  visibility: hidden;
-}
-.orb-pause [hidden] {
-  display: none;
-}
+.orb-controls[hidden] { display: flex; visibility: hidden; }
+.orb-pause [hidden] { display: none; }
 .orb-steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -134,73 +44,29 @@
   flex: 1;
 }
 .orb-steps button {
-  border-top: 2px solid var(--line);
-  min-height: 48px;
-  padding: 10px 3px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.orb-steps button > span {
-  font-size: 10px;
-  margin-left: 5px;
+  min-height: 44px;
+  border-block-start: 2px solid var(--line);
+  padding: 4px;
+  color: var(--bone-dim);
+  font-size: 13px;
 }
 .orb-steps button[aria-pressed="true"] {
   border-color: var(--ember);
   color: var(--bone);
 }
-.orb-steps button:hover {
-  background: var(--line-soft);
-  color: var(--bone);
-}
+.orb-steps button:hover { background: var(--line-soft); }
 .orb-pause {
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid var(--line);
   flex-shrink: 0;
 }
-.orb-pause svg {
-  width: 20px;
-  height: 20px;
-}
-.orb-pause:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
+.orb-pause svg { width: 20px; height: 20px; }
+
 @media (max-width: 820px) {
-  .imagination-orb {
-    padding: 18px;
-    border-top-right-radius: 36px;
-  }
-  .orb-stage {
-    aspect-ratio: 1.15;
-  }
-  .orb-topline {
-    font-size: 8px;
-    gap: 7px;
-  }
-  .orb-coordinate {
-    font-size: 8px;
-  }
-  .orb-coordinate--top {
-    top: 20px;
-  }
-  .orb-coordinate--bottom {
-    bottom: 12px;
-  }
-  .orb-caption {
-    padding-top: 18px;
-  }
-  .orb-controls {
-    gap: 8px;
-    margin-top: 18px;
-  }
-  .orb-steps button {
-    font-size: 11px;
-  }
-  .orb-steps button > span {
-    display: none;
-  }
+  .imagination-orb { padding: 6px 12px 10px; }
+  .orb-stage { height: clamp(120px, 22svh, 192px); }
+  .orb-caption { font-size: 13px; }
 }

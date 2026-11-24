@@ -57,11 +57,6 @@ function mountImagination(root) {
   function updateCaption() {
     const chapter = CHAPTERS[target];
     root.querySelector("[data-orb-title]").textContent = chapter.title;
-    root.querySelector("[data-orb-description]").textContent =
-      chapter.description;
-    root.querySelector("[data-orb-count]").textContent = String(
-      target + 1,
-    ).padStart(2, "0");
     buttons.forEach((button, i) =>
       button.setAttribute("aria-pressed", String(i === target)),
     );
