@@ -1,43 +1,45 @@
-// The /Studio scene uses Kage's authored menu. Shopping pages use this small equivalent.
 const navigation = document.getElementById('nav');
 const burger = navigation?.querySelector('.nav-burger');
-const menu = document.getElementById('navlinks');
-const closeMenu = () => {
-    navigation?.classList.remove('menu-open');
-    burger?.classList.remove('active');
-    burger?.setAttribute('aria-expanded', 'false');
-    document.documentElement.classList.remove('nav-open');
-};
-if (!document.body.classList.contains('scene-page')) {
-    burger?.addEventListener('click', () => {
-        const open = burger.getAttribute('aria-expanded') !== 'true';
-        navigation.classList.toggle('menu-open', open);
-        burger.classList.toggle('active', open);
-        burger.setAttribute('aria-expanded', String(open));
-        document.documentElement.classList.toggle('nav-open', open);
-        if (open) menu?.querySelector('a')?.focus();
-    });
-    menu?.addEventListener('click', event => {
-        if (event.target.closest('a') && navigation.classList.contains('menu-open')) closeMenu();
-    });
-    matchMedia('(max-width: 820px)').addEventListener('change', closeMenu);
-    const home = menu?.querySelector('[data-home-link][aria-current="page"]');
-    const collections = menu?.querySelector('[data-collections-link]');
-    if (home && collections) {
-        const setCurrentSection = () => {
+const menu = navigation?.querySelector('.tubelight-nav');
+
+if (menu) {
+    const lamp = menu.querySelector('.tubelight-lamp');
+    const home = menu.querySelector('[data-home-link][aria-current="page"]');
+    const collections = menu.querySelector('[data-collections-link]');
+    const updateLamp = () => {
+        const active = menu.querySelector('a[aria-current]');
+        menu.classList.toggle('is-tracking', Boolean(active));
+        if (!active) return;
+        lamp.style.setProperty('--lamp-x', `${active.offsetLeft}px`);
+        lamp.style.setProperty('--lamp-width', `${active.offsetWidth}px`);
+    };
+    const setCurrentSection = () => {
+        if (home && collections) {
             const onCollections = location.hash === '#bookshelf';
-            if (onCollections) home.removeAttribute('aria-current');
-            else home.setAttribute('aria-current', 'page');
-            if (onCollections) collections.setAttribute('aria-current', 'location');
-            else collections.removeAttribute('aria-current');
-        };
-        setCurrentSection();
-        addEventListener('hashchange', setCurrentSection);
-    }
+            if (onCollections) {
+                home.removeAttribute('aria-current');
+                collections.setAttribute('aria-current', 'location');
+            } else {
+                home.setAttribute('aria-current', 'page');
+                collections.removeAttribute('aria-current');
+            }
+        }
+        updateLamp();
+    };
+    setCurrentSection();
+    addEventListener('hashchange', setCurrentSection);
+    addEventListener('pageshow', setCurrentSection);
+    const layout = new ResizeObserver(updateLamp);
+    menu.querySelectorAll('a').forEach(link => layout.observe(link));
+    requestAnimationFrame(() => menu.classList.add('is-animated'));
 }
+
 document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && navigation?.classList.contains('menu-open')) {
-        closeMenu();
+        navigation.classList.remove('menu-open');
+        burger?.classList.remove('active');
+        burger?.setAttribute('aria-expanded', 'false');
+        document.documentElement.classList.remove('nav-open');
         burger?.focus();
     }
     if (event.key !== 'Tab' || !navigation?.classList.contains('menu-open')) return;

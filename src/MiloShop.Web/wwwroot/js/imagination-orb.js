@@ -1,11 +1,13 @@
 import { makeProj } from "../vendor/thinking-orbs/core.js";
+// Version this import when changing the controls and geometry together.
 import {
   PARTICLE_COUNT,
+  SHAPE_NAMES,
   HOLD_SECONDS,
   MORPH_SECONDS,
   createShapes,
   blendShape,
-} from "./imagination-shapes.js";
+} from "./imagination-shapes.js?forms=2";
 
 const DEPTH_BANDS = 12;
 const ORBIT_DOTS = 36;
@@ -18,20 +20,20 @@ function addDot(path, x, y, radius) {
 
 function mountImagination(root) {
   const canvas = root.querySelector("canvas");
+  if (typeof Path2D !== "function") return;
   let context;
   try {
     context = canvas.getContext("2d", { alpha: true });
   } catch {
     return;
   }
-  if (!context) return; // The inline notebook remains visible without Canvas.
+  if (!context) return; // The inline bird remains visible without Canvas.
 
   const stage = root.querySelector(".orb-stage");
   const controls = root.querySelector(".orb-controls");
   const buttons = [...root.querySelectorAll("[data-orb-shape]")];
   const pause = root.querySelector("[data-orb-pause]");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  let reduceMotion = reducedMotion.matches;
   const shapes = createShapes();
   const current = shapes[0].slice();
   const source = shapes[0].slice();
@@ -49,7 +51,7 @@ function mountImagination(root) {
     morphing = false,
     phaseAge = 0,
     clock = 0;
-  let paused = false,
+  let paused = reducedMotion.matches,
     visible = false,
     pageActive = true,
     lost = false;
@@ -57,17 +59,17 @@ function mountImagination(root) {
     previousTime = 0;
 
   function updateControls() {
-    buttons.forEach((button, i) =>
-      button.setAttribute("aria-pressed", String(i === target)),
+    buttons.forEach((button) =>
+      button.setAttribute("aria-pressed", String(button.dataset.orbShape === SHAPE_NAMES[target])),
     );
   }
 
   function beginMorph(index) {
-    if (index === target) return;
+    if (index === target && !paused) return;
     source.set(current); // Manual selection mid-morph starts from the actual frame.
     target = index;
     phaseAge = 0;
-    morphing = !reduceMotion;
+    morphing = !paused;
     if (!morphing) current.set(shapes[target]);
     updateControls();
   }
@@ -91,25 +93,24 @@ function mountImagination(root) {
     if (!width || !height || lost) return;
     context.clearRect(0, 0, width, height);
     const size = Math.min(width, height);
-    const still = reduceMotion;
-    const time = still ? 0 : clock;
-    const breathe = 1 + Math.sin(time * 0.8) * 0.012;
+    const time = clock;
+    const breathe = 1 + Math.sin(time * 1.3) * 0.025;
     const project = makeProj(
-      0.13 + Math.sin(time * 0.3) * 0.12,
-      -0.16 + Math.sin(time * 0.23) * 0.05,
-      width / 2,
-      height / 2,
-      size * 0.405 * breathe,
+      -0.10 + Math.sin(time * 0.95) * 0.31,
+      0.04 + Math.sin(time * 0.78) * 0.13,
+      width / 2 + Math.sin(time * 0.96) * size * 0.022,
+      height / 2 + Math.sin(time * 1.22) * size * 0.04,
+      size * 0.365 * breathe,
     );
 
     // Draw depth groups together to avoid sorting and filling thousands of times per frame.
     const bands = Array.from({ length: DEPTH_BANDS }, () => new Path2D());
     const orbit = new Path2D();
-    const radius = Math.max(0.45, size / 380);
+    const radius = Math.max(0.56, size / 334);
     for (let i = 0; i < ORBIT_DOTS; i++) {
-      const angle = i / ORBIT_DOTS * FULL_TURN + time * 0.085;
+      const angle = i / ORBIT_DOTS * FULL_TURN + time * 0.31;
       const wave = Math.sin(angle);
-      const [x, y] = project(Math.cos(angle) * 1.27, wave * 0.9, wave * 0.65);
+      const [x, y] = project(Math.cos(angle) * 1.27, wave * 1.15, wave * 0.65);
       addDot(orbit, x, y, radius * 0.75);
     }
     context.fillStyle = dark ? "rgb(188 223 207 / 0.27)" : "rgb(55 105 85 / 0.24)";
@@ -132,7 +133,6 @@ function mountImagination(root) {
       pageActive &&
       !document.hidden &&
       !paused &&
-      !reduceMotion &&
       !lost
     );
   }
@@ -140,7 +140,7 @@ function mountImagination(root) {
     request = 0;
     if (!shouldRun()) return;
     // Time freezes outside the viewport/background; returning never skips shapes.
-    advance(previousTime ? Math.min(0.05, (time - previousTime) / 1000) : 0);
+    advance(previousTime ? Math.min(0.1, (time - previousTime) / 1000) : 0);
     previousTime = time;
     render();
     request = requestAnimationFrame(tick);
@@ -149,18 +149,13 @@ function mountImagination(root) {
     if (request) cancelAnimationFrame(request);
     request = 0;
     previousTime = 0;
-    pause.disabled = reduceMotion;
     pause.setAttribute("aria-pressed", String(paused));
     pause.setAttribute(
       "aria-label",
-      reduceMotion
-        ? "کاهش حرکت فعال است"
-        : paused
-          ? "ادامه پویانمایی"
-          : "توقف پویانمایی",
+      paused ? "پخش پویانمایی" : "توقف پویانمایی",
     );
-    root.querySelector("[data-orb-play-icon]").hidden = !paused;
-    root.querySelector("[data-orb-pause-icon]").hidden = paused;
+    root.querySelector("[data-orb-play-icon]").toggleAttribute("hidden", !paused);
+    root.querySelector("[data-orb-pause-icon]").toggleAttribute("hidden", paused);
     if (shouldRun()) request = requestAnimationFrame(tick);
   }
   function resize() {
@@ -178,25 +173,21 @@ function mountImagination(root) {
     render(); // Repaint even when paused, reduced-motion, or outside the viewport.
   }
 
-  buttons.forEach((button, i) =>
+  buttons.forEach((button) => {
+    const index = SHAPE_NAMES.indexOf(button.dataset.orbShape);
+    if (index < 0) return;
     button.addEventListener("click", () => {
-      beginMorph(i);
-      // A paused animation stays paused. Manual selection still shows its shape.
-      if (paused) {
-        current.set(shapes[target]);
-        morphing = false;
-        phaseAge = 0;
-      }
+      beginMorph(index);
       render();
-    }),
-  );
+    });
+  });
   pause.addEventListener("click", () => {
     paused = !paused;
     syncPlayback();
   });
   reducedMotion.addEventListener("change", (event) => {
-    reduceMotion = event.matches;
-    if (reduceMotion) {
+    paused = event.matches;
+    if (paused) {
       current.set(shapes[target]);
       morphing = false;
       phaseAge = 0;
@@ -237,8 +228,9 @@ function mountImagination(root) {
     { threshold: 0 },
   ).observe(stage);
 
-  readTheme();
+  dark = document.documentElement.dataset.theme === "dark";
   resize();
+  updateControls();
   root.classList.add("is-ready");
   controls.hidden = false;
   syncPlayback();

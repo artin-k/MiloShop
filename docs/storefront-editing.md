@@ -1,6 +1,6 @@
 # MiloShop stationery storefront
 
-The storefront header uses native Razor links and glass tokens in `wwwroot/css/liquid-glass.css`. Admin desktop navigation uses Nimbus UI Liquid Navbar by Guglielmo Giannattasio. Edit the Nimbus component under `frontend/components/ui/liquid-glass-navbar.tsx` or its adapter in `frontend/liquid-glass/navigation.tsx`. After JavaScript changes, run `npm ci --prefix frontend/bookshelf` and `npm run build:glass --prefix frontend/bookshelf`.
+The Tubelight storefront header uses the existing Razor routes in `Views/Shared/_Header.cshtml`. Its centered desktop pill and mobile icon dock use the glass tokens in `wwwroot/css/liquid-glass.css`. The active lamp follows the current page or collections anchor through `wwwroot/js/milo.js`. Admin desktop navigation uses Nimbus UI Liquid Navbar by Guglielmo Giannattasio. Edit the Nimbus component under `frontend/components/ui/liquid-glass-navbar.tsx` or its adapter in `frontend/liquid-glass/navigation.tsx`. After JavaScript changes, run `npm ci --prefix frontend/bookshelf` and `npm run build:glass --prefix frontend/bookshelf`.
 
 The shared SVG symbols live in `Views/Shared/_StationeryIcons.cshtml`. Render a symbol with the `_Icon` partial and set `--icon-size`, `--icon-stroke`, or `--icon-color` on its parent. The `_NotebookCover` partial uses `--cover-color` and `--cover-foil` for stationery cards and missing product photos. In Admin, use **توضیحات** on a category for its card copy and **مشخصات کوتاه برای کارت محصول** on a product for details such as GSM, ruling, or available colors. Rename catalog entries such as `cat1` under **دسته‌بندی‌ها** and the card updates on refresh.
 
@@ -43,7 +43,7 @@ wwwroot/
   js/milo.js                 Commerce menu, keyboard support and coupon copy
   js/comparison.js           Loaded on first comparison selection; up to 3 items
   js/imagination-orb.js      Hero animation, controls, theme and browser lifecycle
-  js/imagination-shapes.js   Notebook, pen nib, paper plane and star geometry
+  js/imagination-shapes.js   Geometry for the six morphing forms
   js/scene-accessibility.js  Scene failure recovery
   vendor/threeui/            Authored scene CSS, JS, fonts and verified images
   vendor/thinking-orbs/      Original web projection/painter, source credit, MIT license
@@ -65,7 +65,7 @@ Light/dark colors live in `wwwroot/css/themes.css`. Light uses warm ivory and bo
 
 Add a homepage section as a Razor partial under `Views/Home` and insert `<partial name="_MySection" model="Model" />` in `Views/Home/Index.cshtml`. Use `.studio-shell`, `.studio-section`, `.studio-heading`, `.button` and semantic color variables. No camera attributes are required. For the separate `/Studio` experience, adapt its existing sections and retain `id`, `data-cam`, `.fg` and reveal attributes. Its partial references use explicit paths because the action belongs to HomeController.
 
-The hero uses a custom browser adaptation of Thinking Orbs, with an open notebook → pen nib → paper plane → star sequence. Edit the headline and links in `Views/Home/Index.cshtml`. Shape button labels and the fallback notebook live in `Views/Home/_ImaginationOrb.cshtml`. The header's floating glass controls are styled in `wwwroot/css/liquid-glass.css`. [Hero editing guide](imagination-hero.md)
+The hero uses a custom browser adaptation of Thinking Orbs, with an origami bird → reading lamp → paper plane → star → paper boat → gift box sequence. Edit the headline and links in `Views/Home/Index.cshtml`. Shape button labels and the fallback bird live in `Views/Home/_ImaginationOrb.cshtml`. The header's floating glass controls are styled in `wwwroot/css/liquid-glass.css`. [Hero editing guide](imagination-hero.md)
 
 The [category shelf guide](bookshelf.md) describes catalog binding, stationery artwork, the isolated build and controls. Categories added/renamed in Admin appear on refresh without rebuilding. Edit `category-data.js` or `category-art.js` for cover design and copy, then rebuild. The registered vendor snapshot remains unchanged; the build adapter intentionally replaces its demo content with Milo's category experience.
 
