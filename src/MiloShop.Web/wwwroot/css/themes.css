@@ -18,7 +18,7 @@
 .theme-moon { display:none; }
 [data-theme="light"] .theme-moon { display:block; }
 [data-theme="light"] .theme-sun { display:none; }
-.commerce-page .nav,.nav.stuck::before { background:var(--nav-surface); }
+.nav.stuck::before { background:var(--nav-surface); }
 .nav-burger i { background:var(--bone); }
 .nav-links .nav-link { color:var(--bone-dim); }
 .nav-links .nav-link:hover { color:var(--bone); }

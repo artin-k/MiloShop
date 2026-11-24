@@ -1,72 +1,54 @@
-/* The canvas and its fallback share fixed layout space before scripts run. */
+/* The fallback and canvas occupy the same space. The hero supplies their background. */
 .imagination-orb {
   min-width: 0;
-  margin: 0;
-  padding: 12px 20px 14px;
-  border: 1px solid var(--line);
-  border-radius: 8px 32px 8px 8px;
-  background: var(--surface);
+  display: grid;
+  justify-items: center;
 }
 .orb-stage {
   position: relative;
-  height: clamp(200px, 32svh, 296px);
-  isolation: isolate;
-  background: radial-gradient(ellipse at center, var(--line-soft), transparent 68%);
+  width: 100%;
+  height: clamp(270px, 53svh, 480px);
 }
-.orb-stage canvas, .orb-fallback {
+.orb-stage canvas,
+.orb-fallback {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 .orb-stage canvas { visibility: hidden; }
-.orb-fallback { color: var(--bone); }
+.orb-fallback { color: var(--ember); }
 .imagination-orb.is-ready canvas { visibility: visible; }
 .imagination-orb.is-ready .orb-fallback { visibility: hidden; }
-.orb-caption {
-  padding-block: 6px;
-  text-align: center;
-  color: var(--bone-dim);
-  font-size: 14px;
-}
-.orb-caption strong { font-weight: 400; }
-.orb-controls {
+
+.orb-controls,
+.orb-steps {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 .orb-controls[hidden] { display: flex; visibility: hidden; }
 .orb-pause [hidden] { display: none; }
 .orb-steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  flex: 1;
+  padding: 3px;
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px;
+  background: var(--glass-face);
 }
-.orb-steps button {
-  min-height: 44px;
-  border-block-start: 2px solid var(--line);
-  padding: 4px;
-  color: var(--bone-dim);
-  font-size: 13px;
-}
-.orb-steps button[aria-pressed="true"] {
-  border-color: var(--ember);
-  color: var(--bone);
-}
-.orb-steps button:hover { background: var(--line-soft); }
+.orb-steps button,
 .orb-pause {
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
+  padding: 0;
   border-radius: 50%;
-  flex-shrink: 0;
+  color: var(--bone);
 }
+.orb-steps button:hover { background: var(--line-soft); }
+.orb-pause { margin-inline-start: 6px; }
 .orb-pause svg { width: 20px; height: 20px; }
 
 @media (max-width: 820px) {
-  .imagination-orb { padding: 6px 12px 10px; }
-  .orb-stage { height: clamp(120px, 22svh, 192px); }
-  .orb-caption { font-size: 13px; }
+  .orb-stage { height: clamp(165px, 38svh, 290px); }
 }

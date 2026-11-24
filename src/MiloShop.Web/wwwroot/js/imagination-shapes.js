@@ -1,6 +1,7 @@
 import { fibDir } from "../vendor/thinking-orbs/core.js";
 
-export const PARTICLE_COUNT = 900;
+const PLANE_ROWS = 47;
+export const PARTICLE_COUNT = 3 * PLANE_ROWS * (PLANE_ROWS + 1) / 2;
 export const HOLD_SECONDS = 4.4;
 export const MORPH_SECONDS = 2.8;
 
@@ -26,27 +27,35 @@ function pathPoint(vertices, fraction) {
   );
 }
 
+const PAGE_COLUMNS = 34;
+const PAGE_ROWS = 44;
+const PAGE_SIZE = PAGE_COLUMNS * PAGE_ROWS;
+const SPINE_ROWS = 70;
+const SPINE_END = 2 * (PAGE_SIZE + SPINE_ROWS);
+const PAGE_EDGE_SIZE = (PARTICLE_COUNT - SPINE_END) / 2;
+
 function notebook(i) {
-  if (i < 720) {
-    const side = i < 360 ? -1 : 1;
-    const local = i % 360,
-      u = (local % 15) / 14,
-      v = Math.floor(local / 15) / 23;
+  if (i < 2 * PAGE_SIZE) {
+    const side = i < PAGE_SIZE ? -1 : 1;
+    const local = i % PAGE_SIZE;
+    const u = (local % PAGE_COLUMNS) / (PAGE_COLUMNS - 1);
+    const v = Math.floor(local / PAGE_COLUMNS) / (PAGE_ROWS - 1);
     return [
       side * (0.035 + u * 0.95),
       (0.5 - v) * 1.42 + Math.sin((u * Math.PI) / 2) * 0.18,
       0.23 * u * u,
     ];
   }
-  if (i < 780) {
+  if (i < SPINE_END) {
     const side = i % 2 ? 1 : -1;
     return [
       side * 0.018,
-      0.71 - (Math.floor((i - 720) / 2) / 29) * 1.42,
+      0.71 - (Math.floor((i - 2 * PAGE_SIZE) / 2) / (SPINE_ROWS - 1)) * 1.42,
       -0.025,
     ];
   }
-  const side = i < 840 ? -1 : 1;
+  const edge = i - SPINE_END;
+  const side = edge < PAGE_EDGE_SIZE ? -1 : 1;
   return pathPoint(
     [
       [side * 0.025, 0.74, -0.02],
@@ -54,7 +63,7 @@ function notebook(i) {
       [side * 1.02, -0.55, 0.23],
       [side * 0.025, -0.75, -0.02],
     ],
-    ((i - 780) % 60) / 60,
+    (edge % PAGE_EDGE_SIZE) / PAGE_EDGE_SIZE,
   );
 }
 
@@ -66,10 +75,18 @@ const NIB_OUTLINE = [
   [-0.55, 0.22, 0],
 ];
 
+const NIB_COLUMNS = 48;
+const NIB_ROWS = 60;
+const NIB_BODY_SIZE = NIB_COLUMNS * NIB_ROWS;
+const NIB_HOLE_SIZE = 96;
+const NIB_SLIT_SIZE = 144;
+const NIB_HOLE_END = NIB_BODY_SIZE + NIB_HOLE_SIZE;
+const NIB_SLIT_END = NIB_HOLE_END + NIB_SLIT_SIZE;
+
 function nib(i) {
-  if (i < 700) {
-    const u = (i % 25) / 24,
-      v = Math.floor(i / 25) / 27;
+  if (i < NIB_BODY_SIZE) {
+    const u = (i % NIB_COLUMNS) / (NIB_COLUMNS - 1);
+    const v = Math.floor(i / NIB_COLUMNS) / (NIB_ROWS - 1);
     const y = 0.88 - v * 1.88;
     const width =
       y > 0.22
@@ -86,13 +103,15 @@ function nib(i) {
     if (Math.abs(x) < gap) x = (u < 0.5 ? -1 : 1) * gap;
     return [x, y, 0.2 * (1 - (x / width) ** 2)];
   }
-  if (i < 732) {
-    const angle = ((i - 700) / 32) * Math.PI * 2;
+  if (i < NIB_HOLE_END) {
+    const angle = ((i - NIB_BODY_SIZE) / NIB_HOLE_SIZE) * Math.PI * 2;
     return [Math.cos(angle) * 0.115, 0.24 + Math.sin(angle) * 0.115, 0.21];
   }
-  if (i < 780)
-    return [(i % 2 ? 1 : -1) * 0.014, 0.12 - ((i - 732) / 47) * 1.04, 0.205];
-  return pathPoint(NIB_OUTLINE, (i - 780) / 120);
+  if (i < NIB_SLIT_END) {
+    const row = Math.floor((i - NIB_HOLE_END) / 2);
+    return [(i % 2 ? 1 : -1) * 0.014, 0.12 - (row / (NIB_SLIT_SIZE / 2 - 1)) * 1.04, 0.205];
+  }
+  return pathPoint(NIB_OUTLINE, (i - NIB_SLIT_END) / (PARTICLE_COUNT - NIB_SLIT_END));
 }
 
 function plane() {
@@ -105,11 +124,10 @@ function plane() {
   ];
   const points = [];
   for (const [a, b, c] of triangles) {
-    // 24 rows of a triangular lattice: 300 particles per folded face.
-    for (let row = 0; row < 24; row++)
+    for (let row = 0; row < PLANE_ROWS; row++)
       for (let column = 0; column <= row; column++) {
-        const v = row / 23,
-          u = column / 23;
+        const v = row / (PLANE_ROWS - 1);
+        const u = column / (PLANE_ROWS - 1);
         points.push(
           a.map(
             (value, axis) => value * (1 - v) + b[axis] * (v - u) + c[axis] * u,

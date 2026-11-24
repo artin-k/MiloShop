@@ -8,38 +8,39 @@
   margin: auto;
 }
 .paper-hero {
-  padding: clamp(18px, 3.5svh, 32px) 0;
-  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px);
-  background-size: 100% 36px;
+  display: grid;
+  align-items: center;
+  min-block-size: clamp(390px, calc(90svh - var(--nav-h)), 660px);
+  padding-block: clamp(20px, 4svh, 42px);
+  background:
+    radial-gradient(ellipse at 30% 50%, var(--hero-glow) 0, transparent 58%),
+    repeating-linear-gradient(0deg, transparent 0 35px, var(--hero-rule) 35px 36px);
+  --hero-glow: #507d6a21;
+  --hero-rule: #8cbfa911;
+}
+[data-theme="light"] .paper-hero {
+  --hero-glow: #88ac902d;
+  --hero-rule: #456b5312;
 }
 .paper-hero__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(24px, 5vw, 68px);
-}
-.paper-hero__copy {
-  background: var(--ink);
+  gap: clamp(16px, 3vw, 48px);
 }
 .paper-hero h1 {
   font-size: clamp(32px, 4vw, 58px);
   line-height: 1.42;
-  margin: 0 0 14px;
+  margin: 0;
   font-weight: 400;
 }
 .paper-hero h1 em {
   font-style: normal;
   color: var(--ember);
-  border-bottom: 2px solid currentColor;
-}
-.paper-hero__copy > p {
-  max-width: 42ch;
-  color: var(--bone-dim);
-  line-height: 2;
 }
 .paper-hero .actions {
   gap: 10px;
-  margin-block: 18px 0;
+  margin-block: clamp(18px, 3svh, 30px) 0;
 }
 .text-link {
   text-decoration: underline;
@@ -159,7 +160,8 @@
     width: calc(100% - 32px);
   }
   .paper-hero {
-    padding: 20px 0;
+    min-block-size: 0;
+    padding-block: 26px;
   }
   .paper-hero__grid,
   .desk-spread {
@@ -167,7 +169,6 @@
     gap: 18px;
   }
   .paper-hero h1 { font-size: clamp(25px, 7vw, 38px); }
-  .paper-hero__copy > p { font-size: 14px; margin-block-end: 0; }
   .paper-hero .button { font-size: 13px; padding-inline: 14px; }
   .studio-section {
     padding: 24px 0;
