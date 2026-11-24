@@ -825,6 +825,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     position:static; width:auto; height:auto; overflow:visible; clip:auto;
     clip-path:none; white-space:normal;
   }
+  
 
   body[data-layout-story="b"] .gate-stats{ grid-template-columns:repeat(2,1fr); border-right:1px solid var(--line-soft); }
   body[data-layout-story="b"] .gate-stats div{ min-height:86px; padding:14px; }

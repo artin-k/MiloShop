@@ -15,6 +15,7 @@
   src: url("/vendor/threeui/secret-pathways-assets/fonts/256fa8037be67fd4a857a660c328a09e4696a0fb5de166f1357534a81f738556.woff2")
     format("woff2");
 }
+
 :root {
   --ink: #101b19;
   --ink-2: #182420;

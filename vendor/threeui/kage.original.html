@@ -821,14 +821,10 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
   /* the split collapses and the copy takes the page back */
   body[data-layout-hero="b"] .hero-top{ margin-left:0; max-width:none; }
   body[data-layout-hero="b"] .hero-foot{ width:100%; }
-  /* The four-column strip is set on a selector specific enough to survive the
-     plain .chapters override below 820, so it has to be unset here by name or
-     the chips stay four across on a phone and wrap a word to a line. */
+
   body[data-layout-hero="b"] .chapters{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 14px; }
   body[data-layout-hero="b"] .chip{ flex-direction:row; gap:14px; }
-  /* Same shape of bug: the layout selector outranks the plain single-column
-     rule, so the heading kept a 37% column while its words are set at 30px —
-     "CHAPTERS." alone is wider than that, and it spilled over the paragraph. */
+
   body[data-layout-curriculum="b"] .cur-head{ grid-template-columns:1fr; gap:18px; align-items:start; }
   body[data-layout-hero="b"] .chip .num{ font-size:clamp(26px,8vw,36px); }
   body[data-layout-hero="b"] .chip .tx{

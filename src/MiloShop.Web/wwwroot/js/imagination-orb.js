@@ -7,7 +7,6 @@ import {
   PARTICLE_COUNT,
   HOLD_SECONDS,
   MORPH_SECONDS,
-  CHAPTERS,
   createShapes,
   blendShape,
 } from "./imagination-shapes.js";

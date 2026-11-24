@@ -1,32 +1,12 @@
-// Normalized 3D point clouds. Every shape has the same particle identities so
-// transitions move real dots rather than crossfading pictures or canvases.
 import { fibDir } from "../vendor/thinking-orbs/core.js";
 
 export const PARTICLE_COUNT = 900;
 export const HOLD_SECONDS = 4.4;
 export const MORPH_SECONDS = 2.8;
-export const CHAPTERS = [
-  {
-    title: "صفحه‌ای برای شروع",
-    description: "فکرهای کوچک را بنویس؛ این اولین شکل یک رویای بزرگ است.",
-  },
-  {
-    title: "قلمی برای خیال",
-    description: "از یک نقطه تا هزار داستان؛ خط بعدی را خودت بکش.",
-  },
-  {
-    title: "رویایی آماده پرواز",
-    description: "به خیال‌هایت بال بده؛ کاغذ می‌تواند آغاز یک سفر باشد.",
-  },
-  {
-    title: "ایده‌ای که می‌درخشد",
-    description: "آنچه امروز تصور می‌کنی، می‌تواند فردا شکل بگیرد.",
-  },
-];
 
-// Quintic easing has zero velocity AND acceleration at both ends of a morph.
 export function easeMorph(t) {
   const x = Math.max(0, Math.min(1, t));
+
   return x * x * x * (x * (x * 6 - 15) + 10);
 }
 

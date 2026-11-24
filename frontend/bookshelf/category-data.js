@@ -123,7 +123,6 @@ export function createCategoryVolumes(categories, dark = false) {
       width: 1.02 + (category.id % 3) * 0.035,
       height: 1.5 + (category.id % 4) * 0.035,
       depth: 0.25 + (category.id % 3) * 0.012,
-      chapters: ['آغاز یک ایده', 'انتخاب ابزار', 'ادامه خیال'],
       seed: category.id * 17,
     };
   });
