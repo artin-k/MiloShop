@@ -1,16 +1,20 @@
 <div class="imagination-orb" data-imagination-orb>
     <div class="orb-stage">
-        <svg class="orb-fallback" viewBox="0 0 360 300" fill="none" aria-hidden="true">
-            <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" stroke-dasharray="1 5">
-                <path d="M39 103L117 124 137 13 207 117 264 59 316 85 275 85 241 155 207 117 130 248 80 239 138 165Z" />
-                <path d="M39 103L117 124 207 117 138 165 117 124M207 117L275 85 264 59" opacity=".65" />
+        <svg class="orb-fallback" viewBox="0 0 360 300" aria-hidden="true">
+            <defs>
+                <pattern id="orb-paper-dots" width="4.5" height="4.5" patternUnits="userSpaceOnUse" patternTransform="rotate(14)">
+                    <circle cx="1" cy="1" r=".85" fill="currentColor" />
+                </pattern>
+            </defs>
+            <g fill="url(#orb-paper-dots)">
+                <path d="M39 100 114 127 144 178Z M114 127 115 23 160 69Z M114 127 160 69 197 136Z" opacity=".60" />
+                <path d="M114 127 197 136 144 178Z M144 178 65 243 151 217Z M144 178 197 136 151 217Z" opacity=".90" />
+                <path d="M151 217 197 136 240 166Z M197 136 260 64 240 166Z" opacity=".7" />
+                <path d="M240 166 260 64 275 86Z M260 64 275 86 313 98Z" />
             </g>
         </svg>
         <canvas aria-hidden="true"></canvas>
     </div>
-    <figcaption class="orb-caption">
-        <strong id="imagination-title" data-orb-title>صفحه‌ای برای شروع</strong>
-    </figcaption>
     <div class="orb-controls" hidden>
         <div class="orb-steps" role="group" aria-label="شکل‌های خیال">
             <button type="button" data-orb-shape="bird" aria-label="پرندهٔ کاغذی" aria-pressed="true"><partial name="_Icon" model="@("bird")" /></button>
@@ -25,4 +29,4 @@
             <svg data-orb-play-icon viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden><path d="m7 4 9 6-9 6V4Z" stroke="currentColor" stroke-width="1.5" /></svg>
         </button>
     </div>
-</figure>
+</div>

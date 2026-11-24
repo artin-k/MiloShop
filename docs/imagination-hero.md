@@ -1,6 +1,6 @@
 # Milo's imagination hero
 
-One ruled-paper banner holds the storefront headline, shopping links and a dotted Canvas illustration. The same 3,384 particles morph through an origami bird, reading lamp, folded paper plane, star, paper boat and gift box, with 36 smaller dots orbiting the forms. Each form holds for 2.8 seconds, then transforms over 2.2 seconds. Quintic easing brings the movement to rest at each endpoint. Selecting another shape mid-transition starts from the currently visible positions.
+One ruled-paper banner holds the storefront headline, shopping links and a dotted Canvas illustration. The same 7,200 particles morph through an origami bird, reading lamp, folded paper plane, star, paper boat and gift box, with 36 smaller dots orbiting the forms. Each form holds for 2.4 seconds, then transforms over 2.2 seconds. Quintic easing brings the movement to rest at each endpoint. Selecting another shape mid-transition starts from the currently visible positions.
 
 Milo reuses the 3D projection from Jakub Antalik's Thinking Orbs web engine. The storefront defines its own stationery geometry and draws the dots in Canvas 2D with 12 depth bands and a separate orbit path. The local vendor directory records the pinned source revision and MIT license. [Original web engine](https://github.com/Jakubantalik/thinking-orbs) · [SwiftUI port](https://github.com/haplollc/ThinkingOrbs)
 
@@ -24,10 +24,10 @@ All six shapes must retain the same particle count and point identity. The sampl
 - While paused, manual selection displays a complete static form. Resuming starts its normal hold period.
 - Reduced motion starts playback paused. Shape buttons show static forms, and the play button starts motion on request. Changes to the preference while the page is open update playback.
 - Frames stop while the stage is outside the viewport, the tab is hidden, or the page is in the back/forward cache. Returning resumes rather than skipping through elapsed wall time.
-- Without JavaScript, a working Canvas context, or a successful module load, the inline dotted bird stays visible. Nonfunctional controls stay hidden. Rendering-context loss also restores the fallback.
+- Without JavaScript, a working Canvas context, or a successful module load, the inline stippled bird stays visible. Nonfunctional controls stay hidden. Rendering-context loss also restores the fallback.
 - Canvas is decorative and hidden from assistive technology. Shopping links and content remain server rendered.
 
-CSS reserves space for the stage and controls before initialization. Canvas pixel density is capped at 2×. Only the homepage loads these modules and styles.
+CSS reserves space for the stage and controls before initialization. Canvas pixel density is capped at 2×. Only the homepage loads these modules and styles. Razor versions both the animation entry point and the geometry module so deployments load the matching files.
 
 ## Checks
 

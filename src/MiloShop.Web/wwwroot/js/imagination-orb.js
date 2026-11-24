@@ -1,5 +1,4 @@
 import { makeProj } from "../vendor/thinking-orbs/core.js";
-// Version this import when changing the controls and geometry together.
 import {
   PARTICLE_COUNT,
   SHAPE_NAMES,
@@ -7,7 +6,7 @@ import {
   MORPH_SECONDS,
   createShapes,
   blendShape,
-} from "./imagination-shapes.js?forms=2";
+} from "milo-imagination-shapes";
 
 const DEPTH_BANDS = 12;
 const ORBIT_DOTS = 36;
@@ -94,19 +93,25 @@ function mountImagination(root) {
     context.clearRect(0, 0, width, height);
     const size = Math.min(width, height);
     const time = clock;
-    const breathe = 1 + Math.sin(time * 1.3) * 0.025;
+    const breathe = 1 + Math.sin(time * 1.35) * 0.028;
+    const roll = Math.sin(time * 1.15) * 0.095;
+    const cx = width / 2 + Math.sin(time * 1.4) * size * 0.024;
+    const cy = height / 2 + Math.sin(time * 1.65) * size * 0.05;
     const project = makeProj(
-      -0.10 + Math.sin(time * 0.95) * 0.31,
-      0.04 + Math.sin(time * 0.78) * 0.13,
-      width / 2 + Math.sin(time * 0.96) * size * 0.022,
-      height / 2 + Math.sin(time * 1.22) * size * 0.04,
+      -0.12 + Math.sin(time * 1.05) * 0.42,
+      0.04 + Math.sin(time * 0.97) * 0.20,
+      0,
+      0,
       size * 0.365 * breathe,
     );
 
+    context.save();
+    context.translate(cx, cy);
+    context.rotate(roll);
     // Draw depth groups together to avoid sorting and filling thousands of times per frame.
     const bands = Array.from({ length: DEPTH_BANDS }, () => new Path2D());
     const orbit = new Path2D();
-    const radius = Math.max(0.56, size / 334);
+    const radius = Math.max(0.42, size / 535);
     for (let i = 0; i < ORBIT_DOTS; i++) {
       const angle = i / ORBIT_DOTS * FULL_TURN + time * 0.31;
       const wave = Math.sin(angle);
@@ -125,6 +130,7 @@ function mountImagination(root) {
       context.fillStyle = palette[i][dark ? "dark" : "light"];
       context.fill(band);
     }
+    context.restore();
   }
 
   function shouldRun() {

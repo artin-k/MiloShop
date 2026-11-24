@@ -1,22 +1,11 @@
-<<<<<<< HEAD
-import { fibDir } from "../vendor/thinking-orbs/core.js";
-
-const PLANE_ROWS = 47;
-export const PARTICLE_COUNT = 3 * PLANE_ROWS * (PLANE_ROWS + 1) / 2;
-export const HOLD_SECONDS = 4.4;
-export const MORPH_SECONDS = 2.8;
-
-=======
 // Normalized 3D point clouds with the same particle budget for every form.
-export const PARTICLE_COUNT = 3384;
-export const HOLD_SECONDS = 2.8;
+export const PARTICLE_COUNT = 7200;
+export const HOLD_SECONDS = 2.4;
 export const MORPH_SECONDS = 2.2;
 const TURN = Math.PI * 2;
 
->>>>>>> b18a7b862d6f5e9920d74388d695c782aec8913b
 export function easeMorph(t) {
   const x = Math.max(0, Math.min(1, t));
-
   return x * x * x * (x * (x * 6 - 15) + 10);
 }
 
@@ -30,8 +19,10 @@ function panel(a, b, c, density = 1) {
     weight: density * Math.hypot(y * w - z * v, z * u - x * w, x * v - y * u) / 2,
     point: (_, i) => {
       // Distribute dots over a square, then reflect its upper half into the triangle.
-      let s = fract(0.5 + i * 0.754877666);
-      let t = fract(0.5 + i * 0.569840291);
+      // A small deterministic jitter softens the grid as the faces rotate.
+      const jitter = (fract(Math.sin(i * 127.1) * 43758.5453) - 0.5) * 0.012;
+      let s = fract(0.5 + i * 0.754877666 + jitter);
+      let t = fract(0.5 + i * 0.569840291 - jitter);
       if (s + t > 1) {
         s = 1 - s;
         t = 1 - t;
@@ -41,7 +32,7 @@ function panel(a, b, c, density = 1) {
   };
 }
 
-function fold(a, b, density = 0.085) {
+function fold(a, b, density = 0.052) {
   return {
     weight: density * Math.hypot(...a.map((value, axis) => b[axis] - value)),
     point: (t) => mix(a, b, t),
@@ -63,25 +54,26 @@ function ellipse(x, y, rx, ry, z, weight, depth = 0) {
 }
 
 function origamiBird() {
-  const tail = [-1.14, 0.35, -0.09];
-  const back = [-0.51, 0.18, -0.02];
-  const peak = [-0.35, 1.07, -0.38];
-  const crest = [0.22, 0.23, 0.28];
-  const chest = [0.49, -0.07, 0.05];
-  const belly = [-0.34, -0.15, 0];
-  const wing = [-0.81, -0.75, 0.27];
-  const wingTip = [-0.40, -0.82, 0.41];
-  const head = [0.68, 0.70, 0.06];
-  const chin = [0.77, 0.49, 0.15];
-  const beak = [1.1, 0.49, 0];
+  const tail = [-1.18, 0.42, -0.12];
+  const shoulder = [-0.55, 0.19, -0.02];
+  const upperWing = [-0.54, 1.06, -0.35];
+  const wingFold = [-0.15, 0.67, -0.17];
+  const keel = [0.14, 0.12, 0.33];
+  const belly = [-0.30, -0.23, 0.03];
+  const lowerWing = [-0.96, -0.78, 0.23];
+  const wingBend = [-0.24, -0.56, 0.40];
+  const chest = [0.50, -0.13, 0.10];
+  const head = [0.67, 0.72, 0.06];
+  const chin = [0.79, 0.53, 0.18];
+  const beak = [1.12, 0.43, 0.02];
   return [
-    panel(tail, back, belly, 1.25), panel(peak, crest, back, 0.95),
-    panel(back, belly, crest), panel(crest, belly, chest, 0.8),
-    panel(belly, wing, wingTip, 0.84), panel(wingTip, crest, belly, 1.15),
-    panel(crest, head, chest, 1.3), panel(chest, head, chin),
-    panel(head, beak, chin, 1.5),
-    ...outline([tail, back, peak, crest, head, beak, chin, chest, crest, wingTip, wing, belly]),
-    fold(back, crest), fold(belly, crest), fold(chin, crest),
+    panel(tail, shoulder, belly), panel(upperWing, wingFold, shoulder, 0.82),
+    panel(wingFold, keel, shoulder, 1.08), panel(shoulder, belly, keel, 0.88),
+    panel(belly, lowerWing, wingBend, 0.90), panel(keel, belly, wingBend, 1.25),
+    panel(keel, wingBend, chest, 1.12), panel(keel, head, chest, 0.84),
+    panel(chest, head, chin, 1.21), panel(head, chin, beak, 1.10),
+    ...outline([tail, shoulder, upperWing, wingFold, keel, head, beak, chin, chest, wingBend, lowerWing, belly]),
+    fold(shoulder, keel), fold(keel, wingBend), fold(keel, chest), fold(chin, head),
   ];
 }
 

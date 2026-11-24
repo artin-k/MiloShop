@@ -32,6 +32,20 @@ if (menu) {
     const layout = new ResizeObserver(updateLamp);
     menu.querySelectorAll('a').forEach(link => layout.observe(link));
     requestAnimationFrame(() => menu.classList.add('is-animated'));
+
+    const reflectLight = matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)');
+    navigation.querySelectorAll('.brand, .tubelight-nav, .theme-toggle').forEach(surface => {
+        surface.addEventListener('pointermove', event => {
+            if (!reflectLight.matches) return;
+            const bounds = surface.getBoundingClientRect();
+            surface.style.setProperty('--glass-x', `${100 * (event.clientX - bounds.left) / bounds.width}%`);
+            surface.style.setProperty('--glass-y', `${100 * (event.clientY - bounds.top) / bounds.height}%`);
+        });
+        surface.addEventListener('pointerleave', () => {
+            surface.style.removeProperty('--glass-x');
+            surface.style.removeProperty('--glass-y');
+        });
+    });
 }
 
 document.addEventListener('keydown', event => {
