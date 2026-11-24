@@ -52,3 +52,10 @@
 @media (max-width: 820px) {
   .orb-stage { height: clamp(165px, 38svh, 290px); }
 }
+@media (max-width: 820px) and (max-height: 680px) {
+  .orb-stage { height: clamp(150px, calc(48svh - 76px), 235px); }
+}
+@media (max-width: 380px) {
+  .orb-steps { gap: 3px; }
+  .orb-steps button { width: 35px; }
+}

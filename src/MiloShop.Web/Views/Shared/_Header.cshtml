@@ -11,7 +11,7 @@
         </svg>
         <span class="brand-tx"><b>MILO / میلو</b><i>PAPER · PENS · POSSIBILITIES</i></span>
     </a>
-    <nav class="nav-links glass-links" id="navlinks" aria-label="ناوبری اصلی">
+    <nav class="nav-links glass-links @(scene ? "" : "tubelight-nav")" id="navlinks" aria-label="ناوبری اصلی">
         @if (scene)
         {
             <a class="nav-link" href="#gate" data-cursor><span>داستان میلو</span><span class="alt" aria-hidden="true">داستان میلو</span></a>
@@ -20,20 +20,27 @@
         }
         @if (!scene)
         {
-            <a class="nav-link" href="/" data-home-link aria-current="@(path == "/" ? "page" : null)"><partial name="_Icon" model="@("home")" /> خانه</a>
-            <a class="nav-link" href="/#bookshelf" data-collections-link><partial name="_Icon" model="@("collections")" /> مجموعه‌ها</a>
+            <a class="nav-link" href="/" data-home-link aria-current="@(path == "/" ? "page" : null)"><partial name="_Icon" model="@("home")" /> <span class="nav-label">خانه</span></a>
+            <a class="nav-link" href="/#bookshelf" data-collections-link><partial name="_Icon" model="@("collections")" /> <span class="nav-label">مجموعه‌ها</span></a>
         }
-        <a class="nav-link" asp-route="ShopIndex" aria-current="@(path.StartsWithSegments("/Shop") || path.StartsWithSegments("/products") ? "page" : null)"><partial name="_Icon" model="@("shop")" /> فروشگاه</a>
-        <a class="nav-link" asp-controller="Cart" asp-action="Index" aria-current="@(path.StartsWithSegments("/Cart") ? "page" : null)"><partial name="_Icon" model="@("cart")" /> سبد خرید</a>
-        <a class="nav-link" href="@(User.Identity?.IsAuthenticated == true ? "/Profile" : "/Auth/Login")" aria-current="@(path.StartsWithSegments("/Profile") || path.StartsWithSegments("/Auth") ? "page" : null)"><partial name="_Icon" model="@("account")" /> حساب من</a>
+        <a class="nav-link" asp-route="ShopIndex" aria-current="@(path.StartsWithSegments("/Shop") || path.StartsWithSegments("/products") ? "page" : null)"><partial name="_Icon" model="@("shop")" /> <span class="nav-label">فروشگاه</span></a>
+        <a class="nav-link" asp-controller="Cart" asp-action="Index" aria-current="@(path.StartsWithSegments("/Cart") ? "page" : null)"><partial name="_Icon" model="@("cart")" /> <span class="nav-label">سبد خرید</span></a>
+        <a class="nav-link" href="@(User.Identity?.IsAuthenticated == true ? "/Profile" : "/Auth/Login")" aria-current="@(path.StartsWithSegments("/Profile") || path.StartsWithSegments("/Auth") ? "page" : null)"><partial name="_Icon" model="@("account")" /> <span class="nav-label">حساب من</span></a>
         @if (User.IsInRole("Admin"))
         {
-            <a class="nav-link" asp-route="AdminDashboard" aria-current="@(adminPage ? "page" : null)"><partial name="_Icon" model="@("admin")" /> مدیریت</a>
+            <a class="nav-link" asp-route="AdminDashboard" aria-current="@(adminPage ? "page" : null)"><partial name="_Icon" model="@("admin")" /> <span class="nav-label">مدیریت</span></a>
+        }
+        @if (!scene)
+        {
+            <span class="tubelight-lamp" aria-hidden="true"></span>
         }
     </nav>
     <button class="theme-toggle" type="button" aria-label="تغییر پوسته" aria-pressed="false">
         <span class="theme-sun"><partial name="_Icon" model="@("sun")" /></span>
         <span class="theme-moon"><partial name="_Icon" model="@("moon")" /></span>
     </button>
-    <button type="button" class="nav-burger" aria-label="فهرست" aria-controls="navlinks" aria-expanded="false" data-cursor><i></i><i></i></button>
+    @if (scene)
+    {
+        <button type="button" class="nav-burger" aria-label="فهرست" aria-controls="navlinks" aria-expanded="false" data-cursor><i></i><i></i></button>
+    }
 </header>

@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createShapes, PARTICLE_COUNT, blendShape, easeMorph } from '../../src/MiloShop.Web/wwwroot/js/imagination-shapes.js';
+import { createShapes, PARTICLE_COUNT, SHAPE_NAMES, blendShape, easeMorph } from '../../src/MiloShop.Web/wwwroot/js/imagination-shapes.js';
 
 test('stationery forms share stable, bounded particle identities', () => {
   const shapes = createShapes();
-  assert.equal(shapes.length, 4);
+  assert.deepEqual(SHAPE_NAMES, ['bird', 'lamp', 'plane', 'star', 'boat', 'gift']);
+  assert.equal(shapes.length, SHAPE_NAMES.length);
   for (const shape of shapes) {
     assert.equal(shape.length, PARTICLE_COUNT * 3);
     assert.ok(shape.every(value => Number.isFinite(value) && Math.abs(value) < 1.5));
