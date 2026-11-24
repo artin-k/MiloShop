@@ -1,16 +1,20 @@
-import {
-  makeProj,
-  finalizeFrame,
-  paintFrame,
-} from "../vendor/thinking-orbs/core.js";
+import { makeProj } from "../vendor/thinking-orbs/core.js";
 import {
   PARTICLE_COUNT,
   HOLD_SECONDS,
   MORPH_SECONDS,
-  CHAPTERS,
   createShapes,
   blendShape,
 } from "./imagination-shapes.js";
+
+const DEPTH_BANDS = 12;
+const ORBIT_DOTS = 36;
+const FULL_TURN = Math.PI * 2;
+
+function addDot(path, x, y, radius) {
+  path.moveTo(x + radius, y);
+  path.arc(x, y, radius, 0, FULL_TURN);
+}
 
 function mountImagination(root) {
   const canvas = root.querySelector("canvas");
@@ -31,15 +35,13 @@ function mountImagination(root) {
   const shapes = createShapes();
   const current = shapes[0].slice();
   const source = shapes[0].slice();
-  // A small satellite orbit carries the visual language of Thinking Orbs.
-  const dots = Array.from({ length: PARTICLE_COUNT + 36 }, () => ({
-    x: 0,
-    y: 0,
-    z: 0,
-    r: 1,
-    white: 0.2,
-    a: 1,
-  }));
+  const palette = Array.from({ length: DEPTH_BANDS }, (_, i) => {
+    const shade = i / (DEPTH_BANDS - 1);
+    return {
+      light: `rgb(${74 - shade * 47} ${109 - shade * 56} ${95 - shade * 48} / ${0.55 + shade * 0.4})`,
+      dark: `rgb(${119 + shade * 93} ${160 + shade * 69} ${144 + shade * 68} / ${0.5 + shade * 0.45})`,
+    };
+  });
   let width = 0,
     height = 0,
     dark = false;
@@ -54,9 +56,7 @@ function mountImagination(root) {
   let request = 0,
     previousTime = 0;
 
-  function updateCaption() {
-    const chapter = CHAPTERS[target];
-    root.querySelector("[data-orb-title]").textContent = chapter.title;
+  function updateControls() {
     buttons.forEach((button, i) =>
       button.setAttribute("aria-pressed", String(i === target)),
     );
@@ -69,7 +69,7 @@ function mountImagination(root) {
     phaseAge = 0;
     morphing = !reduceMotion;
     if (!morphing) current.set(shapes[target]);
-    updateCaption();
+    updateControls();
   }
 
   function advance(seconds) {
@@ -98,35 +98,32 @@ function mountImagination(root) {
       0.13 + Math.sin(time * 0.3) * 0.12,
       -0.16 + Math.sin(time * 0.23) * 0.05,
       width / 2,
-      height * 0.51,
-      size * 0.345 * breathe,
+      height / 2,
+      size * 0.405 * breathe,
     );
 
-    for (let i = 0; i < dots.length; i++) {
-      let x, y, z;
-      if (i < PARTICLE_COUNT) {
-        const offset = i * 3;
-        x = current[offset];
-        y = current[offset + 1];
-        z = current[offset + 2];
-      } else {
-        const angle = ((i - PARTICLE_COUNT) / 36) * Math.PI * 2 + time * 0.085;
-        x = Math.cos(angle) * 1.37;
-        y = Math.sin(angle) * 0.85;
-        z = Math.sin(angle) * 0.65;
-      }
-      const [px, py, depth] = project(x, y, z);
-      const light = Math.max(0, Math.min(1, (depth + 0.7) / 1.4));
-      const dot = dots[i];
-      dot.x = px;
-      dot.y = py;
-      dot.z = depth;
-      dot.r = Math.max(0.55, (size / 550) * (1.25 + light * 0.85));
-      dot.white = 0.62 - light * 0.55;
-      dot.a = i < PARTICLE_COUNT ? 0.8 + light * 0.2 : 0.25;
-      if (i >= PARTICLE_COUNT) dot.r *= 0.65;
+    // Draw depth groups together to avoid sorting and filling thousands of times per frame.
+    const bands = Array.from({ length: DEPTH_BANDS }, () => new Path2D());
+    const orbit = new Path2D();
+    const radius = Math.max(0.45, size / 380);
+    for (let i = 0; i < ORBIT_DOTS; i++) {
+      const angle = i / ORBIT_DOTS * FULL_TURN + time * 0.085;
+      const wave = Math.sin(angle);
+      const [x, y] = project(Math.cos(angle) * 1.27, wave * 0.9, wave * 0.65);
+      addDot(orbit, x, y, radius * 0.75);
     }
-    paintFrame(context, finalizeFrame(dots, []), dark);
+    context.fillStyle = dark ? "rgb(188 223 207 / 0.27)" : "rgb(55 105 85 / 0.24)";
+    context.fill(orbit);
+    for (let i = 0; i < PARTICLE_COUNT * 3; i += 3) {
+      const [x, y, depth] = project(current[i], current[i + 1], current[i + 2]);
+      const shade = Math.max(0, Math.min(1, (depth + 0.5) / 1.1));
+      const band = Math.round(shade * (DEPTH_BANDS - 1));
+      addDot(bands[band], x, y, radius * (0.65 + shade * 0.63));
+    }
+    for (const [i, band] of bands.entries()) {
+      context.fillStyle = palette[i][dark ? "dark" : "light"];
+      context.fill(band);
+    }
   }
 
   function shouldRun() {

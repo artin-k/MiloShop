@@ -1,6 +1,6 @@
-<figure class="imagination-orb" data-imagination-orb aria-labelledby="imagination-title">
+<div class="imagination-orb" data-imagination-orb>
     <div class="orb-stage">
-        <svg class="orb-fallback" viewBox="0 0 600 540" fill="none" aria-hidden="true">
+        <svg class="orb-fallback" viewBox="65 88 470 355" fill="none" aria-hidden="true">
             <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M300 181C259 146 209 143 145 157V351C207 338 255 340 300 375C345 340 393 338 455 351V157C391 143 341 146 300 181Z" stroke-width="3" stroke-dasharray="1 8" />
                 <path d="M300 181V375M170 191C211 184 247 190 277 207M170 225C211 218 247 224 277 241M170 259C211 252 247 258 277 275M170 293C211 286 247 292 277 309M323 207C353 190 389 184 430 191M323 241C353 224 389 218 430 225M323 275C353 258 389 252 430 259M323 309C353 292 389 286 430 293" stroke-width="2.5" stroke-dasharray="1 8" />
@@ -9,19 +9,16 @@
         </svg>
         <canvas aria-hidden="true"></canvas>
     </div>
-    <figcaption class="orb-caption">
-        <strong id="imagination-title" data-orb-title>صفحه‌ای برای شروع</strong>
-    </figcaption>
     <div class="orb-controls" hidden>
         <div class="orb-steps" role="group" aria-label="شکل‌های خیال">
-            <button type="button" data-orb-shape="0" aria-label="نمایش دفتر باز" aria-pressed="true">دفتر</button>
-            <button type="button" data-orb-shape="1" aria-label="نمایش نوک قلم" aria-pressed="false">قلم</button>
-            <button type="button" data-orb-shape="2" aria-label="نمایش هواپیمای کاغذی" aria-pressed="false">پرواز</button>
-            <button type="button" data-orb-shape="3" aria-label="نمایش ستاره خیال" aria-pressed="false">رویا</button>
+            <button type="button" data-orb-shape="0" aria-label="نمایش دفتر باز" aria-pressed="true"><partial name="_Icon" model="@("notebook")" /></button>
+            <button type="button" data-orb-shape="1" aria-label="نمایش نوک قلم" aria-pressed="false"><partial name="_Icon" model="@("pen")" /></button>
+            <button type="button" data-orb-shape="2" aria-label="نمایش هواپیمای کاغذی" aria-pressed="false"><partial name="_Icon" model="@("plane")" /></button>
+            <button type="button" data-orb-shape="3" aria-label="نمایش ستاره خیال" aria-pressed="false"><partial name="_Icon" model="@("star")" /></button>
         </div>
         <button class="orb-pause" type="button" data-orb-pause aria-label="توقف پویانمایی" aria-pressed="false">
             <svg data-orb-pause-icon viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 5v10M13 5v10" stroke="currentColor" stroke-width="1.5" /></svg>
             <svg data-orb-play-icon viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden><path d="m7 4 9 6-9 6V4Z" stroke="currentColor" stroke-width="1.5" /></svg>
         </button>
     </div>
-</figure>
+</div>
