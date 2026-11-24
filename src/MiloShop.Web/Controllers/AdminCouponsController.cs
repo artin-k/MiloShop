@@ -17,6 +17,8 @@ namespace MiloShop.Web.Controllers
             _context = context;
         }
 
+        [HttpGet("/Admin/Coupons", Name = "AdminCouponsIndex")]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Coupons";

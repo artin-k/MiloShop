@@ -21,6 +21,8 @@ namespace MiloShop.Web.Controllers
             _env = env;
         }
 
+        [HttpGet("/Admin/Offers", Name = "AdminOffersIndex")]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Offers";

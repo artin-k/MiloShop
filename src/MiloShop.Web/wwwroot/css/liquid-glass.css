@@ -1,0 +1,119 @@
+/* Shared glass surfaces for Milo's native controls and Nimbus navigation. */
+:root {
+    --glass-face: #23342e;
+    --glass-shine: #ffffff19;
+    --glass-edge: #c4e0cc38;
+    --glass-selected: #618d7652;
+    --glass-shadow: #050f0b40;
+}
+:root[data-theme="light"] {
+    --glass-face: #f7f6ed;
+    --glass-shine: #ffffffb8;
+    --glass-edge: #53715b41;
+    --glass-selected: #8cb79c59;
+    --glass-shadow: #344f3b1c;
+}
+
+.liquid-nav-host:empty, .glass-links[hidden] { display: none; }
+.liquid-nav-host--primary { margin-inline-start: auto; }
+.liquid-nav-host--admin { margin: 0 0 36px; }
+.liquid-nav-host .nimbus-nav[data-tone] {
+    direction: rtl;
+    font-family: MiloPersian, Onest, sans-serif;
+    --n-fg: var(--bone);
+    --n-fg-soft: var(--bone-dim);
+    --n-tint: color-mix(in srgb, var(--glass-face) 82%, transparent);
+}
+.liquid-nav-host .nimbus-item {
+    min-height: 44px;
+    padding-inline: clamp(10px, 1.1vw, 17px);
+    white-space: nowrap;
+    transition: none;
+}
+.liquid-nav-host .nimbus-item:focus-visible { outline-color: var(--ember); }
+.liquid-nav-host .nimbus-item[aria-current="page"] { background: var(--glass-selected); }
+.liquid-nav-host .nimbus-nav[data-active="false"] :is(.nimbus-water, .nimbus-drop) { display: none; }
+.liquid-nav-host .nimbus-nav[data-tone="dark"] .nimbus-drop {
+    background: linear-gradient(160deg, var(--glass-shine), transparent), var(--glass-selected);
+    box-shadow: inset 0 0 0 1px var(--glass-edge);
+}
+.liquid-nav-host .nv-ico svg { width: 18px; height: 18px; }
+
+.commerce-page :is(.button, .btn, .milo-button, .theme-toggle, .admin-nav a, .bookshelf-volumes button, .orb-pause) {
+    background: linear-gradient(165deg, var(--glass-shine), transparent 65%), var(--glass-face);
+    border: 1px solid var(--glass-edge);
+    box-shadow: inset 0 1px 0 var(--glass-shine), 0 3px 9px var(--glass-shadow);
+}
+.commerce-page :is(.button--primary, .btn-primary, .milo-button--primary) {
+    background: linear-gradient(160deg, #ffffff26, transparent 65%), var(--vermilion);
+    color: #ffffff;
+}
+.commerce-page :is(.button, .btn, .milo-button, .theme-toggle, .admin-nav a, .bookshelf-volumes button, .orb-pause):enabled:hover,
+.commerce-page :is(a.button, a.btn, .admin-nav a):hover,
+.commerce-page :is(.glass-links a[aria-current="page"], .bookshelf-volumes button[aria-pressed="true"], .orb-steps button[aria-pressed="true"]) {
+    background: linear-gradient(160deg, var(--glass-shine), transparent 65%), var(--glass-selected);
+    color: var(--bone);
+    border-color: var(--ember);
+}
+.commerce-page :is(.button--primary, .btn-primary, .milo-button--primary):is(:enabled:hover, a:hover) {
+    background: linear-gradient(160deg, #ffffff38, transparent 70%), var(--vermilion);
+    color: #ffffff;
+}
+.theme-toggle, .nav-burger { min-width: 44px; min-height: 44px; }
+.commerce-page :is(.catalog-filters, .form-panel, .compare-bar, #compare-dialog, .bookshelf-shopping) {
+    background: linear-gradient(155deg, var(--glass-shine), transparent 70%), var(--surface);
+    border-color: var(--glass-edge);
+    border-radius: 18px;
+}
+.commerce-page :is(.nav-links, .admin-nav) a { border-radius: 999px; }
+.commerce-page .nav-links { gap: 4px; }
+.commerce-page .nav-links .nav-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 10px;
+    white-space: nowrap;
+}
+.admin-nav { gap: 8px; }
+.admin-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.admin-shortcuts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+.admin-shortcuts a {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    background: linear-gradient(150deg, var(--glass-shine), transparent 70%), var(--surface);
+    border: 1px solid var(--glass-edge);
+    border-radius: 18px;
+}
+.admin-shortcuts a:hover { border-color: var(--ember); }
+.admin-shortcuts span { color: var(--bone-dim); font-size: 14px; }
+.commerce-page :is(.admin-toolbar, .admin-card) { margin-block: 16px; }
+.commerce-page .admin-card {
+    border: 1px solid var(--glass-edge);
+    border-radius: 18px;
+    padding: 16px;
+    background: var(--surface);
+}
+.table-responsive { overflow-x: auto; }
+.table-responsive table { min-width: max-content; }
+
+@media (min-width: 970px) {
+    .admin-shortcuts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 820px) {
+    .commerce-page .nav-links {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background: var(--glass-face);
+        box-shadow: 0 14px 40px var(--glass-shadow);
+    }
+    .commerce-page .nav-links .nav-link { padding: 10px 16px; }
+    .commerce-page .nav.menu-open .nav-links .nav-link {
+        margin-block: 3px;
+        border: 1px solid var(--glass-edge);
+        background: linear-gradient(160deg, var(--glass-shine), transparent 70%);
+    }
+    .commerce-page .nav.menu-open .nav-links .nav-link[aria-current="page"] {
+        background-color: var(--glass-selected);
+    }
+}

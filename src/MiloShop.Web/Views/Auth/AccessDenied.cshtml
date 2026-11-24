@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "دسترسی محدود | میلوشاپ";
+}
+<section class="form-panel">
+    <h1>دسترسی محدود</h1>
+    <p>برای ورود به این بخش، به حساب دارای دسترسی مدیریت نیاز دارید.</p>
+    <div class="actions">
+        <a class="button button--primary" asp-route="ShopIndex">بازگشت به فروشگاه</a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                <button class="button" type="submit">خروج و تغییر حساب</button>
+            </form>
+        }
+        else
+        {
+            <a class="button" asp-controller="Auth" asp-action="Login">ورود</a>
+        }
+    </div>
+</section>

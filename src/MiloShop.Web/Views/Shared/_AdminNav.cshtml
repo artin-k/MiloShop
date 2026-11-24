@@ -1,9 +1,18 @@
-<nav class="admin-nav" aria-label="مدیریت فروشگاه">
-    <a href="/Admin">داشبورد</a>
-    <a href="/Admin/Products/Index">محصولات</a>
-    <a href="/Admin/Categories/Index">دسته‌بندی‌ها</a>
-    <a href="/Admin/Orders/Index">سفارش‌ها</a>
-    <a href="/Admin/Offers/Index">پیشنهادها</a>
-    <a href="/Admin/Coupons/Index">کدهای تخفیف</a>
-    <a href="/Admin/Settings/General">تنظیمات</a>
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var sections = new[] {
+        ("AdminHome", "AdminDashboard", "داشبورد"),
+        ("AdminProducts", "AdminProductsIndex", "محصولات"),
+        ("AdminCategories", "AdminCategoriesIndex", "دسته‌بندی‌ها"),
+        ("AdminOrders", "AdminOrdersIndex", "سفارش‌ها"),
+        ("AdminOffers", "AdminOffersIndex", "پیشنهادها"),
+        ("AdminCoupons", "AdminCouponsIndex", "کدهای تخفیف"),
+        ("AdminSettings", "AdminSettingsIndex", "تنظیمات"),
+    };
+}
+<nav class="admin-nav glass-links" aria-label="مدیریت فروشگاه" data-liquid-nav="admin">
+    @foreach (var (section, route, label) in sections)
+    {
+        <a asp-route="@route" aria-current="@(controller == section ? "page" : null)">@label</a>
+    }
 </nav>

@@ -2,7 +2,14 @@
     ViewData["Title"] = "داشبورد";
 }
 
-<div class="admin-card">
-    <h3 style="margin:0 0 10px;">خوش آمدید 👋</h3>
-    <p>از فهرست مدیریت، بخش مورد نظر را انتخاب کنید.</p>
+<header class="storefront-heading">
+    <h1>داشبورد مدیریت</h1>
+</header>
+<div class="admin-shortcuts">
+    <a class="panel" asp-route="AdminProductsIndex"><strong>محصولات</strong><span>قیمت، موجودی و مشخصات کالاها</span></a>
+    <a class="panel" asp-route="AdminCategoriesIndex"><strong>دسته‌بندی‌ها</strong><span>مجموعه‌های فروشگاه و قفسه صفحه اصلی</span></a>
+    <a class="panel" asp-route="AdminOrdersIndex"><strong>سفارش‌ها</strong><span>پیگیری خریدها و جزئیات ارسال</span></a>
+    <a class="panel" asp-route="AdminOffersIndex"><strong>پیشنهادها</strong><span>مدیریت پیشنهادهای فروشگاه</span></a>
+    <a class="panel" asp-route="AdminCouponsIndex"><strong>کدهای تخفیف</strong><span>تعریف کد، اعتبار و محدودیت استفاده</span></a>
+    <a class="panel" asp-route="AdminSettingsIndex"><strong>تنظیمات</strong><span>راه‌های تماس و شبکه‌های اجتماعی</span></a>
 </div>

@@ -50,6 +50,13 @@ namespace MiloShop.Web.Controllers
             return View();
         }
 
+        [HttpGet("AccessDenied")]
+        public IActionResult AccessDenied()
+        {
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+            return View();
+        }
+
         [HttpPost("SignUp")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignUp(SignUpVM model, string? returnUrl = null)
@@ -122,7 +129,7 @@ namespace MiloShop.Web.Controllers
             // if admin → send to admin dashboard
             if (await _userManager.IsInRoleAsync(user, "Admin"))
             {
-                return RedirectToAction("Index", "AdminHome");
+                return RedirectToRoute("AdminDashboard");
             }
 
             return Redirect("/Profile");

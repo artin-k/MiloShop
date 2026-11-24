@@ -14,6 +14,7 @@ namespace MiloShop.Web.Controllers
         public AdminSettingsController(ISiteSettingsService settings) => _settings = settings;
 
         [HttpGet]
+        [HttpGet("/Admin/Settings", Name = "AdminSettingsIndex")]
         public IActionResult Index()
         {
             return RedirectToAction(nameof(General));

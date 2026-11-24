@@ -1,6 +1,7 @@
 // The /Studio scene uses Kage's authored menu. Shopping pages use this small equivalent.
 const navigation = document.getElementById('nav');
 const burger = navigation?.querySelector('.nav-burger');
+const menu = document.getElementById('navlinks');
 const closeMenu = () => {
     navigation?.classList.remove('menu-open');
     burger?.classList.remove('active');
@@ -14,10 +15,18 @@ if (!document.body.classList.contains('scene-page')) {
         burger.classList.toggle('active', open);
         burger.setAttribute('aria-expanded', String(open));
         document.documentElement.classList.toggle('nav-open', open);
+        if (open) menu?.querySelector('a')?.focus();
     });
+    menu?.addEventListener('click', event => {
+        if (event.target.closest('a') && navigation.classList.contains('menu-open')) closeMenu();
+    });
+    matchMedia('(max-width: 820px)').addEventListener('change', closeMenu);
 }
 document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') { closeMenu(); burger?.focus(); }
+    if (event.key === 'Escape' && navigation?.classList.contains('menu-open')) {
+        closeMenu();
+        burger?.focus();
+    }
     if (event.key !== 'Tab' || !navigation?.classList.contains('menu-open')) return;
     const nodes = [...navigation.querySelectorAll('a,button')].filter(el => el.getClientRects().length);
     const first = nodes[0], last = nodes[nodes.length - 1];

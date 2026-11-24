@@ -32,7 +32,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 {
     opt.LoginPath = "/Auth/Login";
     opt.LogoutPath = "/Auth/Logout";        // if you have it
-    opt.AccessDeniedPath = "/Auth/Login";   // or "/Auth/AccessDenied" if you make one
+    opt.AccessDeniedPath = "/Auth/AccessDenied";
 
     opt.Cookie.IsEssential = true;
     opt.Cookie.HttpOnly = true;

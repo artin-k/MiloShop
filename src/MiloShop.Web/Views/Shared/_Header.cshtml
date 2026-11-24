@@ -1,4 +1,8 @@
-@{ var scene = ViewData["Scene"] is true; }
+@{
+    var scene = ViewData["Scene"] is true;
+    var path = Context.Request.Path;
+    var adminPage = path.StartsWithSegments("/Admin");
+}
 <header class="nav" id="nav">
     <a class="brand" href="/" aria-label="میلوشاپ، صفحه اصلی" data-cursor>
         <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
@@ -7,16 +11,25 @@
         </svg>
         <span class="brand-tx"><b>MILO / میلو</b><i>PAPER · PENS · POSSIBILITIES</i></span>
     </a>
-    <nav class="nav-links" id="navlinks" aria-label="ناوبری اصلی">
+    <nav class="nav-links glass-links" id="navlinks" aria-label="ناوبری اصلی" data-liquid-nav="@(!scene && !adminPage ? "primary" : null)">
         @if (scene)
         {
             <a class="nav-link" href="#gate" data-cursor><span>داستان میلو</span><span class="alt" aria-hidden="true">داستان میلو</span></a>
             <a class="nav-link" href="#pathways" data-cursor><span>مجموعه‌ها</span><span class="alt" aria-hidden="true">مجموعه‌ها</span></a>
             <a class="nav-link" href="#lessons" data-cursor><span>تازه‌ها</span><span class="alt" aria-hidden="true">تازه‌ها</span></a>
         }
-        <a class="nav-link" href="/Shop"><span>فروشگاه</span><span class="alt" aria-hidden="true">فروشگاه</span></a>
-        <a class="nav-link" href="/Cart"><span>سبد خرید</span><span class="alt" aria-hidden="true">سبد خرید</span></a>
-        <a class="nav-link" href="@(User.Identity?.IsAuthenticated == true ? "/Profile" : "/Auth/Login")"><span>حساب من</span><span class="alt" aria-hidden="true">حساب من</span></a>
+        @if (!scene)
+        {
+            <a class="nav-link" href="/" data-liquid-icon="home" aria-current="@(path == "/" ? "page" : null)">خانه</a>
+            <a class="nav-link" href="/#bookshelf" data-liquid-icon="globe">مجموعه‌ها</a>
+        }
+        <a class="nav-link" asp-route="ShopIndex" data-liquid-icon="globe" aria-current="@(path.StartsWithSegments("/Shop") || path.StartsWithSegments("/products") ? "page" : null)">فروشگاه</a>
+        <a class="nav-link" asp-controller="Cart" asp-action="Index" data-liquid-icon="cart" aria-current="@(path.StartsWithSegments("/Cart") ? "page" : null)">سبد خرید</a>
+        <a class="nav-link" href="@(User.Identity?.IsAuthenticated == true ? "/Profile" : "/Auth/Login")" data-liquid-icon="user" aria-current="@(path.StartsWithSegments("/Profile") || path.StartsWithSegments("/Auth") ? "page" : null)">حساب من</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="nav-link" asp-route="AdminDashboard" data-liquid-icon="admin" aria-current="@(adminPage ? "page" : null)">مدیریت</a>
+        }
     </nav>
     <button class="theme-toggle" type="button" aria-label="تغییر پوسته" aria-pressed="false">
         <svg class="theme-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg>

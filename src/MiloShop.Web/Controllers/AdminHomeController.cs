@@ -7,8 +7,9 @@ namespace MiloShop.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminHomeController : Controller
     {
-        [HttpGet("/Admin")]
+        [HttpGet("/Admin", Name = "AdminDashboard")]
         [HttpGet("/Admin/Home")]
+        [HttpGet]
         public IActionResult Index() => View();
     }
 }

@@ -14,9 +14,16 @@
         @if (!string.IsNullOrWhiteSpace(Model.Material)) { <span class="spec-tag">@Model.Material</span> }
         <span class="sku">کد: @Model.Sku</span>
         <p class="price">@price.ToString("N0") <small>تومان</small></p>
-        <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl">
-            <button class="button" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد ←" : "ناموجود")</button>
-        </form>
+        @if (Model.StockQuantity > 0 && User.Identity?.IsAuthenticated != true)
+        {
+            <a class="button" asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@returnUrl">ورود برای افزودن به سبد ←</a>
+        }
+        else
+        {
+            <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl">
+                <button class="button" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد ←" : "ناموجود")</button>
+            </form>
+        }
         <label class="compare-choice"><input type="checkbox" data-compare="@Model.Id" data-title="@Model.Title" data-brand="@Model.Brand" data-material="@Model.Material" data-sku="@Model.Sku" data-price="@price.ToString("N0")" /> مقایسه مشخصات</label>
     </div>
 </article>

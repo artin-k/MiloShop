@@ -42,9 +42,16 @@
                 @if (Model.SalePrice.HasValue && Model.SalePrice < Model.Price) { <del>@Model.Price.ToString("N0")</del> }
                 <strong>@price.ToString("N0")</strong><span>تومان</span>
             </div>
-            <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
-                <button class="button button--primary" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد خرید" : "ناموجود")</button>
-            </form>
+            @if (Model.StockQuantity > 0 && User.Identity?.IsAuthenticated != true)
+            {
+                <a class="button button--primary" asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">ورود برای افزودن به سبد خرید</a>
+            }
+            else
+            {
+                <form method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
+                    <button class="button button--primary" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد خرید" : "ناموجود")</button>
+                </form>
+            }
         </div>
     </article>
     <section class="product-description" aria-labelledby="description-title">

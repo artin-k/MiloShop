@@ -16,5 +16,5 @@
         <span asp-validation-for="ConfirmPassword" class="error"></span>
         <button class="button button--primary" type="submit">ساخت حساب ←</button>
     </form>
-    <p class="form-hint">حساب داری؟ <a href="/Auth/Login">ورود به حساب</a></p>
+    <p class="form-hint">حساب داری؟ <a asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">ورود به حساب</a></p>
 </section>

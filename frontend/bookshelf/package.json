@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
+    "build:glass": "node build-glass.mjs",
     "verify": "node --test ../../tests/frontend/bookshelf-source.test.mjs"
   },
   "dependencies": {

@@ -1,5 +1,9 @@
 # MiloShop stationery storefront
 
+Milo uses the supplied Nimbus UI Liquid Navbar by Guglielmo Giannattasio for desktop storefront and admin navigation. Mobile menus and shared controls use the glass tokens in `wwwroot/css/liquid-glass.css`. Edit the component under `frontend/components/ui/liquid-glass-navbar.tsx` or its Razor navigation adapter in `frontend/liquid-glass/navigation.tsx`. After JavaScript changes, run `npm ci --prefix frontend/bookshelf` and `npm run build:glass --prefix frontend/bookshelf`.
+
+Administrators can open `/Admin` from **مدیریت** in the header. For local setup, register an account, set `Admin:Email` in the web project's user secrets or `Admin__Email` in the environment to that account's email, then restart the app and sign in again. The startup seeder assigns the role to the existing account.
+
 The storefront uses server-rendered Razor, small JavaScript enhancements and paper/ink theme tokens. The homepage adds a stationery category carousel adapted from ThreeUI Bookshelf as an isolated React component after the hero. Its data and shopping links come from the real catalog. The rest of the site stays in Razor. Generated assets are committed, so ordinary .NET builds need no Node step. The older Kage scene remains at `/Studio`, with links now directing users to the category shelf. There is no Next.js migration.
 
 ## Where to edit

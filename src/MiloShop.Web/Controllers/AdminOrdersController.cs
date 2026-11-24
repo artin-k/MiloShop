@@ -18,6 +18,7 @@ namespace MiloShop.Web.Controllers
         }
 
         [HttpGet]
+        [HttpGet("/Admin/Orders", Name = "AdminOrdersIndex")]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "سفارش‌ها";

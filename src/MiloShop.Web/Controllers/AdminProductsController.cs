@@ -22,6 +22,7 @@ namespace MiloShop.Web.Controllers
             _imageStorage = imageStorage;
         }
 
+        [HttpGet("/Admin/Products", Name = "AdminProductsIndex")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
