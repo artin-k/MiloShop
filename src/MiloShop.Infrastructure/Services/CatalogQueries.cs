@@ -7,6 +7,14 @@ namespace MiloShop.Infrastructure.Services;
 
 public class CatalogQueries(MiloDbContext db) : ICatalogQueries
 {
+    public Task<List<ProductTestimonial>> GetTestimonialsAsync() => db.Reviews.AsNoTracking()
+        .Where(r => r.Product.IsActive && r.Comment.Trim() != "" && r.Rating >= 1 && r.Rating <= 5)
+        .OrderByDescending(r => r.CreatedAt).ThenByDescending(r => r.Id)
+        .Take(6)
+        .Select(r => new ProductTestimonial(r.Comment, r.UserName, r.Rating, r.ProductId,
+            r.Product.Title, r.Product.Slug, r.Product.ImageUrl, r.Product.Category!.Name))
+        .ToListAsync();
+
     public async Task<HomePage> GetHomeAsync()
     {
         var now = DateTime.UtcNow;

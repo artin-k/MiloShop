@@ -16,6 +16,10 @@
     }
     <!script type="importmap">@Json.Serialize(new { imports = new Dictionary<string, string> { ["milo-imagination-shapes"] = shapeModule } })</!script>
     <script type="module" src="~/js/imagination-orb.js" asp-append-version="true"></script>
+    @if (Model.Testimonials.Count > 1)
+    {
+        <script type="module" src="~/js/testimonials.js" asp-append-version="true"></script>
+    }
     @if (Model.Collections.Count > 0)
     {
         <script type="module" src="~/vendor/bookshelf/bookshelf-loader.js" asp-append-version="true"></script>
@@ -31,19 +35,7 @@
     </div>
 </section>
 <partial name="_Bookshelf" model="Model.Collections" />
-<section class="studio-section" id="pathways" aria-labelledby="collections-title"><div class="studio-shell">
-    <header class="studio-heading"><div><p class="eyebrow">برای شیوه کار شما</p><h2 id="collections-title">هر میز، یک دنیای متفاوت.</h2></div><a class="text-link" href="/Shop">همه محصولات ←</a></header>
-    <div class="use-cases">
-        <article class="use-case">
-            <span>01 / JOURNAL</span>
-            <h3>نوشتن و یادداشت</h3>
-            <p>دفترها و ابزار ثبت فکر؛ برای برنامه روزانه، کلاس و ژورنال شخصی.</p>
-            <a class="text-link" href="/Shop?q=دفتر">دفترها را ببین ←</a>
-        </article>
-        <article class="use-case"><span>02 / SKETCH</span><h3>طراحی و ایده‌پردازی</h3><p>از اولین خط تا طرح نهایی؛ ابزارها را بر اساس مشخصات محصول انتخاب کن.</p><a class="text-link" href="/Shop?q=طراحی">ابزار طراحی ←</a></article>
-        <article class="use-case"><span>03 / DESK</span><h3>میز منظم، فکر آزاد</h3><p>برای جمع‌وجور کردن ابزار روزانه و ساختن یک فضای کار دلخواه.</p><a class="text-link" href="/Shop?q=جامدادی">نظم‌دهنده‌های میز ←</a></article>
-    </div>
-</div></section>
+<partial name="_Features" />
 <section class="studio-section" id="lessons" aria-labelledby="arrivals-title"><div class="studio-shell">
     <header class="studio-heading"><div><p class="eyebrow">تازه روی میز میلو</p><h2 id="arrivals-title">انتخاب بعدی شما، همین‌جاست.</h2></div><a class="text-link" href="/Shop?sort=new">جدیدترین‌ها ←</a></header>
     @if (Model.ActiveCoupon is not null) { <p class="notice">کد تخفیف فعال: <strong>@Model.ActiveCoupon.Code</strong> <button class="button" type="button" data-code="@Model.ActiveCoupon.Code">کپی کد</button></p> }
@@ -67,4 +59,4 @@
             </div>
     </div>
 </section>
-
+<partial name="_Testimonials" model="Model.Testimonials" />

@@ -1,0 +1,53 @@
+@model IReadOnlyList<MiloShop.Application.Catalog.ProductTestimonial>
+<section class="studio-section" aria-labelledby="testimonials-title">
+    <div class="studio-shell review-shell">
+        <h2 id="testimonials-title">از نگاه مشتریان میلو</h2>
+        @if (Model.Count == 0)
+        {
+            <p>هنوز دیدگاهی دربارهٔ محصولات ثبت نشده است.</p>
+        }
+        else
+        {
+            <div class="review-carousel" data-testimonials>
+                <div class="review-stack" aria-hidden="true">
+                    @for (var i = 0; i < Model.Count; i++)
+                    {
+                        var review = Model[i];
+                        var cover = StationeryIcon.ForCategory(review.CategoryName);
+                        <div class="review-photo" data-position="@(i == 0 ? "current" : "away")" data-cover="@cover">
+                            @if (!string.IsNullOrWhiteSpace(review.ImageUrl))
+                            {
+                                <img src="@review.ImageUrl" alt="" loading="lazy" decoding="async" width="360" height="360" />
+                            }
+                            else
+                            {
+                                <partial name="_NotebookCover" model="cover" />
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="review-content">
+                    @foreach (var review in Model)
+                    {
+                        <figure class="review-quote">
+                            <figcaption>
+                                <strong>@(string.IsNullOrWhiteSpace(review.UserName) || review.UserName == "Guest" ? "مهمان میلو" : review.UserName)</strong>
+                                <span>امتیاز @review.Rating از ۵</span>
+                            </figcaption>
+                            <blockquote>@review.Comment</blockquote>
+                            <a class="text-link" asp-route="ProductDetails" asp-route-id="@review.ProductId" asp-route-slug="@review.Slug">@review.ProductTitle</a>
+                        </figure>
+                    }
+                    @if (Model.Count > 1)
+                    {
+                        <div class="review-controls" hidden>
+                            <button type="button" data-step="-1" aria-label="دیدگاه قبلی">→</button>
+                            <button type="button" data-step="1" aria-label="دیدگاه بعدی">←</button>
+                            <button type="button" data-play></button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>

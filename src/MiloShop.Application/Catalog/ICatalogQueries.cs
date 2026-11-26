@@ -16,6 +16,9 @@ public record CatalogPage(List<Product> Products, List<Category> Categories)
 }
 public record CategoryCollection(int Id, string Name, string Description, int AvailableProductCount);
 
+public record ProductTestimonial(string Comment, string UserName, int Rating, int ProductId,
+    string ProductTitle, string Slug, string ImageUrl, string? CategoryName);
+
 public record HomePage(List<Product> Products, List<Category> Categories, Offer? Offer, Coupon? Coupon)
 {
     public List<CategoryCollection> Collections { get; init; } = [];
@@ -24,6 +27,7 @@ public record HomePage(List<Product> Products, List<Category> Categories, Offer?
 /// <summary>Read operations used by the storefront. Persistence belongs in Infrastructure.</summary>
 public interface ICatalogQueries
 {
+    Task<List<ProductTestimonial>> GetTestimonialsAsync();
     Task<HomePage> GetHomeAsync();
     Task<CatalogPage> GetCatalogAsync(CatalogFilter filter);
     Task<Product?> GetProductAsync(int id);

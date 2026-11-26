@@ -17,7 +17,11 @@ namespace MiloShop.Web.Controllers
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
-            => View(await BuildPageAsync());
+        {
+            var model = await BuildPageAsync();
+            model.Testimonials = await _catalog.GetTestimonialsAsync();
+            return View(model);
+        }
 
         [HttpGet("Studio")]
         public async Task<IActionResult> Studio()

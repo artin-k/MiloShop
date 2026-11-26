@@ -1,0 +1,28 @@
+@{
+    var features = new[] {
+        (Icon: "notebook", Title: "نوشتن و یادداشت", Description: "دفترها را برای کلاس، ژورنال یا یادداشت‌های روزانه‌ات ببین.", Query: "دفتر"),
+        (Icon: "pen", Title: "طراحی و ایده‌پردازی", Description: "برای اتودهای سریع و طرح‌های دقیق، ابزار طراحی انتخاب کن.", Query: "طراحی"),
+        (Icon: "desk", Title: "میز منظم، فکر آزاد", Description: "با یک جامدادی، قلم‌ها و خرده‌ریزهای میزت را کنار هم نگه دار.", Query: "جامدادی"),
+        (Icon: "planner", Title: "برنامه‌ریزی", Description: "برای قرارها، کارهای هفته و پیگیری هدف‌هایت پلنر پیدا کن.", Query: "پلنر"),
+        (Icon: "art", Title: "رنگ و نقاشی", Description: "مدادرنگی‌های مجموعه را برای رنگ‌آمیزی و تجربه با رنگ ببین.", Query: "مدادرنگی"),
+        (Icon: "gift", Title: "هدیه‌های کوچک", Description: "برای کسی که کاغذ و قلم را دوست دارد، هدیه انتخاب کن.", Query: "هدیه")
+    };
+}
+<section class="studio-section" id="pathways" aria-labelledby="collections-title">
+    <div class="studio-shell feature-shell">
+        <header class="feature-heading">
+            <h2 id="collections-title">هر میز، یک دنیای متفاوت.</h2>
+            <p>از یادداشت روزانه تا اولین طرح، از کاری شروع کن که دوستش داری.</p>
+        </header>
+        <div class="feature-grid">
+            @foreach (var feature in features)
+            {
+                <a asp-route="ShopIndex" asp-route-q="@feature.Query" class="feature-cell">
+                    <h3><partial name="_Icon" model="feature.Icon" /> @feature.Title</h3>
+                    <p>@feature.Description</p>
+                </a>
+            }
+        </div>
+        <a class="text-link" asp-route="ShopIndex">همه محصولات ←</a>
+    </div>
+</section>
