@@ -71,6 +71,7 @@ namespace MiloShop.Web.Controllers
                 Brand = vm.Brand,
                 Material = vm.Material,
                 IsActive = vm.IsActive,
+                HomepagePlacement = vm.HomepagePlacement,
                 IsSpecialOffer = vm.IsSpecialOffer,
 
                 Slug = Slugify(vm.Title),
@@ -116,6 +117,7 @@ namespace MiloShop.Web.Controllers
                 Brand = p.Brand,
                 Material = p.Material,
                 IsActive = p.IsActive,
+                HomepagePlacement = p.HomepagePlacement,
                 IsSpecialOffer = p.IsSpecialOffer,
                 ImageUrl = p.ImageUrl
             };
@@ -142,6 +144,7 @@ namespace MiloShop.Web.Controllers
                 return View(vm);
             }
 
+            existing.HomepagePlacement = vm.HomepagePlacement;
             existing.Title = vm.Title;
             existing.ShortDescription = vm.ShortDescription;
             existing.Description = vm.Description;

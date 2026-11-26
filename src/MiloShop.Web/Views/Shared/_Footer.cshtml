@@ -1,9 +1,21 @@
+@model IReadOnlyDictionary<string, string?>
 <footer class="foot" data-cam="5">
     <div class="foot-grid">
         <div class="foot-brand"><span class="footer-word">MILOSHOP</span><p>برای فکرهایی که هنوز روی کاغذ نیامده‌اند. نوشت‌افزار و ابزار خلاقیت برای شروع‌های تازه.</p></div>
-        <div><h4>کشف کن</h4><ul><li><a href="/Shop">فروشگاه</a></li><li><a href="/Shop?sort=new">تازه‌ترین محصولات</a></li><li><a href="/#pathways">مجموعه‌ها</a></li></ul></div>
+        <div><h4>کشف کن</h4><ul><li><a href="/Shop">فروشگاه</a></li><li><a href="/Shop?sort=new">تازه‌ترین محصولات</a></li><li><a href="@(Model["Home.FeaturesVisibility"] == "hidden" ? "/#bookshelf" : "/#pathways")">مجموعه‌ها</a></li></ul></div>
         <div><h4>حساب شما</h4><ul><li><a href="/Profile">پروفایل</a></li><li><a href="/Cart">سبد خرید</a></li><li><a href="/Auth/SignUp">ساخت حساب</a></li></ul></div>
-        <div><h4>میلو</h4><ul><li><a href="/#gate">داستان ما</a></li><li><a href="/#bookshelf">مجموعه‌های میلو</a></li>@if (User.IsInRole("Admin")) { <li><a href="/Admin">مدیریت فروشگاه</a></li> }</ul></div>
+        <div><h4>میلو</h4><ul>@if (Model["Home.DeskVisibility"] != "hidden") { <li><a href="/#gate">داستان ما</a></li> }<li><a href="/#bookshelf">مجموعه‌های میلو</a></li>
+            @if (!string.IsNullOrWhiteSpace(Model["MainPhone"])) { <li><a href="tel:@Model["MainPhone"]">@Model["MainPhone"]</a></li> }
+            @if (!string.IsNullOrWhiteSpace(Model["SupportEmail"])) { <li><a href="mailto:@Model["SupportEmail"]">@Model["SupportEmail"]</a></li> }
+            @if (!string.IsNullOrWhiteSpace(Model["OfficeAddress"])) { <li>@Model["OfficeAddress"]</li> }
+            @foreach (var (key, label) in new[] { ("InstagramUrl", "اینستاگرام"), ("WhatsappUrl", "واتساپ"), ("TwitterUrl", "ایکس") })
+            {
+                if (Uri.TryCreate(Model[key], UriKind.Absolute, out var url) && url.Scheme is "https" or "http")
+                {
+                    <li><a href="@url.AbsoluteUri">@label</a></li>
+                }
+            }
+            @if (User.IsInRole("Admin")) { <li><a href="/Admin">مدیریت فروشگاه</a></li> }</ul></div>
     </div>
     <div class="foot-base"><span>© @DateTime.UtcNow.Year MILOSHOP</span><span>یک صفحه تازه، یک فکر تازه.</span></div>
 </footer>

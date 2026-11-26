@@ -10,16 +10,20 @@ namespace MiloShop.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ICatalogQueries _catalog;
-        public HomeController(ICatalogQueries catalog)
+        private readonly ISiteSettingsService _settings;
+        public HomeController(ICatalogQueries catalog, ISiteSettingsService settings)
         {
             _catalog = catalog;
+            _settings = settings;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
             var model = await BuildPageAsync();
-            model.Testimonials = await _catalog.GetTestimonialsAsync();
+            model.Content = await HomepageContent.LoadAsync(_settings);
+            if (model.Content["ReviewsVisibility"] == "visible")
+                model.Testimonials = await _catalog.GetTestimonialsAsync();
             return View(model);
         }
 

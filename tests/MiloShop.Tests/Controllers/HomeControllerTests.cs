@@ -55,7 +55,7 @@ public class HomeControllerTests
             });
         await db.SaveChangesAsync();
 
-        var sut = new HomeController(new CatalogQueries(db));
+        var sut = new HomeController(new CatalogQueries(db), new SiteSettingsService(db));
 
         var result = await sut.Index();
 

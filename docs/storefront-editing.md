@@ -1,5 +1,8 @@
 # MiloShop stationery storefront
 
+Use **Admin → صفحه اصلی** to edit homepage headings, the six shopping cards, desk links and section visibility. Each panel saves independently. **دسته‌بندی‌ها** offers six symbols and an uploaded image option. **محصولات** lets you prioritize or hide a product in the homepage list. **دیدگاه‌ها** lets you record customer feedback and control which quotes appear. The storefront takes up to eight available products and six eligible reviews, showing featured entries first and newer entries first within each group.
+
+
 The Tubelight storefront header uses the existing Razor routes in `Views/Shared/_Header.cshtml`. Its centered desktop pill and mobile icon dock use neutral glass colors in `wwwroot/css/liquid-glass.css`. The active highlight and mouse-driven reflection are handled by `wwwroot/js/milo.js`. Admin desktop navigation uses Nimbus UI Liquid Navbar by Guglielmo Giannattasio. Edit the Nimbus component under `frontend/components/ui/liquid-glass-navbar.tsx` or its adapter in `frontend/liquid-glass/navigation.tsx`. After JavaScript changes, run `npm ci --prefix frontend/bookshelf` and `npm run build:glass --prefix frontend/bookshelf`.
 
 The shared SVG symbols live in `Views/Shared/_StationeryIcons.cshtml`. Render a symbol with the `_Icon` partial and set `--icon-size`, `--icon-stroke`, or `--icon-color` on its parent. The `_NotebookCover` partial uses `--cover-color` and `--cover-foil` for stationery cards and missing product photos. In Admin, use **توضیحات** on a category for its card copy and **مشخصات کوتاه برای کارت محصول** on a product for details such as GSM, ruling, or available colors. Rename catalog entries such as `cat1` under **دسته‌بندی‌ها** and the card updates on refresh.

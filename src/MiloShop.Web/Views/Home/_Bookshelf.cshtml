@@ -1,20 +1,29 @@
-@model IReadOnlyList<MiloShop.Application.Catalog.CategoryCollection>
-<section class="studio-section bookshelf-section" id="bookshelf" data-bookshelf-section="@(Model.Count > 0 ? "categories" : "empty")" data-bookshelf-state="idle" aria-labelledby="bookshelf-title">
+@model MiloShop.Web.ViewModels.Home.HomePageViewModel
+@{ var items = Model.Collections; }
+<section class="studio-section bookshelf-section" id="bookshelf" data-bookshelf-section="@(items.Count > 0 ? "categories" : "empty")" data-bookshelf-state="idle" aria-labelledby="bookshelf-title">
     <div class="studio-shell">
         <header class="studio-heading">
-            <h2 id="bookshelf-title">مجموعه‌های نوشت‌افزار</h2>
+            <h2 id="bookshelf-title">@Model.Content["CollectionsTitle"]</h2>
             <a class="text-link" asp-route="ShopIndex">همه محصولات ←</a>
         </header>
-        @if (Model.Count > 0)
+        @if (items.Count > 0)
         {
-            var first = Model[0];
+            var first = items[0];
             <ul class="category-shelf" aria-label="دسته‌بندی‌های فروشگاه">
-                @foreach (var category in Model)
+                @foreach (var category in items)
                 {
+                    var icon = category.Icon ?? StationeryIcon.ForCategory(category.Name);
                     <li>
                         <a class="category-card" asp-route="ShopIndex" asp-route-categoryId="@category.Id"
-                           data-cover="@StationeryIcon.ForCategory(category.Name)">
-                            <partial name="_NotebookCover" model="@StationeryIcon.ForCategory(category.Name)" />
+                           data-cover="@icon">
+                            @if (category.Icon == null && !string.IsNullOrWhiteSpace(category.ImageUrl))
+                            {
+                                <img class="category-icon" src="@category.ImageUrl" alt="" width="36" height="36" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="category-icon"><partial name="_Icon" model="icon" /></span>
+                            }
                             <div class="category-card__copy">
                                 <strong>@category.Name</strong>
                                 @if (!string.IsNullOrWhiteSpace(category.Description))
@@ -30,9 +39,9 @@
             <details class="bookshelf-experience" data-bookshelf-experience hidden>
                 <summary><partial name="_Icon" model="@("collections")" /> قفسه سه‌بعدی</summary>
                 <p id="bookshelf-instructions" class="bookshelf-intro">کتاب‌ها را انتخاب کنید و صفحه‌ها را ورق بزنید.</p>
-                <script type="application/json" data-bookshelf-categories>@Json.Serialize(Model.Select(category => new {
+                <script type="application/json" data-bookshelf-categories>@Json.Serialize(items.Select(category => new {
                     id = category.Id, title = category.Name, description = category.Description,
-                    productCount = category.AvailableProductCount,
+                    productCount = category.AvailableProductCount, icon = category.Icon,
                     url = Url.RouteUrl("ShopIndex", new { categoryId = category.Id })
                 }))</script>
                 <div class="bookshelf-stage">
@@ -40,7 +49,7 @@
                     <div class="bookshelf-placeholder" aria-hidden="true"><partial name="_NotebookCover" model="@("notebook")" /></div>
                 </div>
                 <div class="bookshelf-toolbar">
-                    <div class="bookshelf-selection"><strong data-bookshelf-title>@first.Name</strong><span data-bookshelf-counter dir="ltr">01 / @Model.Count.ToString("D2")</span><span data-bookshelf-page dir="ltr"></span></div>
+                    <div class="bookshelf-selection"><strong data-bookshelf-title>@first.Name</strong><span data-bookshelf-counter dir="ltr">01 / @items.Count.ToString("D2")</span><span data-bookshelf-page dir="ltr"></span></div>
                     <div class="bookshelf-actions" aria-label="کنترل مجموعه‌ها">
                         <button class="button" type="button" data-bookshelf-start>نمایش مجموعه‌ها</button>
                         <button class="button" type="button" data-bookshelf-action="previous" disabled>دسته قبل</button>
@@ -58,7 +67,7 @@
                     <a class="button button--primary" data-bookshelf-shop asp-route="ShopIndex" asp-route-categoryId="@first.Id">دیدن محصولات @first.Name ←</a>
                 </div>
                 <div class="bookshelf-volumes" role="group" aria-label="انتخاب دسته‌بندی">
-                    @for (var i = 0; i < Model.Count; i++) { <button type="button" data-bookshelf-volume="@i" aria-pressed="@(i == 0 ? "true" : "false")" disabled>@Model[i].Name</button> }
+                    @for (var i = 0; i < items.Count; i++) { <button type="button" data-bookshelf-volume="@i" aria-pressed="@(i == 0 ? "true" : "false")" disabled>@items[i].Name</button> }
                 </div>
                 <p class="bookshelf-status" data-bookshelf-status role="status"></p>
             </details>

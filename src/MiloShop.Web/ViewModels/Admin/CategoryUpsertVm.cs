@@ -5,6 +5,8 @@ namespace MiloShop.Web.ViewModels.Admin
 {
     public class CategoryUpsertVm
     {
+        [RegularExpression("^(notebook|pen|desk|planner|art|gift)$")]
+        public string? Icon { get; set; }
         public int Id { get; set; }
 
         [Required, StringLength(120)]

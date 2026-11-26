@@ -48,7 +48,7 @@
             @if (TempData["OrderPlaced"] is string orderPlaced) { <p class="notice" role="status">@orderPlaced</p> }
             @RenderBody()
         </main>
-        <partial name="_Footer" />
+        @await Component.InvokeAsync("Footer")
     </div>
     @if (scene || ViewData["ProductList"] is true || ViewData["Home"] is true) { <partial name="_Comparison" /> }
     @if (scene)

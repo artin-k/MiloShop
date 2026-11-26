@@ -122,7 +122,7 @@ if (section) {
     task = (async () => {
       await loadStyles();
       const module = await import(
-        new URL('bookshelf-7S334JI2.js', import.meta.url)
+        new URL('bookshelf-LXFQIFI2.js', import.meta.url)
       );
       if (!experience.open) return;
       unmount = module.mountBookshelf(mount);

@@ -1,25 +1,18 @@
-@{
-    var features = new[] {
-        (Icon: "notebook", Title: "نوشتن و یادداشت", Description: "دفترها را برای کلاس، ژورنال یا یادداشت‌های روزانه‌ات ببین.", Query: "دفتر"),
-        (Icon: "pen", Title: "طراحی و ایده‌پردازی", Description: "برای اتودهای سریع و طرح‌های دقیق، ابزار طراحی انتخاب کن.", Query: "طراحی"),
-        (Icon: "desk", Title: "میز منظم، فکر آزاد", Description: "با یک جامدادی، قلم‌ها و خرده‌ریزهای میزت را کنار هم نگه دار.", Query: "جامدادی"),
-        (Icon: "planner", Title: "برنامه‌ریزی", Description: "برای قرارها، کارهای هفته و پیگیری هدف‌هایت پلنر پیدا کن.", Query: "پلنر"),
-        (Icon: "art", Title: "رنگ و نقاشی", Description: "مدادرنگی‌های مجموعه را برای رنگ‌آمیزی و تجربه با رنگ ببین.", Query: "مدادرنگی"),
-        (Icon: "gift", Title: "هدیه‌های کوچک", Description: "برای کسی که کاغذ و قلم را دوست دارد، هدیه انتخاب کن.", Query: "هدیه")
-    };
-}
+@using MiloShop.Web.ViewModels.Home
+@model HomePageViewModel
 <section class="studio-section" id="pathways" aria-labelledby="collections-title">
     <div class="studio-shell feature-shell">
         <header class="feature-heading">
-            <h2 id="collections-title">هر میز، یک دنیای متفاوت.</h2>
-            <p>از یادداشت روزانه تا اولین طرح، از کاری شروع کن که دوستش داری.</p>
+            <h2 id="collections-title">@Model.Content["FeaturesTitle"]</h2>
+            <p>@Model.Content["FeaturesIntro"]</p>
         </header>
         <div class="feature-grid">
-            @foreach (var feature in features)
+            @for (var i = 1; i <= HomepageContent.FeatureCount; i++)
             {
-                <a asp-route="ShopIndex" asp-route-q="@feature.Query" class="feature-cell">
-                    <h3><partial name="_Icon" model="feature.Icon" /> @feature.Title</h3>
-                    <p>@feature.Description</p>
+                var key = $"Feature{i}";
+                <a asp-route="ShopIndex" asp-route-q='@Model.Content[key + "Query"]' class="feature-cell">
+                    <h3><partial name="_Icon" model='Model.Content[key + "Icon"]' /> @Model.Content[key + "Title"]</h3>
+                    <p>@Model.Content[key + "Description"]</p>
                 </a>
             }
         </div>

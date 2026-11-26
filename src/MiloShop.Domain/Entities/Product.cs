@@ -5,6 +5,7 @@ namespace MiloShop.Domain.Entities
 {
     public class Product
     {
+        public HomepagePlacement HomepagePlacement { get; set; }
         public int Id { get; set; }
 
         [Required, MaxLength(160)]

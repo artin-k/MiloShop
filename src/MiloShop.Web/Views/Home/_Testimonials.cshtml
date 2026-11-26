@@ -1,8 +1,9 @@
-@model IReadOnlyList<MiloShop.Application.Catalog.ProductTestimonial>
+@model MiloShop.Web.ViewModels.Home.HomePageViewModel
+@{ var items = Model.Testimonials; }
 <section class="studio-section" aria-labelledby="testimonials-title">
     <div class="studio-shell review-shell">
-        <h2 id="testimonials-title">از نگاه مشتریان میلو</h2>
-        @if (Model.Count == 0)
+        <h2 id="testimonials-title">@Model.Content["ReviewsTitle"]</h2>
+        @if (items.Count == 0)
         {
             <p>هنوز دیدگاهی دربارهٔ محصولات ثبت نشده است.</p>
         }
@@ -10,10 +11,10 @@
         {
             <div class="review-carousel" data-testimonials>
                 <div class="review-stack" aria-hidden="true">
-                    @for (var i = 0; i < Model.Count; i++)
+                    @for (var i = 0; i < items.Count; i++)
                     {
-                        var review = Model[i];
-                        var cover = StationeryIcon.ForCategory(review.CategoryName);
+                        var review = items[i];
+                        var cover = review.CategoryIcon ?? StationeryIcon.ForCategory(review.CategoryName);
                         <div class="review-photo" data-position="@(i == 0 ? "current" : "away")" data-cover="@cover">
                             @if (!string.IsNullOrWhiteSpace(review.ImageUrl))
                             {
@@ -27,7 +28,7 @@
                     }
                 </div>
                 <div class="review-content">
-                    @foreach (var review in Model)
+                    @foreach (var review in items)
                     {
                         <figure class="review-quote">
                             <figcaption>
@@ -38,7 +39,7 @@
                             <a class="text-link" asp-route="ProductDetails" asp-route-id="@review.ProductId" asp-route-slug="@review.Slug">@review.ProductTitle</a>
                         </figure>
                     }
-                    @if (Model.Count > 1)
+                    @if (items.Count > 1)
                     {
                         <div class="review-controls" hidden>
                             <button type="button" data-step="-1" aria-label="دیدگاه قبلی">→</button>

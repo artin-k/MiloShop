@@ -1,0 +1,12 @@
+@model MiloShop.Web.ViewModels.Admin.TestimonialInput
+@{ ViewData["Title"] = "ثبت دیدگاه مشتری"; }
+<form asp-action="Create" method="post" class="form-panel">
+    <h1>ثبت دیدگاه مشتری</h1>
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <label asp-for="ProductId">محصول</label>
+    <select asp-for="ProductId" asp-items="Model.Products" required><option value="">انتخاب محصول</option></select>
+    <label asp-for="Author">نام نمایشی مشتری</label><input asp-for="Author" required maxlength="100" />
+    <label asp-for="Quote">متن ارسالی مشتری</label><textarea asp-for="Quote" required maxlength="1000"></textarea>
+    <label asp-for="Rating">امتیاز مشتری از پنج</label><input asp-for="Rating" min="1" max="5" required />
+    <button class="btn mt-3" type="submit">ذخیره به عنوان دیدگاه منتخب</button>
+</form>

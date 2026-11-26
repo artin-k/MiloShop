@@ -79,6 +79,12 @@
             <span class="text-danger">@Html.ValidationMessage("ImageFile")</span>
         </div>
 
+        <label asp-for="HomepagePlacement">نمایش در محصولات صفحه اصلی</label>
+        <select asp-for="HomepagePlacement">
+            <option value="Automatic">خودکار (جدیدترین‌ها)</option>
+            <option value="Featured">در اولویت نمایش</option>
+            <option value="Hidden">پنهان از صفحه اصلی</option>
+        </select>
         <div class="form-check mt-3">
             <input class="form-check-input" asp-for="IsActive" />
             <label class="form-check-label">فعال</label>

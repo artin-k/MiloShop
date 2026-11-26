@@ -2,6 +2,12 @@ namespace MiloShop.Web.Models;
 
 public static class StationeryIcon
 {
+    public static IReadOnlyDictionary<string, string> Options { get; } = new Dictionary<string, string>
+    {
+        ["notebook"] = "دفتر", ["pen"] = "قلم", ["art"] = "پالت رنگ",
+        ["desk"] = "گونیا", ["planner"] = "تقویم", ["gift"] = "هدیه"
+    };
+
     public static string ForCategory(string? name)
     {
         var title = name?.ToLowerInvariant() ?? "";

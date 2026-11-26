@@ -5,6 +5,8 @@ namespace MiloShop.Web.ViewModels.Admin
 {
     public class ProductUpsertVm
     {
+        [EnumDataType(typeof(HomepagePlacement))]
+        public HomepagePlacement HomepagePlacement { get; set; }
         public int Id { get; set; }
 
         [Required, MaxLength(160)]

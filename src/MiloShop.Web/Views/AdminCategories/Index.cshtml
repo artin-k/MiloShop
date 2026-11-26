@@ -34,11 +34,11 @@ else
                 {
                     <tr>
                         <td>
-                            @if (!string.IsNullOrWhiteSpace(c.ImageUrl))
+                            @if (c.Icon == null && !string.IsNullOrWhiteSpace(c.ImageUrl))
                             {
-                                <img src="@c.ImageUrl" class="rounded" style="width:64px;height:64px;object-fit:cover;" />
+                                <img src="@c.ImageUrl" class="rounded" style="width:36px;height:36px;object-fit:cover;" />
                             }
-                            else { <span class="text-muted">—</span> }
+                            else { <partial name="_Icon" model="@(c.Icon ?? StationeryIcon.ForCategory(c.Name))" /> }
                         </td>
                         <td>@c.Name</td>
                         <td class="text-muted">@c.Description</td>

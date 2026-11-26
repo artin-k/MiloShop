@@ -1,0 +1,40 @@
+@using MiloShop.Web.ViewModels.Home
+@model Dictionary<string, string>
+@{ ViewData["Title"] = "ویرایش صفحه اصلی"; }
+<h1>ویرایش صفحه اصلی</h1>
+<div asp-validation-summary="All" class="text-danger"></div>
+@if (TempData["Saved"] is string saved) { <p role="status">تغییرات «@saved» ذخیره شد.</p> }
+@foreach (var group in HomepageContent.Fields.GroupBy(f => f.Group))
+{
+    <details class="admin-card">
+        <summary>@group.Key</summary>
+        <form method="post" asp-action="Save">
+            <input type="hidden" name="group" value="@group.Key" />
+            @foreach (var field in group)
+            {
+                <label for="@field.Key">@field.Label</label>
+                @if (field.IsVisibility)
+                {
+                    <select id="@field.Key" name="values[@field.Key]">
+                        <option value="visible" selected="@(Model[field.Key] == "visible")">نمایش</option>
+                        <option value="hidden" selected="@(Model[field.Key] == "hidden")">پنهان</option>
+                    </select>
+                }
+                else if (field.IsIcon)
+                {
+                    <select id="@field.Key" name="values[@field.Key]">
+                        @foreach (var icon in StationeryIcon.Options)
+                        {
+                            <option value="@icon.Key" selected="@(Model[field.Key] == icon.Key)">@icon.Value</option>
+                        }
+                    </select>
+                }
+                else
+                {
+                    <input id="@field.Key" name="values[@field.Key]" value="@Model[field.Key]" maxlength="500" required />
+                }
+            }
+            <button class="btn mt-3" type="submit">ذخیره @group.Key</button>
+        </form>
+    </details>
+}

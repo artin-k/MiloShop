@@ -2,7 +2,7 @@
 @{
     var price = Model.SalePrice ?? Model.Price;
     var hasImage = !string.IsNullOrWhiteSpace(Model.ImageUrl);
-    var cover = StationeryIcon.ForCategory(Model.Category?.Name);
+    var cover = Model.Category?.Icon ?? StationeryIcon.ForCategory(Model.Category?.Name);
     var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
 }
 <article class="product-tile">

@@ -66,8 +66,10 @@
   margin-bottom: 8px;
 }
 .feature-shell, .review-shell { max-width: 1040px; }
-.feature-heading { max-width: 38rem; margin: 0 auto 28px; text-align: center; }
-.feature-heading h2, .review-shell h2 { font-size: clamp(25px, 3vw, 42px); line-height: 1.5; }
+.feature-heading { max-width: 38rem; margin: 0 auto 12px; text-align: center; }
+.feature-heading h2 { font-size: clamp(21px, 2.4vw, 30px); margin: 0; }
+.feature-heading p { margin: 4px 0; }
+.review-shell h2 { font-size: clamp(25px, 3vw, 42px); line-height: 1.5; }
 .feature-heading p, .feature-cell p, .review-shell > p { color: var(--bone-dim); line-height: 1.9; }
 .feature-grid {
   display: grid;
@@ -76,11 +78,11 @@
   background: var(--line);
   border: 1px solid var(--line);
 }
-.feature-cell { padding: clamp(22px, 3vw, 42px); background: var(--ink); }
+.feature-cell { padding: clamp(12px, 1.5vw, 20px); background: var(--ink); }
 .feature-cell:hover, .feature-cell:focus-visible { background: var(--surface); }
-.feature-cell h3 { display: flex; align-items: center; gap: 10px; font-size: 18px; }
+.feature-cell h3 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 18px; }
 .feature-cell .milo-icon { color: var(--ember); }
-.feature-cell p { margin: 8px 0 0; font-size: 15px; }
+.feature-cell p { margin: 4px 0 0; font-size: 14px; }
 .feature-shell > .text-link { display: table; margin: 20px auto 0; }
 
 .review-shell { border-top: 1px solid var(--line); padding-block: 36px; }

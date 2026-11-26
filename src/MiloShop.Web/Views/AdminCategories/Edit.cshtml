@@ -36,6 +36,15 @@
             <input class="form-control" asp-for="ImageFile" type="file" />
         </div>
 
+        <label asp-for="Icon">نماد کنار دسته‌بندی</label>
+        <select asp-for="Icon">
+            <option value="">تصویر بارگذاری‌شده یا نماد خودکار</option>
+            @foreach (var icon in StationeryIcon.Options)
+            {
+                <option value="@icon.Key">@icon.Value</option>
+            }
+        </select>
+        <span asp-validation-for="Icon"></span>
         <div class="d-flex gap-2">
             <button class="btn btn-primary" type="submit">ذخیره</button>
             <a class="btn btn-outline-light" asp-controller="AdminCategories" asp-action="Index">بازگشت</a>

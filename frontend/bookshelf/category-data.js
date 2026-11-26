@@ -91,9 +91,9 @@ export function createCategoryVolumes(categories, dark = false) {
     }
     seen.add(category.id);
     const [color, foil] = colors[(category.id - 1) % colors.length];
-    const profile = profiles.find((profile) =>
-      profile.match.test(category.title),
-    );
+    const motif = category.icon === 'pen' ? 'writing' : category.icon;
+    const profile = profiles.find(profile => profile.kind === motif)
+      ?? profiles.find(profile => profile.match.test(category.title));
     const count = Number.isSafeInteger(category.productCount)
       ? Math.max(0, category.productCount)
       : 0;

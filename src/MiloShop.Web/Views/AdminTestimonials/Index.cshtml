@@ -1,0 +1,26 @@
+@model List<Review>
+@{ ViewData["Title"] = "مدیریت دیدگاه‌ها"; }
+<h1>دیدگاه‌های مشتریان</h1>
+<a class="btn" asp-action="Create">ثبت دیدگاه مشتری</a>
+<p>برای صفحه اصلی تا شش دیدگاه از محصولات فعال نمایش داده می‌شود. دیدگاه‌های منتخب در اولویت هستند.</p>
+@if (Model.Count == 0) { <p>هنوز دیدگاهی ثبت نشده است.</p> }
+@foreach (var review in Model)
+{
+    <article class="admin-card">
+        <h2>@review.Product.Title</h2>
+        <p>@review.UserName · @review.Rating از ۵</p>
+        <blockquote>@review.Comment</blockquote>
+        <form method="post" asp-action="SetPlacement" asp-route-id="@review.Id">
+            <input type="hidden" name="page" value="@ViewBag.Page" />
+            <label for="placement-@review.Id">نمایش در صفحه اصلی</label>
+            <select name="placement" id="placement-@review.Id">
+                <option value="Automatic" selected="@(review.HomepagePlacement == HomepagePlacement.Automatic)">خودکار</option>
+                <option value="Featured" selected="@(review.HomepagePlacement == HomepagePlacement.Featured)">منتخب</option>
+                <option value="Hidden" selected="@(review.HomepagePlacement == HomepagePlacement.Hidden)">پنهان</option>
+            </select>
+            <button type="submit" class="btn mt-3">ذخیره</button>
+        </form>
+    </article>
+}
+@if (ViewBag.Page > 1) { <a asp-action="Index" asp-route-page="@(ViewBag.Page - 1)">صفحه قبل</a> }
+@if (ViewBag.Page < ViewBag.Pages) { <a asp-action="Index" asp-route-page="@(ViewBag.Page + 1)">صفحه بعد</a> }

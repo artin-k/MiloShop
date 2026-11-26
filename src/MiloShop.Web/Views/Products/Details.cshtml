@@ -6,7 +6,7 @@
     ViewBag.BodyClass = "storefront-page";
     var price = Model.SalePrice ?? Model.Price;
     var hasImage = !string.IsNullOrWhiteSpace(Model.ImageUrl);
-    var cover = StationeryIcon.ForCategory(Model.Category?.Name);
+    var cover = Model.Category?.Icon ?? StationeryIcon.ForCategory(Model.Category?.Name);
     var productUrl = Url.RouteUrl("ProductDetails", new { id = Model.Id, slug = Model.Slug }, Context.Request.Scheme);
     var imageUrl = hasImage ? new Uri(new Uri($"{Context.Request.Scheme}://{Context.Request.Host}"), Model.ImageUrl).ToString() : null;
     var structuredData = new Dictionary<string, object> {

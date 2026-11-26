@@ -51,25 +51,24 @@ namespace MiloShop.Web.Controllers
             if (string.IsNullOrWhiteSpace(model.Name))
                 ModelState.AddModelError(nameof(model.Name), "نام الزامی است.");
 
-            if (model.ImageFile == null)
-                ModelState.AddModelError(nameof(model.ImageFile), "تصویر الزامی است.");
-
             if (!ModelState.IsValid)
             {
                 ViewData["Title"] = "افزودن دسته‌بندی";
                 return View(model);
             }
 
-            await using var image = model.ImageFile!.OpenReadStream();
-            var imageUrl = await _imageStorage.SaveAsync(
-                image,
-                Path.GetExtension(model.ImageFile.FileName),
-                HttpContext.RequestAborted);
+            string? imageUrl = null;
+            if (model.ImageFile != null)
+            {
+                await using var image = model.ImageFile.OpenReadStream();
+                imageUrl = await _imageStorage.SaveAsync(image, Path.GetExtension(model.ImageFile.FileName), HttpContext.RequestAborted);
+            }
 
             _context.Categories.Add(new Category
             {
                 Name = model.Name.Trim(),
                 Description = model.Description?.Trim() ?? string.Empty,
+                Icon = model.Icon,
                 ImageUrl = imageUrl
             });
             await _context.SaveChangesAsync();
@@ -90,6 +89,7 @@ namespace MiloShop.Web.Controllers
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
+                Icon = category.Icon,
                 ExistingImageUrl = category.ImageUrl
             });
         }
@@ -114,12 +114,13 @@ namespace MiloShop.Web.Controllers
                 return View(model);
             }
 
-            existing.Name = model.Name;
+            existing.Icon = model.Icon;
+            existing.Name = model.Name.Trim();
             existing.Description = model.Description?.Trim() ?? string.Empty;
 
+            var previousImage = existing.ImageUrl;
             if (model.ImageFile != null)
             {
-                _imageStorage.DeleteIfExists(existing.ImageUrl);
                 await using var image = model.ImageFile.OpenReadStream();
                 existing.ImageUrl = await _imageStorage.SaveAsync(
                     image,
@@ -128,6 +129,7 @@ namespace MiloShop.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
+            if (model.ImageFile != null) _imageStorage.DeleteIfExists(previousImage);
             return RedirectToAction(nameof(Index));
         }
 

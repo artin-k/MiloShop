@@ -8,11 +8,12 @@ namespace MiloShop.Infrastructure.Services;
 public class CatalogQueries(MiloDbContext db) : ICatalogQueries
 {
     public Task<List<ProductTestimonial>> GetTestimonialsAsync() => db.Reviews.AsNoTracking()
-        .Where(r => r.Product.IsActive && r.Comment.Trim() != "" && r.Rating >= 1 && r.Rating <= 5)
-        .OrderByDescending(r => r.CreatedAt).ThenByDescending(r => r.Id)
+        .Where(r => r.HomepagePlacement != HomepagePlacement.Hidden && r.Product.IsActive && r.Comment.Trim() != "" && r.Rating >= 1 && r.Rating <= 5)
+        .OrderByDescending(r => r.HomepagePlacement == HomepagePlacement.Featured)
+        .ThenByDescending(r => r.CreatedAt).ThenByDescending(r => r.Id)
         .Take(6)
         .Select(r => new ProductTestimonial(r.Comment, r.UserName, r.Rating, r.ProductId,
-            r.Product.Title, r.Product.Slug, r.Product.ImageUrl, r.Product.Category!.Name))
+            r.Product.Title, r.Product.Slug, r.Product.ImageUrl, r.Product.Category!.Name, r.Product.Category.Icon))
         .ToListAsync();
 
     public async Task<HomePage> GetHomeAsync()
@@ -21,7 +22,9 @@ public class CatalogQueries(MiloDbContext db) : ICatalogQueries
         var products = await db.Products.AsNoTracking()
             .Include(p => p.Category)
             .Where(p => p.IsActive && p.StockQuantity > 0)
-            .OrderByDescending(p => p.CreatedAt).ThenByDescending(p => p.Id).Take(8).ToListAsync();
+            .Where(p => p.HomepagePlacement != HomepagePlacement.Hidden)
+            .OrderByDescending(p => p.HomepagePlacement == HomepagePlacement.Featured)
+            .ThenByDescending(p => p.CreatedAt).ThenByDescending(p => p.Id).Take(8).ToListAsync();
         var categoryRows = await db.Categories.AsNoTracking()
             .OrderBy(c => c.Name).ThenBy(c => c.Id)
             .Select(c => new
@@ -39,7 +42,7 @@ public class CatalogQueries(MiloDbContext db) : ICatalogQueries
         return new HomePage(products, categoryRows.Select(row => row.Category).ToList(), offer, coupon)
         {
             Collections = categoryRows.Select(row => new CategoryCollection(row.Category.Id,
-                row.Category.Name, row.Category.Description, row.AvailableProductCount)).ToList()
+                row.Category.Name, row.Category.Description, row.AvailableProductCount, row.Category.Icon, row.Category.ImageUrl)).ToList()
         };
     }
 

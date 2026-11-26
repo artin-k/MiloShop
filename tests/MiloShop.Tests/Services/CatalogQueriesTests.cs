@@ -48,6 +48,39 @@ public class CatalogQueriesTests
     }
 
     [Fact]
+    public async Task HomepagePlacement_PrioritizesFeaturedAndOmitsHiddenBeforeTakingThePage()
+    {
+        await using var db = TestDbContextFactory.Create();
+        var category = new Category { Name = "دفتر", Icon = "gift" };
+        for (int i = 0; i < 12; i++)
+        {
+            var placement = i switch { 0 => HomepagePlacement.Featured, 11 => HomepagePlacement.Hidden, _ => HomepagePlacement.Automatic };
+            var product = new Product
+            {
+                Category = category, Title = $"Paper {i}", Slug = $"paper-{i}", Sku = $"P{i}",
+                StockQuantity = 1, HomepagePlacement = placement, CreatedAt = DateTime.UnixEpoch.AddDays(i)
+            };
+            db.Reviews.Add(new Review
+            {
+                Product = product, Comment = product.Title, Rating = 4, UserName = "Guest",
+                CreatedAt = product.CreatedAt, HomepagePlacement = placement
+            });
+        }
+        await db.SaveChangesAsync();
+        var catalog = new CatalogQueries(db);
+        var home = await catalog.GetHomeAsync();
+        home.Products.Should().HaveCount(8);
+        home.Products.First().Title.Should().Be("Paper 0");
+        home.Products.Should().NotContain(p => p.Title == "Paper 11");
+        home.Collections.Single().Icon.Should().Be("gift");
+        var quotes = await catalog.GetTestimonialsAsync();
+        quotes.Should().HaveCount(6);
+        quotes.First().Comment.Should().Be("Paper 0");
+        quotes.Should().NotContain(q => q.Comment == "Paper 11");
+        (await catalog.GetCatalogAsync(new CatalogFilter())).TotalCount.Should().Be(12);
+    }
+
+    [Fact]
     public async Task Catalog_PaginatesAndKeepsBrandMaterialFilters_WithStablePriceOrder()
     {
         await using var db = TestDbContextFactory.Create();
