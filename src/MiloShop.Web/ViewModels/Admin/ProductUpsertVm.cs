@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using MiloShop.Web.Validation;
 
 namespace MiloShop.Web.ViewModels.Admin
 {
@@ -34,6 +35,7 @@ namespace MiloShop.Web.ViewModels.Admin
         public bool IsSpecialOffer { get; set; }
 
         public string? ImageUrl { get; set; } // for edit preview
+        [AllowedImage(AllowSvg = true, MaxBytes = 30_000_000)]
         public IFormFile? ImageFile { get; set; } // upload
     }
 }

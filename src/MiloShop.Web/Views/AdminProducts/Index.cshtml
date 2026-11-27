@@ -1,4 +1,4 @@
-﻿@model List<MiloShop.Domain.Entities.Product>
+@model List<MiloShop.Domain.Entities.Product>
 @{
     ViewData["Title"] = "محصولات";
 }
@@ -34,7 +34,7 @@ else
                             <td>
                                 @if (!string.IsNullOrWhiteSpace(p.ImageUrl))
                                 {
-                                    <img src="@p.ImageUrl" class="rounded" style="width:64px;height:64px;object-fit:cover;" />
+                                    <img src="@p.ImageUrl" class="rounded" alt="" loading="lazy" decoding="async" style="width:64px;height:64px;object-fit:contain;" />
                                 }
                                 else
                                 {

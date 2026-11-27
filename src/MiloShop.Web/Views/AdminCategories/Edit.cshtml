@@ -23,7 +23,7 @@
             <label class="form-label">تصویر فعلی</label><br />
             @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl))
             {
-                <img src="@Model.ExistingImageUrl" class="rounded" style="width:110px;height:110px;object-fit:cover;" />
+                <img src="@Model.ExistingImageUrl" class="rounded" style="width:110px;height:110px;object-fit:contain;" />
             }
             else
             {
@@ -32,8 +32,10 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">تعویض تصویر (اختیاری)</label>
-            <input class="form-control" asp-for="ImageFile" type="file" />
+            <label class="form-label" asp-for="ImageFile">تعویض تصویر یا نماد SVG (اختیاری)</label>
+            <input class="form-control" asp-for="ImageFile" type="file" accept=".svg,.jpg,.jpeg,.png,.webp" aria-describedby="category-icon-help" />
+            <small id="category-icon-help">برای نمایش SVG ساده (حداکثر ۱۲۸ کیلوبایت)، گزینهٔ «تصویر بارگذاری‌شده یا نماد خودکار» را انتخاب کنید.</small>
+            <span class="text-danger" asp-validation-for="ImageFile"></span>
         </div>
 
         <label asp-for="Icon">نماد کنار دسته‌بندی</label>

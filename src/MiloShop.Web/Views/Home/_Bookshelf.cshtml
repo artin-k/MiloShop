@@ -18,7 +18,7 @@
                            data-cover="@icon">
                             @if (category.Icon == null && !string.IsNullOrWhiteSpace(category.ImageUrl))
                             {
-                                <img class="category-icon" src="@category.ImageUrl" alt="" width="36" height="36" loading="lazy" />
+                                <img class="category-icon" src="@category.ImageUrl" alt="" width="36" height="36" loading="lazy" decoding="async" />
                             }
                             else
                             {

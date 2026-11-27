@@ -19,8 +19,9 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">تصویر</label>
-            <input class="form-control" asp-for="ImageFile" type="file" />
+            <label class="form-label" asp-for="ImageFile">تصویر یا نماد SVG</label>
+            <input class="form-control" asp-for="ImageFile" type="file" accept=".svg,.jpg,.jpeg,.png,.webp" aria-describedby="category-icon-help" />
+            <small id="category-icon-help">برای نمایش SVG ساده (حداکثر ۱۲۸ کیلوبایت)، گزینهٔ «تصویر بارگذاری‌شده یا نماد خودکار» را انتخاب کنید.</small>
             <span class="text-danger">@Html.ValidationMessageFor(m => m.ImageFile)</span>
         </div>
 

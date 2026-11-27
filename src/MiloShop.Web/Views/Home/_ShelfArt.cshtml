@@ -1,7 +1,8 @@
 @model Product
 @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
 {
-    <img class="shelf-art" src="@Model.ImageUrl" alt="" width="160" height="240" loading="lazy" decoding="async" draggable="false" />
+    var isSvg = Model.ImageUrl.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
+    <img class="shelf-art @(isSvg ? "shelf-art--icon" : null)" src="@Model.ImageUrl" alt="" width="160" height="@(isSvg ? 160 : 240)" loading="lazy" decoding="async" draggable="false" />
 }
 else
 {

@@ -1,4 +1,7 @@
-﻿namespace MiloShop.Web.Services
+using System.Xml.Linq;
+using MiloShop.Web.Validation;
+
+namespace MiloShop.Web.Services
 {
     public class ProductImageStorage : IProductImageStorage
     {
@@ -15,6 +18,7 @@
             CancellationToken cancellationToken = default)
         {
             var extension = fileExtension.ToLowerInvariant();
+            var svg = extension == ".svg" ? SvgIcon.Read(content) : null;
             var fileName = $"{Guid.NewGuid():N}{extension}";
 
             var dir = Path.Combine(_env.WebRootPath, "uploads", "products");
@@ -23,7 +27,10 @@
             var fullPath = Path.Combine(dir, fileName);
 
             await using var fs = new FileStream(fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-            await content.CopyToAsync(fs, cancellationToken);
+            if (svg is null)
+                await content.CopyToAsync(fs, cancellationToken);
+            else
+                await svg.SaveAsync(fs, SaveOptions.DisableFormatting, cancellationToken);
 
             return $"/uploads/products/{fileName}";
         }

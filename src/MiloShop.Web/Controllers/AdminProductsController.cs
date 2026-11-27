@@ -1,4 +1,4 @@
-﻿using MiloShop.Web.ViewModels.Admin;
+using MiloShop.Web.ViewModels.Admin;
 using MiloShop.Infrastructure.Persistence;
 using MiloShop.Domain.Entities;
 using MiloShop.Web.Services;
@@ -157,9 +157,9 @@ namespace MiloShop.Web.Controllers
             existing.IsActive = vm.IsActive;
             existing.IsSpecialOffer = vm.IsSpecialOffer;
 
+            var previousImage = existing.ImageUrl;
             if (vm.ImageFile != null)
             {
-                _imageStorage.DeleteIfExists(existing.ImageUrl);
                 await using var image = vm.ImageFile.OpenReadStream();
                 existing.ImageUrl = await _imageStorage.SaveAsync(
                     image,
@@ -171,6 +171,7 @@ namespace MiloShop.Web.Controllers
             existing.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+            if (vm.ImageFile != null) _imageStorage.DeleteIfExists(previousImage);
             return RedirectToAction(nameof(Index));
         }
 

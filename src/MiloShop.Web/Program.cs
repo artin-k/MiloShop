@@ -68,6 +68,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Append("image/svg+xml");
     options.Providers.Add<BrotliCompressionProvider>();
     options.Providers.Add<GzipCompressionProvider>();
 });
@@ -90,14 +91,25 @@ app.UseHttpsRedirection();
 // Compress public assets only; account/cart HTML is never compressed or publicly cached here.
 app.UseWhen(context => context.Request.Path.StartsWithSegments("/css")
     || context.Request.Path.StartsWithSegments("/js") || context.Request.Path.StartsWithSegments("/fonts")
-    || context.Request.Path.StartsWithSegments("/images") || context.Request.Path.StartsWithSegments("/vendor"),
+    || context.Request.Path.StartsWithSegments("/images") || context.Request.Path.StartsWithSegments("/vendor")
+    || (context.Request.Path.StartsWithSegments("/uploads/products")
+        && context.Request.Path.Value!.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)),
     branch => branch.UseResponseCompression());
 app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = context =>
     {
-        var versioned = context.Context.Request.Query.ContainsKey("v");
-        context.Context.Response.Headers.CacheControl = versioned
+        var request = context.Context.Request;
+        var headers = context.Context.Response.Headers;
+        var uploadedSvg = request.Path.StartsWithSegments("/uploads/products")
+            && context.File.Name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
+        if (uploadedSvg)
+        {
+            headers.ContentSecurityPolicy = "default-src 'none'; sandbox";
+            headers.XContentTypeOptions = "nosniff";
+        }
+
+        headers.CacheControl = uploadedSvg || request.Query.ContainsKey("v")
             ? "public,max-age=31536000,immutable" : "public,max-age=3600";
     }
 });

@@ -1,4 +1,4 @@
-﻿@model List<MiloShop.Domain.Entities.Category>
+@model List<MiloShop.Domain.Entities.Category>
 @{
     ViewData["Title"] = "دسته‌بندی‌ها";
 }
@@ -36,7 +36,7 @@ else
                         <td>
                             @if (c.Icon == null && !string.IsNullOrWhiteSpace(c.ImageUrl))
                             {
-                                <img src="@c.ImageUrl" class="rounded" style="width:36px;height:36px;object-fit:cover;" />
+                                <img src="@c.ImageUrl" class="rounded" alt="" loading="lazy" decoding="async" style="width:36px;height:36px;object-fit:contain;" />
                             }
                             else { <partial name="_Icon" model="@(c.Icon ?? StationeryIcon.ForCategory(c.Name))" /> }
                         </td>
