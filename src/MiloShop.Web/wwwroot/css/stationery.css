@@ -10,8 +10,8 @@
 .paper-hero {
   display: grid;
   align-items: center;
-  min-block-size: clamp(390px, calc(90svh - var(--nav-h)), 660px);
-  padding-block: clamp(20px, 4svh, 42px);
+  min-block-size: clamp(390px, calc(90svh - var(--nav-h)), 180px);
+  padding-block: clamp(10px, 4svh, 10px);
   background:
     radial-gradient(ellipse at 30% 50%, var(--hero-glow) 0, transparent 58%),
     repeating-linear-gradient(0deg, transparent 0 35px, var(--hero-rule) 35px 36px);
