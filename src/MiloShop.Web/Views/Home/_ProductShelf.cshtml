@@ -1,0 +1,20 @@
+@model IReadOnlyList<Product>
+@* Store wall adapted from Aakash Mehra's Product Shelf (aakashmehra.com/ref/productshelf). *@
+<div class="product-shelf" data-product-shelf>
+    @foreach (var row in Model.Chunk(4))
+    {
+        <div class="shelf-row">
+            @foreach (var product in row)
+            {
+                <a class="shelf-item" asp-route="ProductDetails" asp-route-id="@product.Id" asp-route-slug="@product.Slug" data-inspector="shelf-detail-@product.Id">
+                    <span class="shelf-stage"><partial name="_ShelfArt" model="product" /></span>
+                    <span class="shelf-label"><strong>@product.Title</strong><small>@((product.SalePrice ?? product.Price).ToString("N0")) تومان</small></span>
+                </a>
+            }
+        </div>
+    }
+    @foreach (var product in Model)
+    {
+        <partial name="_ShelfInspector" model="product" />
+    }
+</div>

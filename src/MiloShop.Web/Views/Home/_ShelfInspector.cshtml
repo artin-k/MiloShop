@@ -1,0 +1,41 @@
+@model Product
+@{
+    var price = Model.SalePrice ?? Model.Price;
+    var productUrl = Url.RouteUrl("ProductDetails", new { id = Model.Id, slug = Model.Slug });
+}
+<dialog class="shelf-inspector" id="shelf-detail-@Model.Id" aria-labelledby="shelf-title-@Model.Id">
+    <button type="button" class="shelf-back" autofocus>→ بازگشت به قفسه</button>
+    <div class="shelf-inspector__body">
+        <div class="shelf-inspector__photo">
+            <partial name="_ShelfArt" model="Model" />
+        </div>
+        <div class="shelf-inspector__info">
+            <span class="eyebrow">@Model.Category?.Name</span>
+            <h3 id="shelf-title-@Model.Id">@Model.Title</h3>
+            <p class="shelf-inspector__price">@price.ToString("N0") تومان
+                @if (price < Model.Price) { <del>@Model.Price.ToString("N0")</del> }
+            </p>
+            @if (!string.IsNullOrWhiteSpace(Model.ShortDescription)) { <p>@Model.ShortDescription</p> }
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form class="shelf-buy" method="post" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id">
+                    <label>تعداد <input name="quantity" type="number" value="1" min="1" max="@Model.StockQuantity" required /></label>
+                    <button class="button button--primary" type="submit">افزودن به سبد</button>
+                </form>
+            }
+            else
+            {
+                <a class="button button--primary" asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@productUrl">ورود برای افزودن به سبد</a>
+            }
+            <details>
+                <summary>مشخصات محصول</summary>
+                <dl><dt>کد محصول</dt><dd><bdi>@Model.Sku</bdi></dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Brand)) { <dt>برند</dt><dd>@Model.Brand</dd> }
+                    @if (!string.IsNullOrWhiteSpace(Model.Material)) { <dt>جنس</dt><dd>@Model.Material</dd> }
+                </dl>
+            </details>
+            <partial name="_CompareProduct" model="Model" />
+            <a class="text-link" asp-route="ProductDetails" asp-route-id="@Model.Id" asp-route-slug="@Model.Slug">صفحهٔ محصول ←</a>
+        </div>
+    </div>
+</dialog>

@@ -34,6 +34,6 @@
                 <button class="button" type="submit" disabled="@(Model.StockQuantity <= 0)">@(Model.StockQuantity > 0 ? "افزودن به سبد ←" : "ناموجود")</button>
             </form>
         }
-        <label class="compare-choice"><input type="checkbox" data-compare="@Model.Id" data-title="@Model.Title" data-brand="@Model.Brand" data-material="@Model.Material" data-sku="@Model.Sku" data-price="@price.ToString("N0")" /> مقایسه مشخصات</label>
+        <partial name="_CompareProduct" model="Model" />
     </div>
 </article>

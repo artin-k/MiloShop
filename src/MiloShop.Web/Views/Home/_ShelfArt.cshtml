@@ -1,0 +1,10 @@
+@model Product
+@if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+{
+    <img class="shelf-art" src="@Model.ImageUrl" alt="" width="160" height="240" loading="lazy" decoding="async" draggable="false" />
+}
+else
+{
+    var cover = Model.Category?.Icon ?? StationeryIcon.ForCategory(Model.Category?.Name);
+    <span class="shelf-art shelf-art--cover" data-cover="@cover"><partial name="_NotebookCover" model="cover" /></span>
+}

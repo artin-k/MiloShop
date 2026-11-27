@@ -1,0 +1,2 @@
+@model Product
+<label class="compare-choice"><input type="checkbox" data-compare="@Model.Id" data-title="@Model.Title" data-brand="@Model.Brand" data-material="@Model.Material" data-sku="@Model.Sku" data-price="@((Model.SalePrice ?? Model.Price).ToString("N0"))" /> مقایسه مشخصات</label>

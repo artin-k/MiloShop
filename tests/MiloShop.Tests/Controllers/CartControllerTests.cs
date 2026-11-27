@@ -5,6 +5,7 @@ using MiloShop.Infrastructure.Services;
 using MiloShop.Tests.Common;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using System.Security.Claims;
 
@@ -42,8 +43,12 @@ public class CartControllerTests
         redirect.Url.Should().Be("/Auth/Login");
     }
 
-    [Fact]
-    public async Task Add_ExistingCartItem_IncrementsQuantity_AndRedirectsToLocalReturnUrl()
+    [Theory]
+    [InlineData(null, 2)]
+    [InlineData(4, 5)]
+    [InlineData(5, 1)]
+    [InlineData(0, 1)]
+    public async Task Add_ExistingCartItem_RespectsRequestedQuantityAndRemainingStock(int? quantity, int expectedCartQuantity)
     {
         await using var db = TestDbContextFactory.Create();
         var product = new Product
@@ -80,12 +85,17 @@ public class CartControllerTests
             .Returns<string>(u => u.StartsWith("/"));
         sut.Url = url.Object;
 
-        var result = await sut.Add(product.Id, "/Shop");
+        sut.TempData = Mock.Of<ITempDataDictionary>();
+        var result = quantity.HasValue
+            ? await sut.Add(product.Id, "/Shop", quantity.Value)
+            : await sut.Add(product.Id, "/Shop");
 
-        var redirect = result.Should().BeOfType<RedirectResult>().Subject;
-        redirect.Url.Should().Be("/Shop");
+        if (expectedCartQuantity == 1)
+            result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
+        else
+            result.Should().BeOfType<RedirectResult>().Which.Url.Should().Be("/Shop");
 
         var item = db.CartItems.Single(x => x.UserId == user.Id && x.ProductId == product.Id);
-        item.Quantity.Should().Be(2);
+        item.Quantity.Should().Be(expectedCartQuantity);
     }
 }

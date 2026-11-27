@@ -47,7 +47,7 @@ namespace MiloShop.Web.Controllers
 
         [HttpPost("Add/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(int id, string? returnUrl = null)
+        public async Task<IActionResult> Add(int id, string? returnUrl = null, int quantity = 1)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Redirect("/Auth/Login");
@@ -63,24 +63,24 @@ namespace MiloShop.Web.Controllers
             var item = await _db.CartItems
                 .FirstOrDefaultAsync(c => c.UserId == user.Id && c.ProductId == id);
 
+            if (!ModelState.IsValid || quantity < 1 || quantity > product.StockQuantity - (item?.Quantity ?? 0))
+            {
+                TempData["OrderError"] = "تعداد درخواستی با موجودی محصول سازگار نیست.";
+                return RedirectToAction(nameof(Index));
+            }
+
             if (item == null)
             {
                 _db.CartItems.Add(new CartItem
                 {
                     UserId = user.Id,
                     ProductId = id,
-                    Quantity = 1
+                    Quantity = quantity
                 });
             }
             else
             {
-                if (item.Quantity >= product.StockQuantity)
-                {
-                    TempData["OrderError"] = "تعداد بیشتری از این محصول در انبار موجود نیست.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                item.Quantity += 1;
+                item.Quantity += quantity;
             }
 
             await _db.SaveChangesAsync();
